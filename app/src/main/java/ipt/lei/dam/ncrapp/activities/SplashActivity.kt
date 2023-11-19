@@ -10,11 +10,11 @@ import android.view.animation.AnimationSet
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import ipt.lei.dam.ncr.MainActivity
-import ipt.lei.dam.ncr.R
+import ipt.lei.dam.ncrapp.R
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_NCRAPP)
+        setTheme(R.style.Theme_NcrAPP)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 

@@ -10,22 +10,24 @@
         android:label="@string/app_name"
         android:roundIcon="@drawable/logo"
         android:supportsRtl="true"
-        android:theme="@style/Theme.NCRAPP"
+        android:theme="@style/Theme.NcrAPP"
         tools:targetApi="31">
         <activity
-            android:name=".activities.SplashActivity"
+            android:name="ipt.lei.dam.ncr.activities.SplashActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NCRAPP">
+            android:theme="@style/Theme.NcrAPP">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity">
+        <activity
+            android:name="ipt.lei.dam.ncr.activities.LoginActivity">
         </activity>
-        <activity android:name=".activities.LoginActivity">
+        <activity
+            android:name="ipt.lei.dam.ncr.MainActivity">
         </activity>
     </application>
 

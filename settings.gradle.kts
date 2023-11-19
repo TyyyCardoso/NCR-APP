@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "NCRAPP"
+rootProject.name = "ncrAPP"
 include(":app")

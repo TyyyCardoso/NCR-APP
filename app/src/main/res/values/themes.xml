@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.NCRAPP" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="Theme.NcrAPP" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
     </style>
 

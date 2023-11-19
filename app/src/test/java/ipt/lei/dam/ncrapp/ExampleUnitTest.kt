@@ -1,4 +1,4 @@
-package ipt.lei.dam.ncr
+package ipt.lei.dam.ncrapp
 
 import org.junit.Test
 
