@@ -9,8 +9,8 @@ import android.view.animation.Animation
 import android.view.animation.AnimationSet
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
-import ipt.lei.dam.ncr.MainActivity
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.activities.MainActivity
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,7 +40,7 @@ class SplashActivity : AppCompatActivity() {
 
                 // Delay for 2 seconds before starting MainActivity
                 Handler(Looper.getMainLooper()).postDelayed({
-                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                     finish()
                 }, 4000)  // 2000 milliseconds delay
             }

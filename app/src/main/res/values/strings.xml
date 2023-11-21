@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Núcleo de Conservação e Restauro</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="eventos">Eventos</string>
+    <string name="sabias_que">Sabias Que</string>
+    <string name="outros">Outros</string>
 </resources>
