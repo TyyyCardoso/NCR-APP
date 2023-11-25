@@ -1,11 +1,9 @@
-package ipt.lei.dam.ncrapp.activities
+package ipt.lei.dam.ncrapp.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import ipt.lei.dam.ncr.activities.LoginActivity
 import ipt.lei.dam.ncrapp.R
 
 class CreateAccountActivity : AppCompatActivity() {

@@ -27,16 +27,19 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="ipt.lei.dam.ncr.activities.LoginActivity">
+            android:name=".activities.authentication.LoginActivity">
         </activity>
         <activity
             android:name="ipt.lei.dam.ncr.MainActivity">
         </activity>
         <activity
-            android:name=".activities.ForgotPasswordActivity">
+            android:name=".activities.authentication.ForgotPasswordActivity">
         </activity>
         <activity
-            android:name=".activities.CreateAccountActivity">
+            android:name=".activities.authentication.CreateAccountActivity">
+        </activity>
+        <activity
+            android:name=".activities.authentication.InsertOTPActivity">
         </activity>
     </application>
 

@@ -16,17 +16,18 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/recoverPasswordTitle"
-        android:textSize="24sp"
+        android:text="@string/insertOTPTitle"
+        android:gravity="center"
+        android:textSize="20sp"
         android:textColor="#00574B"
         android:layout_marginBottom="20dp"/>
 
     <EditText
-        android:id="@+id/etEmail"
+        android:id="@+id/etOTP"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/recoverPasswordEmailBoxHint"
-        android:inputType="textEmailAddress"
+        android:hint="@string/insertOTPBoxHint"
+        android:inputType="number"
         android:background="@drawable/edittext_background"
         android:padding="15dp"
         android:layout_marginBottom="15dp"
@@ -38,10 +39,10 @@
         style="@style/CustomButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/recoverPasswordButton" />
+        android:text="@string/insertOTPButton" />
 
     <Button
-        android:id="@+id/btnBackToLogin"
+        android:id="@+id/btnBackToRecoverPassword"
         style="@style/CustomButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

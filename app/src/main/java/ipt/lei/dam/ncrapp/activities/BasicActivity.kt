@@ -4,11 +4,16 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ipt.lei.dam.ncrapp.R
+import org.json.JSONObject
+import retrofit2.Response
+import java.io.IOException
 
 open class BaseActivity : AppCompatActivity() {
 
+    var toast: Toast? = null
     private lateinit var loadingImage: ImageView
     private lateinit var rotationAnimation: Animation
 
@@ -33,9 +38,59 @@ open class BaseActivity : AppCompatActivity() {
     }
 
     fun isEmailValid(email: String) : Boolean {
-        val emailRegex = ("(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")" +
-                "@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}" +
-                "(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])")
+        val emailRegex = ("^[a-zA-Z0-9_+&*-]+(?:\\." +
+                "[a-zA-Z0-9_+&*-]+)*@" +
+                "(?:[a-zA-Z0-9-]+\\.)+[a-z" +
+                "A-Z]{2,7}$")
         return email.matches(emailRegex.toRegex())
+    }
+    fun <T> makeRequestWithRetries(
+        requestCall: () -> Response<T>,
+        onSuccess: (T) -> Unit,
+        onError: (String) -> Unit,
+        maxAttempts: Int = 3
+    ) {
+        setLoadingVisibility(true)
+        Thread {
+            var attemptCount = 0
+            var successful = false
+
+            while (attemptCount < maxAttempts && !successful) {
+                try {
+                    val response = requestCall()
+                    if (response.isSuccessful) {
+                        runOnUiThread {
+                            onSuccess(response.body()!!)
+                            setLoadingVisibility(false)
+                        }
+                        successful = true
+                    } else {
+                        val errorBody = response.errorBody()?.string()
+                        val errorMessage = JSONObject(errorBody).getString("message")
+                        runOnUiThread {
+                            onError(errorMessage)
+                            setLoadingVisibility(false)
+                        }
+                        break // Não tentar novamente em caso de erro de resposta HTTP
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    attemptCount++
+                    if (attemptCount >= maxAttempts) {
+                        runOnUiThread {
+                            onError("Erro ao tentar conectar. Por favor, tente novamente.")
+                            setLoadingVisibility(false)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    runOnUiThread {
+                        onError("Erro inesperado. Por favor, tente novamente.")
+                        setLoadingVisibility(false)
+                    }
+                    break
+                }
+            }
+        }.start()
     }
 }

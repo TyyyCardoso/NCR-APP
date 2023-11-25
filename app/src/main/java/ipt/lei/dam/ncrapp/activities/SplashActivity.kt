@@ -6,11 +6,10 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.animation.Animation
-import android.view.animation.AnimationSet
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
-import ipt.lei.dam.ncr.MainActivity
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
