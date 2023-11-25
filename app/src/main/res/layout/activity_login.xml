@@ -11,13 +11,14 @@
         android:layout_width="250dp"
         android:layout_height="250dp"
         android:src="@drawable/logo"
-        android:layout_marginBottom="58dp"/>
+        android:layout_marginBottom="58dp"
+        />
 
     <EditText
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="@string/loginEmailBoxHint"
         android:inputType="textEmailAddress"
         android:background="@drawable/edittext_background"
         android:padding="15dp"
@@ -28,7 +29,7 @@
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="@string/loginPasswordBoxHint"
         android:inputType="textPassword"
         android:background="@drawable/edittext_background"
         android:padding="15dp"
@@ -40,7 +41,7 @@
         style="@style/CustomButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login" />
+        android:text="@string/loginButton" />
 
     <TextView
         android:id="@+id/forgot_password"
@@ -48,15 +49,26 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
-        android:text="Forgot Password?"
+        android:text="@string/loginForgotPassword"
         android:textColor="#00574B" />
 
     <TextView
         android:id="@+id/register_prompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Don't have an account? Sign Up"
+        android:text="@string/loginCreateAccount"
         android:textColor="#00574B"
         android:layout_marginTop="10dp"
         android:layout_gravity="center"/>
+
+
+    <ImageView
+        android:id="@+id/loading_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerInParent="true"
+        android:src="@drawable/cotonete"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"/>
+
 </LinearLayout>

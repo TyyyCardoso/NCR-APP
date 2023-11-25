@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Núcleo de Conservação e Restauro</string>
+    <!-- LOGIN SCREEN TEXTS -->
+    <string name="loginEmailBoxHint">E-mail</string>
+    <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>
+    <string name="loginEmailBoxInvalid">E-mail inválido.</string>
+    <string name="loginPasswordBoxHint">Palavra-passe</string>
+    <string name="loginPasswordBoxHintNotFilledError">Tem que preencher a palavra-passe.</string>
+    <string name="loginButton">Entrar</string>
+    <string name="loginForgotPassword">Esqueci-me da minha palavra-passe.</string>
+    <string name="loginCreateAccount">Não tem uma conta? Registe-se.</string>
+    <!-- RECOVER PASSWORD SCREEN TEXTS -->
+    <string name="recoverPasswordTitle">Recuperar palavra-passe</string>
+    <string name="recoverPasswordEmailBoxHint">Introduza o seu e-mail</string>
+    <string name="recoverPasswordButton">Enviar e-mail</string>
+    <string name="recoverPasswordBackButton">Voltar</string>
+
+
 </resources>
