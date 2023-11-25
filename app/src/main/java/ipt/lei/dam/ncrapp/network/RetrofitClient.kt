@@ -13,7 +13,7 @@ object RetrofitClient {
         .addInterceptor(authInterceptor)
         .build()
 
-    val retrofit: Retrofit = Retrofit.Builder()
+    private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
