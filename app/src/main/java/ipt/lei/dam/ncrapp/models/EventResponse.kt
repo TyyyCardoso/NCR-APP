@@ -1,6 +1,6 @@
-package ipt.lei.dam.ncrapp
+package ipt.lei.dam.ncrapp.models
 
-data class Event(
+data class EventResponse(
     val title: String,
     val description: String,
     val imageUrl: String

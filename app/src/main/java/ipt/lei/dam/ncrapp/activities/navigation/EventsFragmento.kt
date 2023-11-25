@@ -1,4 +1,4 @@
-package ipt.lei.dam.ncrapp
+package ipt.lei.dam.ncrapp.activities.navigation
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,7 +7,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.EventsAdapter
+import ipt.lei.dam.ncrapp.models.EventResponse
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -46,10 +48,10 @@ class EventsFragmento : Fragment() {
 
         // Substitua isso pela sua lista de eventos
         val eventsList = listOf(
-            Event("Lisboa Games Week", "Lisboa Games Week Descrição", "https://www.actigamer.pt/cnt/uploads/I22H011lisboagamesweek.jpg"),
-            Event("Web Summit", "Web Summit Descrição", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTclv-4FHV1CKx5fUBNGQf0K8sU6prmdRvXKJB6Jti8TP8VcYhmMzJZYHGyjXc8S5Fo-c&usqp=CAU"),
-            Event("Web Summit2", "Web Summit Descrição", "https://www.actigamer.pt/cnt/uploads/I22H011lisboagamesweek.jpg"),
-            Event("Web Summit3", "Web Summit Descrição", "https://www.actigamer.pt/cnt/uploads/I22H011lisboagamesweek.jpg")
+            EventResponse("Lisboa Games Week", "Lisboa Games Week Descrição", "https://www.actigamer.pt/cnt/uploads/I22H011lisboagamesweek.jpg"),
+            EventResponse("Web Summit", "Web Summit Descrição", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTclv-4FHV1CKx5fUBNGQf0K8sU6prmdRvXKJB6Jti8TP8VcYhmMzJZYHGyjXc8S5Fo-c&usqp=CAU"),
+            EventResponse("Web Summit2", "Web Summit Descrição", "https://www.actigamer.pt/cnt/uploads/I22H011lisboagamesweek.jpg"),
+            EventResponse("Web Summit3", "Web Summit Descrição", "https://www.actigamer.pt/cnt/uploads/I22H011lisboagamesweek.jpg")
 
             // ...
         )

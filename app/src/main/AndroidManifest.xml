@@ -30,7 +30,7 @@
             android:name=".activities.authentication.LoginActivity">
         </activity>
         <activity
-            android:name="ipt.lei.dam.ncr.MainActivity">
+            android:name=".activities.MainActivity">
         </activity>
         <activity
             android:name=".activities.authentication.ForgotPasswordActivity">

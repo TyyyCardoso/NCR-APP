@@ -2,6 +2,10 @@
     <!-- GENERAL SCREEN TEXTS -->
     <string name="app_name">Núcleo de Conservação e Restauro</string>
     <string name="generalBackButton">Voltar</string>
+    <!-- MAIN SCREEN TEXTS -->
+    <string name="mainNavEventsButton">Eventos</string>
+    <string name="mainNavSabiasButton">Sabias Que</string>
+    <string name="mainNavOutrosButton">Outros</string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>
     <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>
@@ -19,5 +23,6 @@
     <string name="insertOTPTitle">Se o seu e-mail for válido, terá sido enviado um código para o seu e-mail:</string>
     <string name="insertOTPBoxHint">Inserir código</string>
     <string name="insertOTPButton">Confirmar</string>
+
 
 </resources>

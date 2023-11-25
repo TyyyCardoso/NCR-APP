@@ -7,10 +7,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
-import ipt.lei.dam.ncrapp.Event
+import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.R
 
-class EventsAdapter(private val eventsList: List<Event>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
+class EventsAdapter(private val eventsList: List<EventResponse>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val imageView: ImageView = view.findViewById(R.id.imageView)

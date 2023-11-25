@@ -7,20 +7,20 @@
 
     <fragment
         android:id="@+id/navigation_events"
-        android:name="ipt.lei.dam.ncrapp.EventsFragmento"
-        android:label="@string/eventos"
+        android:name="ipt.lei.dam.ncrapp.activities.navigation.EventsFragmento"
+        android:label="@string/mainNavOutrosButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_sabias"
-        android:name="ipt.lei.dam.ncrapp.sabiasQueFragmento"
-        android:label="@string/eventos"
+        android:name="ipt.lei.dam.ncrapp.activities.navigation.sabiasQueFragmento"
+        android:label="@string/mainNavOutrosButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="ipt.lei.dam.ncrapp.settingsFragmento"
-        android:label="@string/eventos"
+        android:name="ipt.lei.dam.ncrapp.activities.navigation.settingsFragmento"
+        android:label="@string/mainNavOutrosButton"
         tools:layout="@layout/fragment_events" />
 
 </navigation>
