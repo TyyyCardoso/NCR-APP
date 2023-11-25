@@ -19,7 +19,8 @@ class LoginActivity : AppCompatActivity() {
         loginButton.setOnClickListener {
             val username = usernameEditText.text.toString()
             val password = passwordEditText.text.toString()
-            // Implement your login logic here
+
+            
         }
     }
 }

@@ -13,8 +13,16 @@
         android:src="@drawable/logo"
         android:layout_marginBottom="58dp"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create new account"
+        android:textSize="24sp"
+        android:textColor="#00574B"
+        android:layout_marginBottom="20dp"/>
+
     <EditText
-        android:id="@+id/username"
+        android:id="@+id/etSignUpEmail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Email"
@@ -25,7 +33,18 @@
         android:layout_marginHorizontal="10dp" />
 
     <EditText
-        android:id="@+id/password"
+        android:id="@+id/etSignUpName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"
+        android:inputType="text"
+        android:background="@drawable/edittext_background"
+        android:padding="15dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginHorizontal="10dp" />
+
+    <EditText
+        android:id="@+id/etSignUpPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Password"
@@ -36,27 +55,19 @@
         android:layout_marginHorizontal="10dp" />
 
     <Button
-        android:id="@+id/login_button"
+        android:id="@+id/btnSignUp"
         style="@style/CustomButtonStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Login" />
+        android:text="Sign Up"
+        android:layout_marginTop="24dp"/>
 
     <TextView
-        android:id="@+id/forgot_password"
+        android:id="@+id/tvGoToLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="16dp"
-        android:text="Forgot Password?"
-        android:textColor="#00574B" />
-
-    <TextView
-        android:id="@+id/register_prompt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Don't have an account? Sign Up"
+        android:text="Already have an account? Log in"
         android:textColor="#00574B"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:layout_gravity="center"/>
 </LinearLayout>

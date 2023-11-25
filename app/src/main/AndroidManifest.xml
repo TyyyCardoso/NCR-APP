@@ -29,6 +29,12 @@
         <activity
             android:name="ipt.lei.dam.ncr.MainActivity">
         </activity>
+        <activity
+            android:name=".activities.ForgotPasswordActivity">
+        </activity>
+        <activity
+            android:name=".activities.CreateAccountActivity">
+        </activity>
     </application>
 
 </manifest>
