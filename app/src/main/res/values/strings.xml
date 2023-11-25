@@ -1,8 +1,23 @@
 <resources>
+    <!-- GENERAL SCREEN TEXTS -->
     <string name="app_name">Núcleo de Conservação e Restauro</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="eventos">Eventos</string>
-    <string name="sabias_que">Sabias Que</string>
-    <string name="outros">Outros</string>
+    <string name="generalBackButton">Voltar</string>
+    <!-- LOGIN SCREEN TEXTS -->
+    <string name="loginEmailBoxHint">E-mail</string>
+    <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>
+    <string name="loginEmailBoxInvalid">E-mail inválido.</string>
+    <string name="loginPasswordBoxHint">Palavra-passe</string>
+    <string name="loginPasswordBoxHintNotFilledError">Tem que preencher a palavra-passe.</string>
+    <string name="loginButton">Entrar</string>
+    <string name="loginForgotPassword">Esqueci-me da minha palavra-passe.</string>
+    <string name="loginCreateAccount">Não tem uma conta? Registe-se.</string>
+    <!-- RECOVER PASSWORD SCREEN TEXTS -->
+    <string name="recoverPasswordTitle">Recuperar palavra-passe</string>
+    <string name="recoverPasswordEmailBoxHint">Introduza o seu e-mail</string>
+    <string name="recoverPasswordButton">Enviar e-mail</string>
+    <!-- INSERT OTP SCREEN TEXTS -->
+    <string name="insertOTPTitle">Se o seu e-mail for válido, terá sido enviado um código para o seu e-mail:</string>
+    <string name="insertOTPBoxHint">Inserir código</string>
+    <string name="insertOTPButton">Confirmar</string>
+
 </resources>
