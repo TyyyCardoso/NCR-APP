@@ -2,6 +2,7 @@
     <!-- GENERAL SCREEN TEXTS -->
     <string name="app_name">Núcleo de Conservação e Restauro</string>
     <string name="generalBackButton">Voltar</string>
+    <string name="generalConfirmButton">Confirmar</string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>
     <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>
@@ -18,6 +19,9 @@
     <!-- INSERT OTP SCREEN TEXTS -->
     <string name="insertOTPTitle">Se o seu e-mail for válido, terá sido enviado um código para o seu e-mail:</string>
     <string name="insertOTPBoxHint">Inserir código</string>
-    <string name="insertOTPButton">Confirmar</string>
+    <!-- CHANGE PASSWORD SCREEN TEXTS -->
+    <string name="changePasswordTitle">Nova palavra-passe:</string>
+    <string name="changePasswordBoxHint">Palavra-passe</string>
+    <string name="changePasswordConfirmBoxHint">Confirmar palavra-passe</string>
 
 </resources>
