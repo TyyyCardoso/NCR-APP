@@ -6,22 +6,27 @@ import android.os.PersistableBundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
+import ipt.lei.dam.ncr.MainActivity
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
+import ipt.lei.dam.ncrapp.models.LoginRequest
+import ipt.lei.dam.ncrapp.models.SignUpRequest
+import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 class SignUpActivity : BaseActivity() {
 
-    override fun onCreate(savedInstanceState: Bundle?, persistentState: PersistableBundle?) {
-        super.onCreate(savedInstanceState, persistentState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign_up)
 
-        val etSignUpName = findViewById<EditText>(R.id.etSignUpName);
-        val etSignUpEmail = findViewById<EditText>(R.id.etSignUpEmail);
-        val etSignUpPassword = findViewById<EditText>(R.id.etSignUpPassword);
-        val etSignUpPasswordConfirm = findViewById<EditText>(R.id.etSignUpPasswordConfirm);
+        val etSignUpName = findViewById<EditText>(R.id.etSignUpName)
+        val etSignUpEmail = findViewById<EditText>(R.id.etSignUpEmail)
+        val etSignUpPassword = findViewById<EditText>(R.id.etSignUpPassword)
+        val etSignUpPasswordConfirm = findViewById<EditText>(R.id.etSignUpPasswordConfirm)
 
-        val btnSignUp = findViewById<Button>(R.id.btnSignUp);
-        val btnBackToLogin = findViewById<TextView>(R.id.btnBackToLogin);
+        val btnSignUp = findViewById<Button>(R.id.btnSignUp)
+        val btnBackToLogin = findViewById<TextView>(R.id.btnBackToLogin)
 
         btnBackToLogin.setOnClickListener {
             val intent = Intent(this@SignUpActivity, LoginActivity::class.java)
@@ -62,7 +67,7 @@ class SignUpActivity : BaseActivity() {
                 doSignUp = false;
             }
 
-            if(isEmailValid(etSignUpEmailText) && doSignUp){
+            if(!isEmailValid(etSignUpEmailText) && doSignUp){
                 etSignUpEmail.error = getString(R.string.signUpEmailBoxInvalid)
                 doSignUp = false;
             }
@@ -78,8 +83,30 @@ class SignUpActivity : BaseActivity() {
             }
 
             if(doSignUp){
+                setLoadingVisibility(true)
+                makeRequestWithRetries(
+                    requestCall = {
+                        RetrofitClient.apiService.signUp(SignUpRequest(etSignUpNameText, etSignUpEmailText, etSignUpPasswordText)).execute()
+                    },
+                    onSuccess = { signUpResponse ->
+                        startActivity(Intent(this@SignUpActivity, LoginActivity::class.java))
+                        toast = Toast.makeText(this@SignUpActivity, "Conta criada com sucesso! Entre.", Toast.LENGTH_SHORT)
+                        toast!!.show()
+                        finish()
 
-
+                        setLoadingVisibility(false)
+                    },
+                    onError = { errorMessage ->
+                        // Tratamento de erro
+                        if (toast != null) {
+                            toast!!.setText(errorMessage)
+                        } else {
+                            toast = Toast.makeText(this@SignUpActivity, errorMessage, Toast.LENGTH_SHORT)
+                        }
+                        toast!!.show()
+                        setLoadingVisibility(false)
+                    }
+                )
             }
         }
     }
