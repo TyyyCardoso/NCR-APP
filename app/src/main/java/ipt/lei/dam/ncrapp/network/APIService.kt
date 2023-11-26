@@ -2,6 +2,7 @@
 import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.models.LoginResponse
 import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
+import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
@@ -14,4 +15,7 @@ interface APIService {
 
         @POST("/auth/recover")
         fun recoverPassword(@Body request: RecoverPasswordRequest): Call<ResponseBody>
+
+        @POST("/auth/validate")
+        fun validateOTP(@Body request: ValidateOTPRequest): Call<ResponseBody>
 }
