@@ -4,6 +4,7 @@ import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.models.LoginResponse
 import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
 import ipt.lei.dam.ncrapp.models.SignUpRequest
+import ipt.lei.dam.ncrapp.models.SignUpResponse
 import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPResponse
 import okhttp3.ResponseBody
@@ -26,5 +27,5 @@ interface APIService {
         fun changePassword(@Body request: ChangePasswordRequest): Call<ResponseBody>
 
         @POST("/auth/signup")
-        fun signUp(@Body request: SignUpRequest): Call<ResponseBody>
+        fun signUp(@Body request: SignUpRequest): Call<SignUpResponse>
 }

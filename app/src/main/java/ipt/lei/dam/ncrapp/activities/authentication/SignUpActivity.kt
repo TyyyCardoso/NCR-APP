@@ -89,11 +89,13 @@ class SignUpActivity : BaseActivity() {
                         RetrofitClient.apiService.signUp(SignUpRequest(etSignUpNameText, etSignUpEmailText, etSignUpPasswordText)).execute()
                     },
                     onSuccess = { signUpResponse ->
-                        startActivity(Intent(this@SignUpActivity, LoginActivity::class.java))
-                        toast = Toast.makeText(this@SignUpActivity, "Conta criada com sucesso! Entre.", Toast.LENGTH_SHORT)
+                        val intent = Intent(this@SignUpActivity, InsertOTPActivity::class.java)
+                        intent.putExtra("userInsertedEmail", signUpResponse.email)
+                        intent.putExtra("type", "2")
+                        toast = Toast.makeText(this@SignUpActivity, "Conta criada com sucesso.", Toast.LENGTH_SHORT)
                         toast!!.show()
+                        startActivity(intent)
                         finish()
-
                         setLoadingVisibility(false)
                     },
                     onError = { errorMessage ->

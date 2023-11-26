@@ -60,6 +60,7 @@ class ForgotPasswordActivity : BaseActivity() {
                         val intent = Intent(this@ForgotPasswordActivity, InsertOTPActivity::class.java)
                         if((email.isNotEmpty()) && super.isEmailValid(email))
                             intent.putExtra("userInsertedEmail", email)
+                        intent.putExtra("type", "1")
                         startActivity(intent)
                         finish()
                         setLoadingVisibility(false)

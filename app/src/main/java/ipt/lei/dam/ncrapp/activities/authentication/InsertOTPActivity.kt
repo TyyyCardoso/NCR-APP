@@ -23,12 +23,20 @@ class InsertOTPActivity : BaseActivity() {
         val backToRecoverPassword = findViewById<Button>(R.id.btnBackToRecoverPassword);
 
         val userEmailFromLogin = intent.getStringExtra("userInsertedEmail")
+        val type = intent.getStringExtra("type")
 
         backToRecoverPassword.setOnClickListener {
-            val intent = Intent(this@InsertOTPActivity, ForgotPasswordActivity::class.java)
-            intent.putExtra("userInsertedEmail", userEmailFromLogin)
-            startActivity(intent)
-            finish()
+            if(type.equals("1")){
+                val intent = Intent(this@InsertOTPActivity, ForgotPasswordActivity::class.java)
+                intent.putExtra("userInsertedEmail", userEmailFromLogin)
+                startActivity(intent)
+                finish()
+            }else{
+                val intent = Intent(this@InsertOTPActivity, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+
         }
 
         btnValidateOTP.setOnClickListener {
@@ -46,13 +54,23 @@ class InsertOTPActivity : BaseActivity() {
                 setLoadingVisibility(true)
                 makeRequestWithRetries(
                     requestCall = {
-                        RetrofitClient.apiService.validateOTP(ValidateOTPRequest(otpInserted, userEmailFromLogin)).execute()
+                        RetrofitClient.apiService.validateOTP(ValidateOTPRequest(otpInserted, userEmailFromLogin, type)).execute()
                     },
                     onSuccess = { validateOTPResponse ->
-                        val intent = Intent(this@InsertOTPActivity, ChangePasswordActivity::class.java)
-                        intent.putExtra("userID", validateOTPResponse.userID)
-                        startActivity(intent)
-                        finish()
+                        if(type.equals("1")){
+                            val intent = Intent(this@InsertOTPActivity, ChangePasswordActivity::class.java)
+                            intent.putExtra("userID", validateOTPResponse.userID)
+                            startActivity(intent)
+                            finish()
+                        }else{
+                            val intent = Intent(this@InsertOTPActivity, LoginActivity::class.java)
+                            startActivity(intent)
+                            toast = Toast.makeText(this@InsertOTPActivity, "Conta validada com sucesso. Entre!", Toast.LENGTH_SHORT)
+                            toast!!.show()
+                            finish()
+                        }
+
+
                         setLoadingVisibility(false)
                     },
                     onError = { errorMessage ->
