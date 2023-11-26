@@ -74,9 +74,19 @@ class LoginActivity : BaseActivity() {
                         // Aqui, loginResponse é diretamente o corpo da resposta e não o objeto Response
                         RetrofitClient.setAuthToken(loginResponse.token ?: "")
                         println(loginResponse.token ?: "")
-                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                        finish()
-                        setLoadingVisibility(false)
+                        if(loginResponse.isValidated){
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            finish()
+                            setLoadingVisibility(false)
+                        }else{
+                            val intent = Intent(this@LoginActivity, InsertOTPActivity::class.java)
+                            intent.putExtra("userInsertedEmail", loginResponse.email)
+                            intent.putExtra("type", "2")
+                            startActivity(intent)
+                            finish()
+                            setLoadingVisibility(false)
+                        }
+
                     },
                     onError = { errorMessage ->
                         // Tratamento de erro
