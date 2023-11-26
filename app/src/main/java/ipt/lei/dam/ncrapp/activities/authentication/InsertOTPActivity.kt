@@ -36,14 +36,17 @@ class InsertOTPActivity : BaseActivity() {
             var validateOTP = true;
             val otpInserted = otpEditText.text.toString()
 
-            if(otpInserted.isNullOrEmpty() || otpInserted.length!=7)
+            if(otpInserted.isNullOrEmpty() || otpInserted.length!=7){
+                otpEditText.error = getString(R.string.loginEmailBoxNotFilledError)
                 validateOTP = false;
+            }
+
 
             if(validateOTP){
                 setLoadingVisibility(true)
                 makeRequestWithRetries(
                     requestCall = {
-                        RetrofitClient.apiService.validateOTP(ValidateOTPRequest(otpInserted)).execute()
+                        RetrofitClient.apiService.validateOTP(ValidateOTPRequest(otpInserted, userEmailFromLogin)).execute()
                     },
                     onSuccess = { validateOTPResponse ->
                         val intent = Intent(this@InsertOTPActivity, ChangePasswordActivity::class.java)

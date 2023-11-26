@@ -41,6 +41,9 @@
         <activity
             android:name=".activities.authentication.InsertOTPActivity">
         </activity>
+        <activity
+            android:name=".activities.authentication.ChangePasswordActivity">
+        </activity>
     </application>
 
 </manifest>

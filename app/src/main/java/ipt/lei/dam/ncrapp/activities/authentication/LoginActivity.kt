@@ -11,8 +11,6 @@ import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
 import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
-import org.json.JSONObject
-import java.io.IOException
 
 class LoginActivity : BaseActivity() {
 

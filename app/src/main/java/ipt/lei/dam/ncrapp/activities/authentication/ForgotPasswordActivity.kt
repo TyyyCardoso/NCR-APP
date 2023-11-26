@@ -5,10 +5,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import ipt.lei.dam.ncr.MainActivity
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
-import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 import org.json.JSONObject

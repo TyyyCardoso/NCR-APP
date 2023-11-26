@@ -19,9 +19,14 @@
     <!-- INSERT OTP SCREEN TEXTS -->
     <string name="insertOTPTitle">Se o seu e-mail for válido, terá sido enviado um código para o seu e-mail:</string>
     <string name="insertOTPBoxHint">Inserir código</string>
+    <string name="insertOTPBoxError">Código inserido inválido</string>
     <!-- CHANGE PASSWORD SCREEN TEXTS -->
     <string name="changePasswordTitle">Nova palavra-passe:</string>
     <string name="changePasswordBoxHint">Palavra-passe</string>
     <string name="changePasswordConfirmBoxHint">Confirmar palavra-passe</string>
+    <string name="changePasswordBoxNotFilledError">Tem que prencher com uma palavra-passe</string>
+    <string name="changePasswordBoxMinimumLengthError">Palavra-passe tem que ter no minimo 8 caracteres</string>
+    <string name="changePasswordConfirmBoxNotFilledError">Tem que preencher com uma palavra-passe</string>
+    <string name="changePasswordNotEqualError">As passwords têm que ser iguais</string>
 
 </resources>
