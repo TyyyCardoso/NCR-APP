@@ -1,4 +1,5 @@
 
+import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
 import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.models.LoginResponse
 import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
@@ -19,4 +20,7 @@ interface APIService {
 
         @POST("/auth/validate")
         fun validateOTP(@Body request: ValidateOTPRequest): Call<ValidateOTPResponse>
+
+        @POST("/auth/change")
+        fun changePassword(@Body request: ChangePasswordRequest): Call<ResponseBody>
 }
