@@ -6,12 +6,21 @@
     tools:context=".activities.navigation.EventsFragmento"
     android:background="#FFF8E7">
 
-    <!-- TODO: Update blank fragment layout -->
+    <ImageView
+        android:id="@+id/loading_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/cotonete"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:visibility="visible"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingBottom="56dp"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        android:visibility="gone"/>
 
 </FrameLayout>

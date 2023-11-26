@@ -1,15 +1,26 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.EventsAdapter
+import ipt.lei.dam.ncrapp.network.RetrofitClient
+import org.json.JSONObject
+import retrofit2.Response
+import java.io.IOException
 import ipt.lei.dam.ncrapp.models.EventResponse
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -22,6 +33,10 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class EventsFragmento : Fragment() {
+    private lateinit var loadingImage: ImageView
+    private lateinit var rotationAnimation: Animation
+
+
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
@@ -29,12 +44,78 @@ class EventsFragmento : Fragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: EventsAdapter
 
+    private fun setupLoadingAnimation(view: View) {
+        loadingImage = view.findViewById(R.id.loading_image)
+        rotationAnimation = AnimationUtils.loadAnimation(this.context, R.anim.rotate_loading)
+    }
+
+    protected fun setLoadingVisibility(visible: Boolean) {
+        if (visible) {
+            loadingImage.visibility = View.VISIBLE
+            loadingImage.startAnimation(rotationAnimation)
+        } else {
+            loadingImage.visibility = View.GONE
+            loadingImage.clearAnimation()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
             param1 = it.getString(ARG_PARAM1)
             param2 = it.getString(ARG_PARAM2)
         }
+
+    }
+
+    fun <T> makeRequestWithRetries(
+        requestCall: () -> Response<T>,
+        onSuccess: (T) -> Unit,
+        onError: (String) -> Unit,
+        maxAttempts: Int = 3
+    ) {
+        setLoadingVisibility(true)
+        Thread {
+            var attemptCount = 0
+            var successful = false
+
+            while (attemptCount < maxAttempts && !successful) {
+                try {
+                    val response = requestCall()
+                    if (response.isSuccessful) {
+                        activity?.runOnUiThread {
+                            onSuccess(response.body()!!)
+                            setLoadingVisibility(false)
+                        }
+                        successful = true
+                    } else {
+                        val errorBody = response.errorBody()?.string()
+                        val errorMessage = JSONObject(errorBody).getString("message")
+                        activity?.runOnUiThread {
+                            onError(errorMessage)
+                            setLoadingVisibility(false)
+                        }
+                        break // Não tentar novamente em caso de erro de resposta HTTP
+                    }
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    attemptCount++
+                    if (attemptCount >= maxAttempts) {
+                        activity?.runOnUiThread {
+                            onError("Erro ao tentar conectar. Por favor, tente novamente.")
+                            setLoadingVisibility(false)
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    activity?.runOnUiThread {
+                        onError("Erro inesperado. Por favor, tente novamente.")
+                        setLoadingVisibility(false)
+                    }
+                    break
+                }
+            }
+        }.start()
     }
 
     override fun onCreateView(
@@ -46,18 +127,32 @@ class EventsFragmento : Fragment() {
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
 
-        // Substitua isso pela sua lista de eventos
-        val eventsList = listOf(
-            EventResponse("Lisboa Games Week", "Lisboa Games Week Descrição", "https://www.actigamer.pt/cnt/uploads/I22H011lisboagamesweek.jpg"),
-            EventResponse("Web Summit", "Web Summit Descrição", "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTclv-4FHV1CKx5fUBNGQf0K8sU6prmdRvXKJB6Jti8TP8VcYhmMzJZYHGyjXc8S5Fo-c&usqp=CAU"),
-            EventResponse("Web Summit2", "Web Summit Descrição", "https://www.actigamer.pt/cnt/uploads/I22H011lisboagamesweek.jpg"),
-            EventResponse("Web Summit3", "Web Summit Descrição", "https://www.actigamer.pt/cnt/uploads/I22H011lisboagamesweek.jpg")
+        setupLoadingAnimation(view)
+        var doEventRequest = false
 
-            // ...
-        )
 
-        adapter = EventsAdapter(eventsList)
-        recyclerView.adapter = adapter
+            doEventRequest = true
+            if (doEventRequest) {
+                setLoadingVisibility(true)
+                makeRequestWithRetries(
+                    requestCall = {
+                        RetrofitClient.apiService.getEvents().execute()
+                    },
+                    onSuccess = { EventResponseList ->
+                        EventResponseList.forEach { event ->
+                            println(event.name)
+                        }
+                        setLoadingVisibility(false)
+                        recyclerView.visibility = View.VISIBLE
+                        adapter = EventsAdapter(EventResponseList)
+                        recyclerView.adapter = adapter
+                    },
+                    onError = { errorMessage ->
+                        println(errorMessage)
+                        setLoadingVisibility(false)
+                    }
+                )
+            }
 
         return view
     }

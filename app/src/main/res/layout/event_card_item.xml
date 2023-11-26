@@ -15,13 +15,13 @@
         >
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/event_image"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"/>
 
         <TextView
-            android:id="@+id/textViewTitle"
+            android:id="@+id/event_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -29,7 +29,7 @@
             android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/textViewDescription"
+            android:id="@+id/event_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="4dp"/>
