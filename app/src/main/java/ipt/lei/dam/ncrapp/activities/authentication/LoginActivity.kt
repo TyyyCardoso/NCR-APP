@@ -39,7 +39,7 @@ class LoginActivity : BaseActivity() {
         }
 
         registerLabel.setOnClickListener {
-            startActivity(Intent(this@LoginActivity, CreateAccountActivity::class.java))
+            startActivity(Intent(this@LoginActivity, SignUpActivity::class.java))
             finish()
         }
 

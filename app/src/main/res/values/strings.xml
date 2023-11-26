@@ -3,6 +3,7 @@
     <string name="app_name">Núcleo de Conservação e Restauro</string>
     <string name="generalBackButton">Voltar</string>
     <string name="generalConfirmButton">Confirmar</string>
+    <string name="generalNotFilledField">Tem que preencher este campo.</string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>
     <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>
@@ -27,6 +28,18 @@
     <string name="changePasswordBoxNotFilledError">Tem que prencher com uma palavra-passe</string>
     <string name="changePasswordBoxMinimumLengthError">Palavra-passe tem que ter no minimo 8 caracteres</string>
     <string name="changePasswordConfirmBoxNotFilledError">Tem que preencher com uma palavra-passe</string>
-    <string name="changePasswordNotEqualError">As passwords têm que ser iguais</string>
+    <string name="changePasswordNotEqualError">As palavra-passes têm que ser iguais</string>
+    <!-- SIGN UP SCREEN TEXTS -->
+    <string name="signUpTitle">Criar uma nova conta</string>
+    <string name="signUpNameBoxHint">Nome</string>
+    <string name="signUpEmailBoxHint">E-mail</string>
+    <string name="signUpPasswordBoxHint">Palavra-passe</string>
+    <string name="signUpPasswordConfirmBoxHint">Confirmar palavra-passe</string>
+    <string name="signUpButton">Registar</string>
+    <string name="signUpBackToLogin">Já tem uma conta? Entre!</string>
+    <string name="signUpNameBoxMinimumLength">Nome tem que ter no minimo 2 caracteres</string>
+    <string name="signUpEmailBoxInvalid">E-mail inválido.</string>
+    <string name="signUpPasswordBoxMinimumLengthError">Palavra-passe tem que ter no minimo 8 caracteres</string>
+    <string name="signUpNotEqualError">As palavra-passes têm que ser iguais</string>
 
 </resources>
