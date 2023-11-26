@@ -2,16 +2,22 @@ package ipt.lei.dam.ncrapp.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
 import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
+import ipt.lei.dam.ncrapp.models.SendOTPRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 class InsertOTPActivity : BaseActivity() {
+
+    private lateinit var countdownTimer: CountDownTimer
+    private lateinit var tvCountdown: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +27,9 @@ class InsertOTPActivity : BaseActivity() {
         val otpEditText = findViewById<EditText>(R.id.etOTP)
         val btnValidateOTP = findViewById<Button>(R.id.btnValidateOTP);
         val backToRecoverPassword = findViewById<Button>(R.id.btnBackToRecoverPassword);
+
+        tvCountdown = findViewById(R.id.tvCountdown)
+        tvCountdown.isClickable = false // Inicialmente não clicável
 
         val userEmailFromLogin = intent.getStringExtra("userInsertedEmail")
         val type = intent.getStringExtra("type")
@@ -37,6 +46,34 @@ class InsertOTPActivity : BaseActivity() {
                 finish()
             }
 
+        }
+
+        iniciarContagemRegressiva()
+
+        tvCountdown.setOnClickListener {
+            makeRequestWithRetries(
+                requestCall = {
+                    RetrofitClient.apiService.sendOTP(SendOTPRequest(userEmailFromLogin)).execute()
+                },
+                onSuccess = { validateOTPResponse ->
+                    toast = Toast.makeText(this@InsertOTPActivity, "OTP Reenviado!", Toast.LENGTH_SHORT)
+                    toast!!.show()
+                    iniciarContagemRegressiva()
+                    setLoadingVisibility(false)
+                },
+                onError = { errorMessage ->
+                    // Tratamento de erro
+                    if (toast != null) {
+                        toast!!.setText(errorMessage)
+                    } else {
+                        toast = Toast.makeText(this@InsertOTPActivity, errorMessage, Toast.LENGTH_SHORT)
+                    }
+                    toast!!.show()
+                    setLoadingVisibility(false)
+                }
+            )
+
+            tvCountdown.isClickable = false // Inicialmente não clicável
         }
 
         btnValidateOTP.setOnClickListener {
@@ -85,7 +122,24 @@ class InsertOTPActivity : BaseActivity() {
                     }
                 )
             }
-
         }
+    }
+
+    private fun iniciarContagemRegressiva() {
+        countdownTimer = object : CountDownTimer(30000, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                runOnUiThread {
+                    tvCountdown.text = "Reenviar código: ${millisUntilFinished / 1000} segundos"
+                    tvCountdown.isClickable = false // Mantém não clicável durante a contagem
+                }
+            }
+
+            override fun onFinish() {
+                runOnUiThread {
+                    tvCountdown.text = "Clique aqui para reenviar"
+                    tvCountdown.isClickable = true // Torna clicável após a contagem terminar
+                }
+            }
+        }.start()
     }
 }

@@ -3,6 +3,7 @@ import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
 import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.models.LoginResponse
 import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
+import ipt.lei.dam.ncrapp.models.SendOTPRequest
 import ipt.lei.dam.ncrapp.models.SignUpRequest
 import ipt.lei.dam.ncrapp.models.SignUpResponse
 import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
@@ -28,4 +29,7 @@ interface APIService {
 
         @POST("/auth/signup")
         fun signUp(@Body request: SignUpRequest): Call<SignUpResponse>
+
+        @POST("/auth/send")
+        fun sendOTP(@Body request: SendOTPRequest): Call<ResponseBody>
 }
