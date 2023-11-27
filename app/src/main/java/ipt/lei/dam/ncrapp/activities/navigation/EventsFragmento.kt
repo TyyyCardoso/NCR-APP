@@ -1,16 +1,15 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.Button
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import ipt.lei.dam.ncrapp.R
@@ -144,7 +143,32 @@ class EventsFragmento : Fragment() {
                         }
                         setLoadingVisibility(false)
                         recyclerView.visibility = View.VISIBLE
-                        adapter = EventsAdapter(EventResponseList)
+                        adapter = EventsAdapter(EventResponseList).apply {
+                            onItemClickListener = { event ->
+                                //val intent = Intent(context, EventsFragmento::class.java)
+                                //intent.putExtra("event_id", event.eventId)
+                                //startActivity(intent)
+                                //val detailsFragment = EventDetailFragmento.newInstance(event)
+                                //fragmentManager?.beginTransaction()
+                                //    ?.replace(R.id.nav_host_fragment_activity_main, detailsFragment)
+                                //    ?.addToBackStack(null)
+                                //    ?.commit()
+                                val navController = findNavController()
+                                val bundle = Bundle().apply {
+                                    putInt("eventId", event.eventId ?: 0) // Substituir 0 pelo valor padrão desejado para ID
+                                    putString("eventName", event.name ?: "Nome não disponível")
+                                    putString("eventDescription", event.description ?: "Descrição não disponível")
+                                    putString("eventDate", event.date?.toString() ?: "Data não disponível")
+                                    putString("eventLocation", event.location ?: "Localização não disponível")
+                                    putBoolean("eventTransport", event.transport ?: false) // false como valor padrão
+                                    putString("eventCreatedAt", event.createAt?.toString() ?: "Data de criação não disponível")
+                                    putString("eventUpdatedAt", event.updatedAt?.toString() ?: "Data de atualização não disponível")
+                                    putString("eventImage", event.image ?: "")
+                                    // Adicione outros campos do evento
+                                }
+                                navController.navigate(R.id.navigation_events_details, bundle)
+                            }
+                        }
                         recyclerView.adapter = adapter
                     },
                     onError = { errorMessage ->

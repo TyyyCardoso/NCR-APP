@@ -23,4 +23,10 @@
         android:label="@string/mainNavOutrosButton"
         tools:layout="@layout/fragment_events" />
 
+    <fragment
+        android:id="@+id/navigation_events_details"
+        android:name="ipt.lei.dam.ncrapp.activities.navigation.EventDetailFragmento"
+        android:label="@string/mainNavOutrosButton"
+        tools:layout="@layout/fragment_events" />
+
 </navigation>

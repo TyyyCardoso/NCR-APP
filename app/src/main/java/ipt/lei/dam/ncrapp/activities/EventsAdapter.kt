@@ -15,6 +15,8 @@ import ipt.lei.dam.ncrapp.models.EventResponse
 
 class EventsAdapter(private val eventsList: List<EventResponse>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
 
+    var onItemClickListener: ((EventResponse) -> Unit)? = null
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val eventImage: ImageView = view.findViewById(R.id.event_image)
         val eventName: TextView = view.findViewById(R.id.event_name)
@@ -41,6 +43,10 @@ class EventsAdapter(private val eventsList: List<EventResponse>) : RecyclerView.
 
         holder.eventName.text = event.name
         holder.eventDescription.text = event.description
+
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.invoke(event)
+        }
     }
 
     override fun getItemCount() = eventsList.size
