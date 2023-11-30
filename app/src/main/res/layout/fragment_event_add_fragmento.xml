@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.navigation.EventAddFragmento"
+    android:background="#FFF8E7"
+
+    android:gravity="center">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="56dp"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/etNewEventName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/addEventTextEventNameBox"
+                android:background="@drawable/edittext_background"
+                android:padding="15dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="10dp" />
+
+            <EditText
+                android:id="@+id/etNewEventDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/addEventTextEventDescBox"
+                android:background="@drawable/edittext_background"
+                android:padding="15dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="10dp" />
+
+            <EditText
+                android:id="@+id/etNewEventLocal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/addEventTextEventLocalBox"
+                android:background="@drawable/edittext_background"
+                android:padding="15dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginHorizontal="10dp" />
+
+            <DatePicker
+                android:id="@+id/etNewEventDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="15dp"
+                android:datePickerMode="calendar"/>
+
+            <CheckBox
+                android:id="@+id/checkboxNewEventTransport"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/addEventTextEventTranspBox"/>
+
+            <Button
+                android:id="@+id/btnNewEventImageSelect"
+                style="@style/CustomButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/addEventTextEventImgBox"
+                android:layout_marginBottom="8dp"/>
+
+            <ImageView
+                android:id="@+id/imageviewNewEventImageView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_gallery"/>
+
+            <Button
+                android:id="@+id/btnNewEventSubmit"
+                style="@style/CustomButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/addEventTextEventAddBtn"
+                android:layout_marginBottom="8dp"/>
+
+        </LinearLayout>
+    </ScrollView>
+</FrameLayout>

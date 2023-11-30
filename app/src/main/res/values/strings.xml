@@ -6,6 +6,14 @@
     <string name="mainNavEventsButton">Eventos</string>
     <string name="mainNavSabiasButton">Sabias Que</string>
     <string name="mainNavOutrosButton">Outros</string>
+    <!-- ADD EVENT SCREEN TEXTS -->
+    <string name="addEventTextEventNameBox">Nome</string>
+    <string name="addEventTextEventDescBox">Descrição</string>
+    <string name="addEventTextEventLocalBox">Localização</string>
+    <string name="addEventTextEventDateBox">Data</string>
+    <string name="addEventTextEventTranspBox">Transporte? </string>
+    <string name="addEventTextEventImgBox">Adicionar Imagem </string>
+    <string name="addEventTextEventAddBtn">Criar Evento </string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>
     <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>

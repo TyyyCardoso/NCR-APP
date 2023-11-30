@@ -12,6 +12,7 @@ import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.EventsAdapter
 import ipt.lei.dam.ncrapp.network.RetrofitClient
@@ -127,6 +128,14 @@ class EventsFragmento : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         setupLoadingAnimation(view)
+
+        val navController = findNavController()
+
+        val fab: FloatingActionButton = view.findViewById(R.id.fab_add_event)
+        fab.setOnClickListener {
+            navController.navigate(R.id.navigation_events_add)
+        }
+
         var doEventRequest = false
 
 
@@ -153,7 +162,7 @@ class EventsFragmento : Fragment() {
                                 //    ?.replace(R.id.nav_host_fragment_activity_main, detailsFragment)
                                 //    ?.addToBackStack(null)
                                 //    ?.commit()
-                                val navController = findNavController()
+
                                 val bundle = Bundle().apply {
                                     putInt("eventId", event.eventId ?: 0) // Substituir 0 pelo valor padrão desejado para ID
                                     putString("eventName", event.name ?: "Nome não disponível")
@@ -177,6 +186,8 @@ class EventsFragmento : Fragment() {
                     }
                 )
             }
+
+
 
         return view
     }
