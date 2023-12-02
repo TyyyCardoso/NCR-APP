@@ -1,9 +1,15 @@
 package ipt.lei.dam.ncrapp.network
 
 import APIService
+import android.os.Build
+import androidx.annotation.RequiresApi
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonDeserializer
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
@@ -18,12 +24,24 @@ object RetrofitClient {
         .addInterceptor(authInterceptor)
         .build()
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    val localDateTimeDeserializer = JsonDeserializer { json, _, _ ->
+        LocalDateTime.parse(json.asJsonPrimitive.asString, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val gson = GsonBuilder()
+        .registerTypeAdapter(LocalDateTime::class.java, localDateTimeDeserializer)
+        .create()
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private val retrofit: Retrofit = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
-        .addConverterFactory(GsonConverterFactory.create())
+        .addConverterFactory(GsonConverterFactory.create(gson))
         .build()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     val apiService: APIService = retrofit.create(APIService::class.java)
 
     fun setAuthToken(token: String) {
