@@ -7,6 +7,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.models.ValidateOTPResponse
 import org.json.JSONObject
 import retrofit2.Response
 import java.io.IOException

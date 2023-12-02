@@ -2,6 +2,8 @@
     <!-- GENERAL SCREEN TEXTS -->
     <string name="app_name">Núcleo de Conservação e Restauro</string>
     <string name="generalBackButton">Voltar</string>
+    <string name="generalConfirmButton">Confirmar</string>
+    <string name="generalNotFilledField">Tem que preencher este campo.</string>
     <!-- MAIN SCREEN TEXTS -->
     <string name="mainNavEventsButton">Eventos</string>
     <string name="mainNavSabiasButton">Sabias Que</string>
@@ -30,9 +32,26 @@
     <!-- INSERT OTP SCREEN TEXTS -->
     <string name="insertOTPTitle">Se o seu e-mail for válido, terá sido enviado um código para o seu e-mail:</string>
     <string name="insertOTPBoxHint">Inserir código</string>
-    <string name="insertOTPButton">Confirmar</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-
+    <string name="insertOTPBoxError">Código inserido inválido</string>
+    <!-- CHANGE PASSWORD SCREEN TEXTS -->
+    <string name="changePasswordTitle">Nova palavra-passe:</string>
+    <string name="changePasswordBoxHint">Palavra-passe</string>
+    <string name="changePasswordConfirmBoxHint">Confirmar palavra-passe</string>
+    <string name="changePasswordBoxNotFilledError">Tem que prencher com uma palavra-passe</string>
+    <string name="changePasswordBoxMinimumLengthError">Palavra-passe tem que ter no minimo 8 caracteres</string>
+    <string name="changePasswordConfirmBoxNotFilledError">Tem que preencher com uma palavra-passe</string>
+    <string name="changePasswordNotEqualError">As palavra-passes têm que ser iguais</string>
+    <!-- SIGN UP SCREEN TEXTS -->
+    <string name="signUpTitle">Criar uma nova conta</string>
+    <string name="signUpNameBoxHint">Nome</string>
+    <string name="signUpEmailBoxHint">E-mail</string>
+    <string name="signUpPasswordBoxHint">Palavra-passe</string>
+    <string name="signUpPasswordConfirmBoxHint">Confirmar palavra-passe</string>
+    <string name="signUpButton">Registar</string>
+    <string name="signUpBackToLogin">Já tem uma conta? Entre!</string>
+    <string name="signUpNameBoxMinimumLength">Nome tem que ter no minimo 2 caracteres</string>
+    <string name="signUpEmailBoxInvalid">E-mail inválido.</string>
+    <string name="signUpPasswordBoxMinimumLengthError">Palavra-passe tem que ter no minimo 8 caracteres</string>
+    <string name="signUpNotEqualError">As palavra-passes têm que ser iguais</string>
 
 </resources>

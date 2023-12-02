@@ -11,8 +11,6 @@ import ipt.lei.dam.ncrapp.activities.BaseActivity
 import ipt.lei.dam.ncrapp.activities.MainActivity
 import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
-import org.json.JSONObject
-import java.io.IOException
 
 class LoginActivity : BaseActivity() {
 
@@ -41,7 +39,7 @@ class LoginActivity : BaseActivity() {
         }
 
         registerLabel.setOnClickListener {
-            startActivity(Intent(this@LoginActivity, CreateAccountActivity::class.java))
+            startActivity(Intent(this@LoginActivity, SignUpActivity::class.java))
             finish()
         }
 
@@ -76,9 +74,19 @@ class LoginActivity : BaseActivity() {
                         // Aqui, loginResponse é diretamente o corpo da resposta e não o objeto Response
                         RetrofitClient.setAuthToken(loginResponse.token ?: "")
                         println(loginResponse.token ?: "")
-                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                        finish()
-                        setLoadingVisibility(false)
+                        if(loginResponse.isValidated){
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                            finish()
+                            setLoadingVisibility(false)
+                        }else{
+                            val intent = Intent(this@LoginActivity, InsertOTPActivity::class.java)
+                            intent.putExtra("userInsertedEmail", loginResponse.email)
+                            intent.putExtra("type", "2")
+                            startActivity(intent)
+                            finish()
+                            setLoadingVisibility(false)
+                        }
+
                     },
                     onError = { errorMessage ->
                         // Tratamento de erro

@@ -5,10 +5,8 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
-import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 import org.json.JSONObject
@@ -62,6 +60,7 @@ class ForgotPasswordActivity : BaseActivity() {
                         val intent = Intent(this@ForgotPasswordActivity, InsertOTPActivity::class.java)
                         if((email.isNotEmpty()) && super.isEmailValid(email))
                             intent.putExtra("userInsertedEmail", email)
+                        intent.putExtra("type", "1")
                         startActivity(intent)
                         finish()
                         setLoadingVisibility(false)
