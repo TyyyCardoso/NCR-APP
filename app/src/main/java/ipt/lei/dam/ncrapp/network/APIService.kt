@@ -1,5 +1,6 @@
 
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
+import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.models.LoginResponse
 import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
@@ -12,6 +13,7 @@ import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface APIService {
@@ -32,4 +34,10 @@ interface APIService {
 
         @POST("/auth/send")
         fun sendOTP(@Body request: SendOTPRequest): Call<ResponseBody>
+
+        /**
+         * Events
+         */
+        @GET("/event/all")
+        fun getEvents(): Call<List<EventResponse>>
 }
