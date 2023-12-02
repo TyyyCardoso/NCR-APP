@@ -3,25 +3,31 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.navigation.EventDetailFragmento">
+    tools:context=".activities.navigation.EventDetailFragmento"
+    android:background="#FFF8E7"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="8dp"
+        android:layout_margin="2dp">
 
         <ImageView
             android:id="@+id/eventDetailImage"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/eventDetailName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="24sp"
-            android:layout_marginTop="10dp" />
+            android:textStyle="bold"
+            android:padding="8dp"/>
 
         <TextView
             android:id="@+id/eventDetailDescription"

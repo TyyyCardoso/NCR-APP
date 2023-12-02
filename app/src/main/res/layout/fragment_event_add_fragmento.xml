@@ -20,6 +20,15 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <ImageView
+                android:id="@+id/loading_image"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/cotonete"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:visibility="gone"/>
+
             <EditText
                 android:id="@+id/etNewEventName"
                 android:layout_width="match_parent"

@@ -1,5 +1,6 @@
 
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
+import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.models.LoginResponse
@@ -40,4 +41,7 @@ interface APIService {
          */
         @GET("/event/all")
         fun getEvents(): Call<List<EventResponse>>
+
+        @POST("/event")
+        fun addEvent(@Body eventRequest: EventRequest) : Call<ResponseBody>
 }
