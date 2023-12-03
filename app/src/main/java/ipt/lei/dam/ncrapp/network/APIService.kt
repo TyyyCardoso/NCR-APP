@@ -18,30 +18,30 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface APIService {
-        @POST("/auth/login")
+        @POST("auth/login")
         fun login(@Body request: LoginRequest): Call<LoginResponse>
 
-        @POST("/auth/recover")
+        @POST("auth/recover")
         fun recoverPassword(@Body request: RecoverPasswordRequest): Call<ResponseBody>
 
-        @POST("/auth/validate")
+        @POST("auth/validate")
         fun validateOTP(@Body request: ValidateOTPRequest): Call<ValidateOTPResponse>
 
-        @POST("/auth/change")
+        @POST("auth/change")
         fun changePassword(@Body request: ChangePasswordRequest): Call<ResponseBody>
 
-        @POST("/auth/signup")
+        @POST("auth/signup")
         fun signUp(@Body request: SignUpRequest): Call<SignUpResponse>
 
-        @POST("/auth/send")
+        @POST("auth/send")
         fun sendOTP(@Body request: SendOTPRequest): Call<ResponseBody>
 
         /**
          * Events
          */
-        @GET("/event/all")
+        @GET("event/all")
         fun getEvents(): Call<List<EventResponse>>
 
-        @POST("/event")
+        @POST("event")
         fun addEvent(@Body eventRequest: EventRequest) : Call<ResponseBody>
 }
