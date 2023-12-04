@@ -57,20 +57,32 @@
                 android:background="@drawable/edittext_background"
                 android:padding="15dp"
                 android:layout_marginTop="24dp"
+                android:layout_marginBottom="16dp"
                 android:layout_marginHorizontal="10dp" />
 
-            <DatePicker
-                android:id="@+id/etNewEventDate"
+            <Button
+                android:id="@+id/btnPickDateTime"
+                style="@style/CustomButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="15dp"
-                android:datePickerMode="calendar"/>
+                android:text="@string/addEventTextEventAddTimeDateBtn" />
+
+            <TextView
+                android:id="@+id/tvSelectedDateTime"
+                android:layout_width="match_parent"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textAlignment="center"
+                android:padding="15dp" />
 
             <CheckBox
                 android:id="@+id/checkboxNewEventTransport"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/addEventTextEventTranspBox"/>
+                android:text="@string/addEventTextEventTranspBox"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="16dp"/>
 
             <Button
                 android:id="@+id/btnNewEventImageSelect"

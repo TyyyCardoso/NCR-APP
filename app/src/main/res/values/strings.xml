@@ -16,6 +16,7 @@
     <string name="addEventTextEventTranspBox">Transporte? </string>
     <string name="addEventTextEventImgBox">Adicionar Imagem </string>
     <string name="addEventTextEventAddBtn">Criar Evento </string>
+    <string name="addEventTextEventAddTimeDateBtn">Escolher Data </string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>
     <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>

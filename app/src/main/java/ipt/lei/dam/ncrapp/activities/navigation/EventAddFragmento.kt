@@ -1,6 +1,8 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
 import android.app.Activity
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -16,6 +18,7 @@ import android.widget.CheckBox
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.navigation.fragment.findNavController
@@ -24,12 +27,27 @@ import ipt.lei.dam.ncrapp.activities.BasicFragment
 import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 import java.io.ByteArrayOutputStream
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Calendar
+import java.util.Locale
 
 
 class EventAddFragmento : BasicFragment() {
     private var eventSelectedImage: String = ""
+    private lateinit var eventNameEditText: EditText
+    private lateinit var eventDescEditText: EditText
+    private lateinit var eventLocalEditText: EditText
+
+    private lateinit var btnPickDateTime: Button
+    private lateinit var selectedDateTime: String
+    private lateinit var tvSelectedDateTime: TextView
+    private val calendar = Calendar.getInstance()
+
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    val formatShow = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,13 +63,17 @@ class EventAddFragmento : BasicFragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_event_add_fragmento, container, false)
-        val eventNameEditText = view.findViewById<EditText>(R.id.etNewEventName)
-        val eventDescEditText = view.findViewById<EditText>(R.id.etNewEventDesc)
-        val eventLocalEditText = view.findViewById<EditText>(R.id.etNewEventLocal)
-        val eventDatePicker = view.findViewById<DatePicker>(R.id.etNewEventDate)
+        eventNameEditText = view.findViewById<EditText>(R.id.etNewEventName)
+        eventDescEditText = view.findViewById<EditText>(R.id.etNewEventDesc)
+        eventLocalEditText = view.findViewById<EditText>(R.id.etNewEventLocal)
         val eventTransportCheckbox = view.findViewById<CheckBox>(R.id.checkboxNewEventTransport)
         val eventSubmitButton = view.findViewById<Button>(R.id.btnNewEventSubmit)
         val EventImageSelectButton = view.findViewById<Button>(R.id.btnNewEventImageSelect)
+
+        btnPickDateTime = view.findViewById(R.id.btnPickDateTime)
+        tvSelectedDateTime = view.findViewById(R.id.tvSelectedDateTime)
+        tvSelectedDateTime.text = formatShow.format(calendar.time)
+        selectedDateTime = format.format(calendar.time)
 
         setupLoadingAnimation(view)
 
@@ -59,89 +81,115 @@ class EventAddFragmento : BasicFragment() {
             pickImageFromGallery()
         }
 
+        btnPickDateTime.setOnClickListener {
+            pickDateTime()
+        }
+
         eventSubmitButton.setOnClickListener {
-            val eventName = eventNameEditText.text.toString()
-            val eventDesc = eventDescEditText.text.toString()
-            val eventLocal = eventLocalEditText.text.toString()
+            if(validateFields()){
+                val eventName = eventNameEditText.text.toString()
+                val eventDesc = eventDescEditText.text.toString()
+                val eventLocal = eventLocalEditText.text.toString()
 
-            // Convertendo DatePicker para LocalDateTime
-            val eventDate = LocalDateTime.of(
-                eventDatePicker.year,
-                eventDatePicker.month + 1,
-                eventDatePicker.dayOfMonth,
-                0, 0
-            )
+                val eventTransport = eventTransportCheckbox.isChecked
 
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-            val formattedDate = eventDate.format(formatter)
+                // Obtendo a data e hora atual
+                val now = LocalDateTime.now()
+                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
-            val eventTransport = eventTransportCheckbox.isChecked
-
-            // Obtendo a data e hora atual
-            val now = LocalDateTime.now()
-
-            // Criando o objeto EventResponse
-            val eventRequest = EventRequest(
-                name = eventName,
-                description = eventDesc,
-                date = formattedDate,
-                location = eventLocal,
-                transport = eventTransport,
-                createAt = now.format(formatter),
-                updatedAt = now.format(formatter),
-                image = eventSelectedImage // Ou o caminho da imagem, se você estiver permitindo o upload de imagens
-            )
-
-            println(eventRequest.toString())
-
-            // Agora você pode usar eventResponse conforme necessário
-            var doEventRequest = false
-
-
-            doEventRequest = true
-            if (doEventRequest) {
-                setLoadingVisibility(true)
-                makeRequestWithRetries(
-                    requestCall = {
-                        RetrofitClient.apiService.addEvent(eventRequest).execute()
-                    },
-                    onSuccess = { isAdded ->
-                        setLoadingVisibility(false)
-                        val bundle = Bundle().apply {
-                            putString("eventName", eventRequest.name ?: "Nome não disponível")
-                            putString("eventDescription", eventRequest.description ?: "Descrição não disponível")
-                            putString("eventDate", eventRequest.date?.toString() ?: "Data não disponível")
-                            putString("eventLocation", eventRequest.location ?: "Localização não disponível")
-                            putBoolean("eventTransport", eventRequest.transport ?: false) // false como valor padrão
-                            putString("eventCreatedAt", eventRequest.createAt?.toString() ?: "Data de criação não disponível")
-                            putString("eventUpdatedAt", eventRequest.updatedAt?.toString() ?: "Data de atualização não disponível")
-                            putString("eventImage", eventRequest.image ?: "")
-                        }
-                        val navController = findNavController()
-                        navController.navigate(R.id.navigation_events_details, bundle)
-
-                        if (toast != null) {
-                            toast!!.setText("Evento criado com sucesso")
-                        } else {
-                            toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
-                        }
-                        toast!!.show()
-
-                    },
-                    onError = { errorMessage ->
-                        if (toast != null) {
-                            toast!!.setText(errorMessage)
-                        } else {
-                            toast = Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT)
-                        }
-                        toast!!.show()
-                        setLoadingVisibility(false)
-                    }
+                // Criando o objeto EventResponse
+                val eventRequest = EventRequest(
+                    name = eventName,
+                    description = eventDesc,
+                    date = selectedDateTime,
+                    location = eventLocal,
+                    transport = eventTransport,
+                    createAt = now.format(formatter),
+                    updatedAt = now.format(formatter),
+                    image = eventSelectedImage // Ou o caminho da imagem, se você estiver permitindo o upload de imagens
                 )
+
+
+                // Agora você pode usar eventResponse conforme necessário
+                var doEventRequest = false
+
+                doEventRequest = true
+                if (doEventRequest) {
+                    setLoadingVisibility(true)
+                    makeRequestWithRetries(
+                        requestCall = {
+                            RetrofitClient.apiService.addEvent(eventRequest).execute()
+                        },
+                        onSuccess = { isAdded ->
+                            setLoadingVisibility(false)
+                            val bundle = Bundle().apply {
+                                putString("eventName", eventRequest.name ?: "Nome não disponível")
+                                putString("eventDescription", eventRequest.description ?: "Descrição não disponível")
+                                putString("eventDate", eventRequest.date?.toString() ?: "Data não disponível")
+                                putString("eventLocation", eventRequest.location ?: "Localização não disponível")
+                                putBoolean("eventTransport", eventRequest.transport ?: false) // false como valor padrão
+                                putString("eventCreatedAt", eventRequest.createAt?.toString() ?: "Data de criação não disponível")
+                                putString("eventUpdatedAt", eventRequest.updatedAt?.toString() ?: "Data de atualização não disponível")
+                                putString("eventImage", eventRequest.image ?: "")
+                            }
+                            val navController = findNavController()
+                            navController.navigate(R.id.navigation_events_details, bundle)
+
+                            if (toast != null) {
+                                toast!!.setText("Evento criado com sucesso")
+                            } else {
+                                toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
+                            }
+                            toast!!.show()
+
+                        },
+                        onError = { errorMessage ->
+                            if (toast != null) {
+                                toast!!.setText(errorMessage)
+                            } else {
+                                toast = Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT)
+                            }
+                            toast!!.show()
+                            setLoadingVisibility(false)
+                        }
+                    )
+                }
             }
+
 
         }
         return view
+    }
+
+    private fun pickDateTime() {
+        DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
+            calendar.set(year, month, dayOfMonth)
+
+            TimePickerDialog(requireContext(), { _, hourOfDay, minute ->
+                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+                calendar.set(Calendar.MINUTE, minute)
+                calendar.set(Calendar.SECOND, 0)
+
+                selectedDateTime = format.format(calendar.time)
+                tvSelectedDateTime.text = formatShow.format(calendar.time)
+            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+    }
+
+    private fun validateFields(): Boolean {
+        if (eventNameEditText.text.toString().trim().isEmpty()) {
+            eventNameEditText.error = "Introduza um nome"
+            return false
+        }
+        if (eventDescEditText.text.toString().trim().isEmpty()) {
+            eventDescEditText.error = "Introduza uma descrição"
+            return false
+        }
+        if (eventLocalEditText.text.toString().trim().isEmpty()) {
+            eventLocalEditText.error = "Introduza uma localização"
+            return false
+        }
+        return true
     }
 
     private fun pickImageFromGallery() {
