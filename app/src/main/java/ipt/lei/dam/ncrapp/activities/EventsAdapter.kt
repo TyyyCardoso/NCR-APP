@@ -32,7 +32,7 @@ class EventsAdapter(private val eventsList: List<EventResponse>) : RecyclerView.
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = eventsList[position]
 
-        holder.eventImage.setImageResource(R.drawable.baseline_event_note_24) // Um placeholder ou imagem padrão
+        holder.eventImage.setImageResource(R.drawable.default_event_img) // Um placeholder ou imagem padrão
 
         if (!event.image.isNullOrBlank()){
             val base64Image: String = event.image.split(",").get(1)

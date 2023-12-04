@@ -16,7 +16,9 @@ import android.widget.CheckBox
 import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.navigation.fragment.findNavController
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
 import ipt.lei.dam.ncrapp.models.EventRequest
@@ -104,12 +106,35 @@ class EventAddFragmento : BasicFragment() {
                         RetrofitClient.apiService.addEvent(eventRequest).execute()
                     },
                     onSuccess = { isAdded ->
-                        print("yes")
                         setLoadingVisibility(false)
+                        val bundle = Bundle().apply {
+                            putString("eventName", eventRequest.name ?: "Nome não disponível")
+                            putString("eventDescription", eventRequest.description ?: "Descrição não disponível")
+                            putString("eventDate", eventRequest.date?.toString() ?: "Data não disponível")
+                            putString("eventLocation", eventRequest.location ?: "Localização não disponível")
+                            putBoolean("eventTransport", eventRequest.transport ?: false) // false como valor padrão
+                            putString("eventCreatedAt", eventRequest.createAt?.toString() ?: "Data de criação não disponível")
+                            putString("eventUpdatedAt", eventRequest.updatedAt?.toString() ?: "Data de atualização não disponível")
+                            putString("eventImage", eventRequest.image ?: "")
+                        }
+                        val navController = findNavController()
+                        navController.navigate(R.id.navigation_events_details, bundle)
+
+                        if (toast != null) {
+                            toast!!.setText("Evento criado com sucesso")
+                        } else {
+                            toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
+                        }
+                        toast!!.show()
 
                     },
                     onError = { errorMessage ->
-                        println(errorMessage)
+                        if (toast != null) {
+                            toast!!.setText(errorMessage)
+                        } else {
+                            toast = Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT)
+                        }
+                        toast!!.show()
                         setLoadingVisibility(false)
                     }
                 )
@@ -144,7 +169,7 @@ class EventAddFragmento : BasicFragment() {
                 var myBitmap : Bitmap? = uriToBitmap(uri)
                 var myBase64 : String? = myBitmap?.let { it1 -> bitmapToBase64(it1) }
                 if (myBase64 != null) {
-                    eventSelectedImage = myBase64
+                    eventSelectedImage = "data:image/png;base64," + myBase64
                 }
             }
         }

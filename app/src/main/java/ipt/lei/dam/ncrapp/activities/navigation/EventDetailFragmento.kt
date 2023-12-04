@@ -9,6 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.addCallback
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.models.EventResponse
 
@@ -51,7 +54,7 @@ class EventDetailFragmento : Fragment() {
         eventDate.text = date
         eventTransport.text = "Transporte: " + if (transport == true) "Sim" else "Não"
 
-        eventImage.setImageResource(R.drawable.baseline_event_note_24) // Um placeholder ou imagem padrão
+        eventImage.setImageResource(R.drawable.default_event_img) // Um placeholder ou imagem padrão
 
         if (!image.isNullOrBlank()){
             val base64Image: String = image.split(",").get(1)
@@ -59,8 +62,15 @@ class EventDetailFragmento : Fragment() {
             val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
             eventImage.setImageBitmap(decodedByte)
         }
+
+        val navController = findNavController()
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            navController.navigate(R.id.navigation_events)
+        }
+
         return view
     }
+
 
     companion object {
         @JvmStatic

@@ -4,6 +4,7 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import ipt.lei.dam.ncrapp.R
 import org.json.JSONObject
@@ -11,6 +12,7 @@ import retrofit2.Response
 import java.io.IOException
 
 open class BasicFragment : Fragment() {
+    var toast: Toast? = null
     protected lateinit var loadingImage: ImageView
     protected lateinit var rotationAnimation: Animation
 
@@ -78,4 +80,5 @@ open class BasicFragment : Fragment() {
             }
         }.start()
     }
+
 }
