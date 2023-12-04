@@ -13,7 +13,8 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL = "http://2.81.245.199:8080/ncrAPI/"
+    //private const val BASE_URL = "http://2.81.245.199:8080/ncrAPI/"
+    private const val BASE_URL = "http://10.0.2.2:8080/ncr/"
 
     private val authInterceptor = AuthInterceptor()
 
