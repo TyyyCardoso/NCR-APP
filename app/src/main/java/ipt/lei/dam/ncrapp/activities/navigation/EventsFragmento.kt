@@ -53,7 +53,8 @@ class EventsFragmento : BasicFragment() {
                     },
                     onSuccess = { EventResponseList ->
                         EventResponseList.forEach { event ->
-                            println(event.name)
+                            println("" + event.id + " - " + event.name + " - " + event.createdAt)
+
                         }
                         setLoadingVisibility(false)
                         recyclerView.visibility = View.VISIBLE

@@ -16,6 +16,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 
 interface APIService {
         @POST("auth/login")
@@ -44,4 +45,7 @@ interface APIService {
 
         @POST("event")
         fun addEvent(@Body eventRequest: EventRequest) : Call<ResponseBody>
+
+        @PUT("event")
+        fun editEvent(@Body eventRequest: EventRequest) : Call<ResponseBody>
 }

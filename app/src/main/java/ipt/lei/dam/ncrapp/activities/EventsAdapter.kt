@@ -35,7 +35,7 @@ class EventsAdapter(private val eventsList: List<EventResponse>) : RecyclerView.
         holder.eventImage.setImageResource(R.drawable.default_event_img) // Um placeholder ou imagem padrão
 
         if (!event.image.isNullOrBlank()){
-            val base64Image: String = event.image.split(",").get(1)
+            val base64Image: String = event.image!!.split(",").get(1)
             val decodedString: ByteArray = Base64.decode(base64Image, Base64.DEFAULT)
             val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
             holder.eventImage.setImageBitmap(decodedByte)

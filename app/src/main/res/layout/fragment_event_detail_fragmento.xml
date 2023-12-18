@@ -19,6 +19,15 @@
         android:layout_margin="2dp">
 
         <ImageView
+            android:id="@+id/loading_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/cotonete"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"/>
+
+        <ImageView
             android:id="@+id/eventDetailImage"
             android:layout_width="match_parent"
             android:layout_height="200dp"

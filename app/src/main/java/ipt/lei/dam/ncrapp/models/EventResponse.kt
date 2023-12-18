@@ -7,15 +7,15 @@ import java.time.LocalDateTime
 
 
 data class EventResponse(
-    val eventId: Int?,
-    val name: String?,
-    val description: String?,
-    val date: LocalDateTime?,  // Supondo que você tenha uma maneira de lidar com LocalDateTime
-    val location: String?,
-    val transport: Boolean?,
-    val createAt: LocalDateTime?,
-    val updatedAt: LocalDateTime?,
-    val image: String?
+    val id: Int?,
+    var name: String?,
+    var description: String?,
+    var date: LocalDateTime?,  // Supondo que você tenha uma maneira de lidar com LocalDateTime
+    var location: String?,
+    var transport: Boolean?,
+    var createdAt: LocalDateTime?,
+    var updatedAt: LocalDateTime?,
+    var image: String?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readValue(Int::class.java.classLoader) as? Int,
@@ -31,7 +31,7 @@ data class EventResponse(
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
-        parcel.writeValue(eventId)
+        parcel.writeValue(id)
         parcel.writeString(name)
         parcel.writeString(description)
         parcel.writeString(location)

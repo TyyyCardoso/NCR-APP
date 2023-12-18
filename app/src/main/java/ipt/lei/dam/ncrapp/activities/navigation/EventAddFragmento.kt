@@ -15,7 +15,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CheckBox
-import android.widget.DatePicker
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -99,18 +98,17 @@ class EventAddFragmento : BasicFragment() {
 
                 // Criando o objeto EventResponse
                 val eventRequest = EventRequest(
+                    id = -1,
                     name = eventName,
                     description = eventDesc,
                     date = selectedDateTime,
                     location = eventLocal,
                     transport = eventTransport,
-                    createAt = now.format(formatter),
+                    createdAt = now.format(formatter),
                     updatedAt = now.format(formatter),
-                    image = eventSelectedImage // Ou o caminho da imagem, se você estiver permitindo o upload de imagens
+                    image = eventSelectedImage
                 )
 
-
-                // Agora você pode usar eventResponse conforme necessário
                 var doEventRequest = false
 
                 doEventRequest = true
@@ -122,18 +120,9 @@ class EventAddFragmento : BasicFragment() {
                         },
                         onSuccess = { isAdded ->
                             setLoadingVisibility(false)
-                            val bundle = Bundle().apply {
-                                putString("eventName", eventRequest.name ?: "Nome não disponível")
-                                putString("eventDescription", eventRequest.description ?: "Descrição não disponível")
-                                putString("eventDate", eventRequest.date?.toString() ?: "Data não disponível")
-                                putString("eventLocation", eventRequest.location ?: "Localização não disponível")
-                                putBoolean("eventTransport", eventRequest.transport ?: false) // false como valor padrão
-                                putString("eventCreatedAt", eventRequest.createAt?.toString() ?: "Data de criação não disponível")
-                                putString("eventUpdatedAt", eventRequest.updatedAt?.toString() ?: "Data de atualização não disponível")
-                                putString("eventImage", eventRequest.image ?: "")
-                            }
+
                             val navController = findNavController()
-                            navController.navigate(R.id.navigation_events_details, bundle)
+                            navController.navigate(R.id.navigation_events)
 
                             if (toast != null) {
                                 toast!!.setText("Evento criado com sucesso")
