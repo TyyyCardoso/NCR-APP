@@ -8,17 +8,24 @@
     <string name="mainNavEventsButton">Eventos</string>
     <string name="mainNavSabiasButton">Sabias Que</string>
     <string name="mainNavPersonalButton">Pessoal</string>
+    <string name="mainEventTabIncreverBtn">Increver-me</string>
+    <string name="mainEventTabDetalhesBtn">Detalhes</string>
     <!-- ADD EVENT SCREEN TEXTS -->
     <string name="addEventTextEventNameBox">Nome</string>
     <string name="addEventTextEventDescBox">Descrição</string>
     <string name="addEventTextEventLocalBox">Localização</string>
     <string name="addEventTextEventDateBox">Data</string>
-    <string name="addEventTextEventTranspBox">Transporte? </string>
+    <string name="addEventTextEventTranspBox">Sim </string>
     <string name="addEventTextEventImgBox">Escolher Imagem </string>
     <string name="addEventTextEventImgBoxCap">Tirar Fotografia </string>
     <string name="addEventTextEventAddBtn">Criar Evento </string>
     <string name="addEventTextEventAddTimeDateBtn">Escolher Data </string>
-    <!-- EDIT EVENT SCREEN TEXTS -->
+    <!-- DETAILS & EDIT EVENT SCREEN TEXTS -->
+    <string name="eventDetailNameTitle">Nome de Evento </string>
+    <string name="eventDetailDescriptionTitle">Descrição de Evento </string>
+    <string name="eventDetailLocationTitle">Localização Evento </string>
+    <string name="eventDetailTransportTitle">Tem Transporte? </string>
+    <string name="eventDetailDateTitle">Data do Evento </string>
     <string name="editEventTextEventAddBtn">Editar Evento </string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>

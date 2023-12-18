@@ -97,8 +97,8 @@ class EventDetailFragmento :  BasicFragment() {
         eventName.text = event?.name
         eventDescription.text = event?.description
         eventLocation.text = event?.location
-        eventDate.text = event?.date.toString()
-        eventTransport.text = "Transporte: " + if (event?.transport == true) "Sim" else "Não"
+        eventDate.text = convertDateTime(event.date.toString())
+        eventTransport.text = "" + if (event?.transport == true) "Sim" else "Não"
         eventImage.setImageResource(R.drawable.default_event_img) // Um placeholder ou imagem padrão
 
         selectedDateTime = event?.date.toString()
@@ -267,6 +267,14 @@ class EventDetailFragmento :  BasicFragment() {
             btnPickDateTime.visibility = View.GONE
 
         }
+    }
+
+    fun convertDateTime(dateTimeStr: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
+        val outputFormat = SimpleDateFormat("dd/MM/yyyy HH:mm")
+
+        val date = inputFormat.parse(dateTimeStr)
+        return outputFormat.format(date)
     }
 
 

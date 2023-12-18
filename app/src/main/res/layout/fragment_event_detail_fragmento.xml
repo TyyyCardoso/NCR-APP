@@ -15,8 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="8dp"
-        android:layout_margin="2dp">
+        android:padding="16dp">
 
         <ImageView
             android:id="@+id/loading_image"
@@ -24,7 +23,6 @@
             android:layout_height="40dp"
             android:src="@drawable/cotonete"
             android:layout_gravity="center"
-            android:layout_marginTop="10dp"
             android:visibility="gone"/>
 
         <ImageView
@@ -32,14 +30,22 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
+            android:elevation="4dp"
             android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:id="@+id/eventDetailNameTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/eventDetailNameTitle"
+            android:textStyle="bold"
+            android:paddingBottom="4dp"/>
 
         <TextView
             android:id="@+id/eventDetailName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="24sp"
-            android:textStyle="bold"
             android:padding="8dp"/>
 
         <EditText
@@ -53,12 +59,27 @@
             android:layout_marginHorizontal="10dp"
             android:visibility="gone"/>
 
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginVertical="8dp"/>
+
         <TextView
-            android:id="@+id/eventDetailDescription"
+            android:id="@+id/eventDetailDescriptionTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/eventDetailDescriptionTitle"
+            android:textStyle="bold"
+            android:paddingBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/eventDetailDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:textSize="18sp"
-            android:layout_marginTop="10dp" />
+            android:padding="8dp"/>
 
         <EditText
             android:id="@+id/etEditEventDesc"
@@ -71,10 +92,26 @@
             android:layout_marginHorizontal="10dp"
             android:visibility="gone"/>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginVertical="8dp"/>
+
+        <TextView
+            android:id="@+id/eventDetailDateTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/eventDetailDateTitle"
+            android:textStyle="bold"
+            android:paddingBottom="4dp"/>
+
         <TextView
             android:id="@+id/eventDetailDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:padding="8dp"
             android:layout_marginTop="10dp" />
 
         <Button
@@ -85,11 +122,26 @@
             android:text="@string/addEventTextEventAddTimeDateBtn"
             android:visibility="gone"/>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginVertical="8dp"/>
+
+        <TextView
+            android:id="@+id/eventDetailLocationTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/eventDetailLocationTitle"
+            android:textStyle="bold"
+            android:paddingBottom="4dp"/>
+
         <TextView
             android:id="@+id/eventDetailLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
+            android:textSize="18sp"
+            android:padding="8dp" />
 
         <EditText
             android:id="@+id/etEditEventLocation"
@@ -102,23 +154,27 @@
             android:layout_marginHorizontal="10dp"
             android:visibility="gone"/>
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#E0E0E0"
+            android:layout_marginVertical="8dp"/>
+
+        <TextView
+            android:id="@+id/eventDetailTransportTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/eventDetailTransportTitle"
+            android:textStyle="bold"
+            android:paddingBottom="4dp"/>
+
         <TextView
             android:id="@+id/eventDetailTransport"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
+            android:textSize="18sp"
+            android:padding="8dp" />
 
-        <TextView
-            android:id="@+id/eventDetailCreatedAt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
-
-        <TextView
-            android:id="@+id/eventDetailUpdatedAt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
 
         <Button
             android:id="@+id/btnEditEventSubmit"
@@ -129,11 +185,7 @@
             android:layout_marginBottom="8dp"
             android:visibility="invisible"/>
 
-
-
-
-
-    </LinearLayout>
+        </LinearLayout>
     </ScrollView>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabEditEvent"
@@ -142,6 +194,7 @@
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="72dp"
         android:layout_marginRight="16dp"
-        android:src="@drawable/baseline_edit_24" />
+        android:src="@drawable/baseline_edit_24"
+        android:tint="#FFF8E7"/>
 
 </FrameLayout>

@@ -16,6 +16,18 @@
         <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
 
+    <style name="CustomButtonStyleShort" parent="Widget.AppCompat.Button">
+        <item name="android:background">@drawable/button_background</item>
+        <item name="android:backgroundTint">@color/buttonColor</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:padding">12dp</item>
+        <item name="android:layout_margin">6dp</item>
+        <item name="android:elevation">4dp</item>
+        <item name="cornerRadius">4dp</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+    </style>
+
     <!-- Define the button color in colors.xml -->
     <color name="buttonColor">#00574B</color>
 </resources>

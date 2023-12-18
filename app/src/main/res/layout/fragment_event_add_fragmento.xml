@@ -29,6 +29,14 @@
                 android:layout_marginTop="10dp"
                 android:visibility="gone"/>
 
+            <TextView
+                android:id="@+id/eventDetailNameTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eventDetailNameTitle"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+
             <EditText
                 android:id="@+id/etNewEventName"
                 android:layout_width="match_parent"
@@ -36,8 +44,22 @@
                 android:hint="@string/addEventTextEventNameBox"
                 android:background="@drawable/edittext_background"
                 android:padding="15dp"
-                android:layout_marginTop="24dp"
+                android:layout_margin="10dp"
                 android:layout_marginHorizontal="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginVertical="8dp"/>
+
+            <TextView
+                android:id="@+id/eventDetailDescriptionTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eventDetailDescriptionTitle"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
 
             <EditText
                 android:id="@+id/etNewEventDesc"
@@ -46,8 +68,22 @@
                 android:hint="@string/addEventTextEventDescBox"
                 android:background="@drawable/edittext_background"
                 android:padding="15dp"
-                android:layout_marginTop="24dp"
+                android:layout_margin="10dp"
                 android:layout_marginHorizontal="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginVertical="8dp"/>
+
+            <TextView
+                android:id="@+id/eventDetailLocationTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eventDetailLocationTitle"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
 
             <EditText
                 android:id="@+id/etNewEventLocal"
@@ -56,9 +92,22 @@
                 android:hint="@string/addEventTextEventLocalBox"
                 android:background="@drawable/edittext_background"
                 android:padding="15dp"
-                android:layout_marginTop="24dp"
-                android:layout_marginBottom="16dp"
+                android:layout_margin="10dp"
                 android:layout_marginHorizontal="10dp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginVertical="8dp"/>
+
+            <TextView
+                android:id="@+id/eventDetailDateTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eventDetailDateTitle"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
 
             <Button
                 android:id="@+id/btnPickDateTime"
@@ -76,6 +125,20 @@
                 android:textAlignment="center"
                 android:padding="15dp" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#E0E0E0"
+                android:layout_marginVertical="8dp"/>
+
+            <TextView
+                android:id="@+id/eventDetailTransportTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eventDetailTransportTitle"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+
             <CheckBox
                 android:id="@+id/checkboxNewEventTransport"
                 android:layout_width="match_parent"
@@ -84,21 +147,32 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="16dp"/>
 
-            <Button
-                android:id="@+id/btnNewEventImageSelect"
-                style="@style/CustomButtonStyle"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/addEventTextEventImgBox"
-                android:layout_marginBottom="8dp"/>
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_margin="10dp">
 
-            <Button
-                android:id="@+id/btnNewEventImageCapture"
-                style="@style/CustomButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/addEventTextEventImgBoxCap"
-                android:layout_marginBottom="8dp"/>
+                <Button
+                    android:id="@+id/btnNewEventImageSelect"
+                    style="@style/CustomButtonStyleShort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/addEventTextEventImgBox"
+                    android:layout_marginBottom="8dp"/>
+
+                <Button
+                    android:id="@+id/btnNewEventImageCapture"
+                    style="@style/CustomButtonStyleShort"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/addEventTextEventImgBoxCap"
+                    android:layout_marginBottom="8dp"/>
+
+            </LinearLayout>
+
+
 
             <ImageView
                 android:id="@+id/imageviewNewEventImageView"
