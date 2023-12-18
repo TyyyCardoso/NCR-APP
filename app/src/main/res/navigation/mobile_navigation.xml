@@ -8,30 +8,30 @@
     <fragment
         android:id="@+id/navigation_events"
         android:name="ipt.lei.dam.ncrapp.activities.navigation.EventsFragmento"
-        android:label="@string/mainNavOutrosButton"
+        android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_sabias"
         android:name="ipt.lei.dam.ncrapp.activities.navigation.sabiasQueFragmento"
-        android:label="@string/mainNavOutrosButton"
+        android:label="@string/mainNavSabiasButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_settings"
         android:name="ipt.lei.dam.ncrapp.activities.navigation.settingsFragmento"
-        android:label="@string/mainNavOutrosButton"
+        android:label="@string/mainNavPersonalButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_events_details"
         android:name="ipt.lei.dam.ncrapp.activities.navigation.EventDetailFragmento"
-        android:label="@string/mainNavOutrosButton"
+        android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
     <fragment
         android:id="@+id/navigation_events_add"
         android:name="ipt.lei.dam.ncrapp.activities.navigation.EventAddFragmento"
-        android:label="@string/mainNavOutrosButton"
+        android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
 
 </navigation>
