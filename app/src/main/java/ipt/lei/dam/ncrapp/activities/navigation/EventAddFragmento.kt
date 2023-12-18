@@ -1,5 +1,6 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
@@ -9,6 +10,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
@@ -67,7 +69,8 @@ class EventAddFragmento : BasicFragment() {
         eventLocalEditText = view.findViewById<EditText>(R.id.etNewEventLocal)
         val eventTransportCheckbox = view.findViewById<CheckBox>(R.id.checkboxNewEventTransport)
         val eventSubmitButton = view.findViewById<Button>(R.id.btnNewEventSubmit)
-        val EventImageSelectButton = view.findViewById<Button>(R.id.btnNewEventImageSelect)
+        val eventImageSelectButton = view.findViewById<Button>(R.id.btnNewEventImageSelect)
+        val eventImagemCaptureButton =  view.findViewById<Button>(R.id.btnNewEventImageCapture)
 
         btnPickDateTime = view.findViewById(R.id.btnPickDateTime)
         tvSelectedDateTime = view.findViewById(R.id.tvSelectedDateTime)
@@ -76,8 +79,12 @@ class EventAddFragmento : BasicFragment() {
 
         setupLoadingAnimation(view)
 
-        EventImageSelectButton.setOnClickListener {
+        eventImageSelectButton.setOnClickListener {
             pickImageFromGallery()
+        }
+
+        eventImagemCaptureButton.setOnClickListener {
+            captureImageFromCamera()
         }
 
         btnPickDateTime.setOnClickListener {
@@ -187,17 +194,25 @@ class EventAddFragmento : BasicFragment() {
         startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
     }
 
+    private fun captureImageFromCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE)
+    }
+
     // Dentro do seu Fragmento
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
             val imageUri = data?.data
-            // Faça algo com o Uri da imagem, como mostrar em um ImageView
             updateImageView(imageUri)
+        } else if(requestCode == REQUEST_CODE_CAPTURE_IMAGE && resultCode == Activity.RESULT_OK) {
+            val imageBitmap = data?.extras?.get("data") as Bitmap
+            updateImageViewWithBitmap(imageBitmap)
         }
     }
 
     private fun updateImageView(uri: Uri?) {
+        println("########!!!!!!!Atualizando imagem")
         uri?.let {
             val imageView = view?.findViewById<ImageView>(R.id.imageviewNewEventImageView)
             imageView?.setImageURI(uri)
@@ -208,6 +223,17 @@ class EventAddFragmento : BasicFragment() {
                 if (myBase64 != null) {
                     eventSelectedImage = "data:image/png;base64," + myBase64
                 }
+            }
+        }
+    }
+
+    private fun updateImageViewWithBitmap(bitmap: Bitmap) {
+        val imageView = view?.findViewById<ImageView>(R.id.imageviewNewEventImageView)
+        if (imageView != null) {
+            imageView.setImageBitmap(bitmap)
+            var myBase64 : String? = bitmap?.let { it1 -> bitmapToBase64(it1) }
+            if (myBase64 != null) {
+                eventSelectedImage = "data:image/png;base64," + myBase64
             }
         }
     }
@@ -227,6 +253,7 @@ class EventAddFragmento : BasicFragment() {
 
 
     companion object {
+        private const val REQUEST_CODE_CAPTURE_IMAGE = 1
         private const val REQUEST_CODE_PICK_IMAGE = 2
     }
 }

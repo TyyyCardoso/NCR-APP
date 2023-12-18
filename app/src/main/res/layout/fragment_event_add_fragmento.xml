@@ -92,6 +92,14 @@
                 android:text="@string/addEventTextEventImgBox"
                 android:layout_marginBottom="8dp"/>
 
+            <Button
+                android:id="@+id/btnNewEventImageCapture"
+                style="@style/CustomButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/addEventTextEventImgBoxCap"
+                android:layout_marginBottom="8dp"/>
+
             <ImageView
                 android:id="@+id/imageviewNewEventImageView"
                 android:layout_width="match_parent"

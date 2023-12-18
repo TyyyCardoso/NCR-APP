@@ -14,7 +14,8 @@
     <string name="addEventTextEventLocalBox">Localização</string>
     <string name="addEventTextEventDateBox">Data</string>
     <string name="addEventTextEventTranspBox">Transporte? </string>
-    <string name="addEventTextEventImgBox">Adicionar Imagem </string>
+    <string name="addEventTextEventImgBox">Escolher Imagem </string>
+    <string name="addEventTextEventImgBoxCap">Tirar Fotografia </string>
     <string name="addEventTextEventAddBtn">Criar Evento </string>
     <string name="addEventTextEventAddTimeDateBtn">Escolher Data </string>
     <!-- EDIT EVENT SCREEN TEXTS -->
