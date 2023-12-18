@@ -66,6 +66,9 @@ class EventDetailFragmento :  BasicFragment() {
     val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     val formatShow = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
+    //Componentes de DELETE
+    private lateinit var btnRemoveEvent: Button
+
             override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -104,6 +107,9 @@ class EventDetailFragmento :  BasicFragment() {
         eventImageSelectButton = view.findViewById(R.id.btnEditEventImageSelect)
         eventImagemCaptureButton =  view.findViewById(R.id.btnEditEventImageCapture)
         checkboxEditEventTransport =  view.findViewById(R.id.checkboxEditEventTransport)
+
+        // Componentes DELETE
+        btnRemoveEvent =  view.findViewById(R.id.btnDeleteEvent)
 
         //Obter evento do bundle
         event = arguments?.getParcelable<EventResponse>("myEvent")!!
@@ -157,9 +163,48 @@ class EventDetailFragmento :  BasicFragment() {
         eventImagemCaptureButton.setOnClickListener {
             captureImageFromCamera()
         }
+
+        btnRemoveEvent.setOnClickListener {
+            deleteEvent()
+        }
         return view
     }
 
+    private fun deleteEvent(){
+        var doEventRequest = false
+        doEventRequest = true
+        if (doEventRequest) {
+            setLoadingVisibility(true)
+            makeRequestWithRetries(
+                requestCall = {
+                    RetrofitClient.apiService.deleteEvent(event.id!!).execute()
+                },
+                onSuccess = { isEditted ->
+                    setLoadingVisibility(false)
+
+                    val navController = findNavController()
+                    navController.navigate(R.id.navigation_events)
+
+                    if (toast != null) {
+                        toast!!.setText("Evento removido com sucesso")
+                    } else {
+                        toast = Toast.makeText(requireActivity(), "Evento removido com sucesso", Toast.LENGTH_SHORT)
+                    }
+                    toast!!.show()
+
+                },
+                onError = { errorMessage ->
+                    if (toast != null) {
+                        toast!!.setText(errorMessage)
+                    } else {
+                        toast = Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT)
+                    }
+                    toast!!.show()
+                    setLoadingVisibility(false)
+                }
+            )
+        }
+    }
     private fun saveEvent(){
         if(editMode){
             //Atualizar objeto event
@@ -289,6 +334,7 @@ class EventDetailFragmento :  BasicFragment() {
 
             btnPickDateTime.visibility = View.VISIBLE
             checkboxEditEventTransport.visibility = View.VISIBLE
+            btnRemoveEvent.visibility = View.VISIBLE
         } else {
             btnEditEventSubmit.visibility = View.INVISIBLE
 
@@ -305,6 +351,7 @@ class EventDetailFragmento :  BasicFragment() {
 
             eventImageEditLayout.visibility = View.GONE
             checkboxEditEventTransport.visibility = View.GONE
+            btnRemoveEvent.visibility = View.GONE
         }
     }
 

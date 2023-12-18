@@ -26,7 +26,8 @@
     <string name="eventDetailLocationTitle">Localização Evento </string>
     <string name="eventDetailTransportTitle">Tem Transporte? </string>
     <string name="eventDetailDateTitle">Data do Evento </string>
-    <string name="editEventTextEventAddBtn">Editar Evento </string>
+    <string name="editEventTextEventEditBtn">Editar Evento </string>
+    <string name="editEventTextEventDeleteBtn">Remover Evento </string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>
     <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>

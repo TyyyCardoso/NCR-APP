@@ -217,9 +217,18 @@
             style="@style/CustomButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/editEventTextEventAddBtn"
+            android:text="@string/editEventTextEventEditBtn"
             android:layout_marginBottom="8dp"
-            android:visibility="invisible"/>
+            android:visibility="gone"/>
+
+        <Button
+            android:id="@+id/btnDeleteEvent"
+            style="@style/CustomRedButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/editEventTextEventDeleteBtn"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"/>
 
         </LinearLayout>
     </ScrollView>
