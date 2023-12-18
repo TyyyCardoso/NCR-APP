@@ -61,15 +61,7 @@ class EventsFragmento : BasicFragment() {
                             onItemClickListener = { event ->
 
                                 val bundle = Bundle().apply {
-                                    putInt("eventId", event.eventId ?: 0) // Substituir 0 pelo valor padrão desejado para ID
-                                    putString("eventName", event.name ?: "Nome não disponível")
-                                    putString("eventDescription", event.description ?: "Descrição não disponível")
-                                    putString("eventDate", event.date?.toString() ?: "Data não disponível")
-                                    putString("eventLocation", event.location ?: "Localização não disponível")
-                                    putBoolean("eventTransport", event.transport ?: false) // false como valor padrão
-                                    putString("eventCreatedAt", event.createAt?.toString() ?: "Data de criação não disponível")
-                                    putString("eventUpdatedAt", event.updatedAt?.toString() ?: "Data de atualização não disponível")
-                                    putString("eventImage", event.image ?: "")
+                                    putParcelable("myEvent", event)
                                 }
                                 navController.navigate(R.id.navigation_events_details, bundle)
                             }

@@ -17,6 +17,8 @@
     <string name="addEventTextEventImgBox">Adicionar Imagem </string>
     <string name="addEventTextEventAddBtn">Criar Evento </string>
     <string name="addEventTextEventAddTimeDateBtn">Escolher Data </string>
+    <!-- EDIT EVENT SCREEN TEXTS -->
+    <string name="editEventTextEventAddBtn">Editar Evento </string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>
     <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>

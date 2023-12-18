@@ -24,6 +24,7 @@ import org.w3c.dom.Text
 class EventDetailFragmento : Fragment() {
     private var editMode : Boolean = false
 
+    // Componentes VIEW
     private lateinit var eventImage: ImageView
     private lateinit var eventName: TextView
     private lateinit var eventDescription: TextView
@@ -31,6 +32,7 @@ class EventDetailFragmento : Fragment() {
     private lateinit var eventDate: TextView
     private lateinit var eventTransport: TextView
 
+    // Componentes de EDIT
     private lateinit var etEventName: EditText
     private lateinit var etEventDescription: EditText
     private lateinit var etEventLocation: EditText
@@ -54,6 +56,7 @@ class EventDetailFragmento : Fragment() {
             toggleEditMode()
         }
 
+        // Componentes VIEW
         eventImage = view.findViewById(R.id.eventDetailImage)
         eventName =  view.findViewById(R.id.eventDetailName)
         eventDescription =  view.findViewById(R.id.eventDetailDescription)
@@ -61,28 +64,25 @@ class EventDetailFragmento : Fragment() {
         eventDate =  view.findViewById(R.id.eventDetailDate)
         eventTransport =  view.findViewById(R.id.eventDetailTransport)
 
+        // Componentes EDIT
         etEventName =  view.findViewById(R.id.etEditEventName)
         etEventDescription =  view.findViewById(R.id.etEditEventDesc)
         etEventLocation =  view.findViewById(R.id.etEditEventLocation)
         btnEditEventSubmit =  view.findViewById(R.id.btnEditEventSubmit)
 
-        val name = arguments?.getString("eventName")
-        val description = arguments?.getString("eventDescription")
-        val location = arguments?.getString("eventLocation")
-        val date = arguments?.getString("eventDate")
-        val transport = arguments?.getBoolean("eventTransport")
-        val image = arguments?.getString("eventImage")
+        var event = arguments?.getParcelable<EventResponse>("myEvent")
 
-        eventName.text = name
-        eventDescription.text = description
-        eventLocation.text = location
-        eventDate.text = date
-        eventTransport.text = "Transporte: " + if (transport == true) "Sim" else "Não"
+
+        eventName.text = event?.name
+        eventDescription.text = event?.description
+        eventLocation.text = event?.location
+        eventDate.text = event?.date.toString()
+        eventTransport.text = "Transporte: " + if (event?.transport == true) "Sim" else "Não"
 
         eventImage.setImageResource(R.drawable.default_event_img) // Um placeholder ou imagem padrão
 
-        if (!image.isNullOrBlank()){
-            val base64Image: String = image.split(",").get(1)
+        if (!event?.image.isNullOrBlank()){
+            val base64Image: String = event?.image!!.split(",").get(1)
             val decodedString: ByteArray = Base64.decode(base64Image, Base64.DEFAULT)
             val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
             eventImage.setImageBitmap(decodedByte)
@@ -132,15 +132,8 @@ class EventDetailFragmento : Fragment() {
         @JvmStatic
         fun newInstance(event: EventResponse): EventDetailFragmento {
             val args = Bundle()
-            args.putInt("eventId", event.eventId)
-            args.putString("eventName", event.name)
-            args.putString("eventDescription", event.description)
-            args.putString("eventDate", event.date.toString())
-            args.putString("eventLocation", event.location)
-            args.putBoolean("eventTransport", event.transport)
-            args.putString("eventCreatedAt", event.createAt.toString())
-            args.putString("eventUpdatedAt", event.updatedAt.toString())
-            args.putString("eventImage", event.image)
+
+            args.putParcelable("myEvent", event)
 
             val fragment = EventDetailFragmento()
             fragment.arguments = args
