@@ -33,6 +33,33 @@
             android:elevation="4dp"
             android:layout_marginBottom="16dp"/>
 
+        <LinearLayout
+            android:id="@+id/eventImageEditLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_margin="10dp"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btnEditEventImageSelect"
+                style="@style/CustomButtonStyleShort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/addEventTextEventImgBox"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnEditEventImageCapture"
+                style="@style/CustomButtonStyleShort"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/addEventTextEventImgBoxCap"
+                android:layout_marginBottom="8dp"/>
+
+        </LinearLayout>
+
         <TextView
             android:id="@+id/eventDetailNameTitle"
             android:layout_width="wrap_content"
@@ -167,6 +194,15 @@
             android:text="@string/eventDetailTransportTitle"
             android:textStyle="bold"
             android:paddingBottom="4dp"/>
+
+        <CheckBox
+            android:id="@+id/checkboxEditEventTransport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addEventTextEventTranspBox"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/eventDetailTransport"

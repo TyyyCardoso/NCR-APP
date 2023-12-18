@@ -1,17 +1,24 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.text.Editable
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
@@ -22,6 +29,7 @@ import ipt.lei.dam.ncrapp.activities.BasicFragment
 import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -43,12 +51,17 @@ class EventDetailFragmento :  BasicFragment() {
     private lateinit var eventTransport: TextView
 
     // Componentes de EDIT
+    private var eventSelectedImage: String = ""
     private lateinit var etEventName: EditText
     private lateinit var etEventDescription: EditText
     private lateinit var etEventLocation: EditText
     private lateinit var btnEditEventSubmit: Button
     private lateinit var btnPickDateTime: Button
+    private lateinit var eventImageSelectButton: Button
+    private lateinit var eventImagemCaptureButton: Button
+    private lateinit var eventImageEditLayout: LinearLayout
     private lateinit var selectedDateTime: String
+    private lateinit var checkboxEditEventTransport: CheckBox
     private val calendar = Calendar.getInstance()
     val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     val formatShow = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
@@ -87,6 +100,10 @@ class EventDetailFragmento :  BasicFragment() {
         etEventLocation =  view.findViewById(R.id.etEditEventLocation)
         btnEditEventSubmit =  view.findViewById(R.id.btnEditEventSubmit)
         btnPickDateTime =  view.findViewById(R.id.btnPickDateTime)
+        eventImageEditLayout =  view.findViewById(R.id.eventImageEditLayout)
+        eventImageSelectButton = view.findViewById(R.id.btnEditEventImageSelect)
+        eventImagemCaptureButton =  view.findViewById(R.id.btnEditEventImageCapture)
+        checkboxEditEventTransport =  view.findViewById(R.id.checkboxEditEventTransport)
 
         //Obter evento do bundle
         event = arguments?.getParcelable<EventResponse>("myEvent")!!
@@ -98,10 +115,18 @@ class EventDetailFragmento :  BasicFragment() {
         eventDescription.text = event?.description
         eventLocation.text = event?.location
         eventDate.text = convertDateTime(event.date.toString())
-        eventTransport.text = "" + if (event?.transport == true) "Sim" else "Não"
+
+        if (event?.transport == true) {
+            eventTransport.text = "Sim"
+            checkboxEditEventTransport.isChecked = true
+        } else {
+            eventTransport.text = "Não"
+            checkboxEditEventTransport.isChecked = false
+        }
         eventImage.setImageResource(R.drawable.default_event_img) // Um placeholder ou imagem padrão
 
         selectedDateTime = event?.date.toString()
+        eventSelectedImage = event?.image.toString()
 
         if (!event?.image.isNullOrBlank()){
             val base64Image: String = event?.image!!.split(",").get(1)
@@ -124,6 +149,14 @@ class EventDetailFragmento :  BasicFragment() {
         btnEditEventSubmit.setOnClickListener {
             saveEvent()
         }
+
+        eventImageSelectButton.setOnClickListener {
+            pickImageFromGallery()
+        }
+
+        eventImagemCaptureButton.setOnClickListener {
+            captureImageFromCamera()
+        }
         return view
     }
 
@@ -133,6 +166,7 @@ class EventDetailFragmento :  BasicFragment() {
             event.name = etEventName.text.toString()
             event.description = etEventDescription.text.toString()
             event.location = etEventLocation.text.toString()
+            event.transport = checkboxEditEventTransport.isChecked
 
             //Atualizar VIEW
             eventName.text = event.name
@@ -162,7 +196,7 @@ class EventDetailFragmento :  BasicFragment() {
                 transport = event.transport!!,
                 createdAt = event.createdAt.toString(),
                 updatedAt = now.format(formatter),
-                image = event.image!!
+                image = eventSelectedImage
             )
 
             var doEventRequest = false
@@ -251,7 +285,10 @@ class EventDetailFragmento :  BasicFragment() {
             etEventLocation.visibility = View.VISIBLE
             etEventLocation.text = Editable.Factory.getInstance().newEditable(eventLocation.text)
 
+            eventImageEditLayout.visibility = View.VISIBLE
+
             btnPickDateTime.visibility = View.VISIBLE
+            checkboxEditEventTransport.visibility = View.VISIBLE
         } else {
             btnEditEventSubmit.visibility = View.INVISIBLE
 
@@ -266,6 +303,8 @@ class EventDetailFragmento :  BasicFragment() {
 
             btnPickDateTime.visibility = View.GONE
 
+            eventImageEditLayout.visibility = View.GONE
+            checkboxEditEventTransport.visibility = View.GONE
         }
     }
 
@@ -277,8 +316,72 @@ class EventDetailFragmento :  BasicFragment() {
         return outputFormat.format(date)
     }
 
+    private fun pickImageFromGallery() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
+    }
+
+    private fun captureImageFromCamera() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE)
+    }
+
+    // Dentro do seu Fragmento
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            val imageUri = data?.data
+            updateImageView(imageUri)
+        } else if(requestCode == REQUEST_CODE_CAPTURE_IMAGE && resultCode == Activity.RESULT_OK) {
+            val imageBitmap = data?.extras?.get("data") as Bitmap
+            updateImageViewWithBitmap(imageBitmap)
+        }
+    }
+
+    private fun updateImageView(uri: Uri?) {
+        println("########!!!!!!!Atualizando imagem")
+        uri?.let {
+            val imageView = view?.findViewById<ImageView>(R.id.eventDetailImage)
+            imageView?.setImageURI(uri)
+            if (imageView != null) {
+                //imageView.setImageBitmap(uriToBitmap(uri))
+                var myBitmap : Bitmap? = uriToBitmap(uri)
+                var myBase64 : String? = myBitmap?.let { it1 -> bitmapToBase64(it1) }
+                if (myBase64 != null) {
+                    eventSelectedImage = "data:image/png;base64," + myBase64
+                }
+            }
+        }
+    }
+
+    private fun updateImageViewWithBitmap(bitmap: Bitmap) {
+        val imageView = view?.findViewById<ImageView>(R.id.eventDetailImage)
+        if (imageView != null) {
+            imageView.setImageBitmap(bitmap)
+            var myBase64 : String? = bitmap?.let { it1 -> bitmapToBase64(it1) }
+            if (myBase64 != null) {
+                eventSelectedImage = "data:image/png;base64," + myBase64
+            }
+        }
+    }
+
+    fun uriToBitmap(uri: Uri): Bitmap? {
+        val inputStream = context?.contentResolver?.openInputStream(uri)
+        return inputStream?.use { BitmapFactory.decodeStream(it) }
+    }
+
+    fun bitmapToBase64(bitmap: Bitmap): String {
+        val outputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+        val byteArray = outputStream.toByteArray()
+        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+    }
+
 
     companion object {
+        private const val REQUEST_CODE_CAPTURE_IMAGE = 1
+        private const val REQUEST_CODE_PICK_IMAGE = 2
         @JvmStatic
         fun newInstance(event: EventResponse): EventDetailFragmento {
             val args = Bundle()
