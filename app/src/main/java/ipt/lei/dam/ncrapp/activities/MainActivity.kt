@@ -66,7 +66,11 @@ class MainActivity : BaseActivity() {
                         AlertDialog.Builder(this)
                             .setTitle("Aviso")
                             .setMessage("Tem que fazer login para poder aceder ao seu perfil.")
-                            .setPositiveButton("OK") { dialog, which ->
+                            .setNeutralButton("Mais tarde") { dialog, which ->
+                            }
+                            .setPositiveButton(" Fazer Login") { dialog, which ->
+                                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                                finish()
                             }
                             .show()
                         false

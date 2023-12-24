@@ -1,19 +1,37 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
+import android.app.Activity.RESULT_OK
+import android.content.ContentValues
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Base64
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
+import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
+import ipt.lei.dam.ncrapp.models.UpdateProfileRequest
+import ipt.lei.dam.ncrapp.network.RetrofitClient
+import java.io.ByteArrayOutputStream
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -29,6 +47,10 @@ class ProfileFragmento : BasicFragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private lateinit var getContent: ActivityResultLauncher<String>
+    private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
+    private lateinit var currentPhotoUri: Uri
+    private val CAMERA_PERMISSION_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,12 +60,31 @@ class ProfileFragmento : BasicFragment() {
         }
     }
 
+    private fun requestCameraPermission() {
+        requestPermissions(arrayOf(android.Manifest.permission.CAMERA), CAMERA_PERMISSION_REQUEST_CODE)
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            CAMERA_PERMISSION_REQUEST_CODE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permissão concedida, pode abrir a câmera
+                    openCamera()
+                } else {
+                    // Permissão negada, lide com a situação
+                    Toast.makeText(context, "Permissão de câmera necessária", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_profile, container, false)
-
+        setupLoadingAnimation(view)
         val fab: FloatingActionButton = view.findViewById(R.id.fabEditProfile)
 
         val profileImage = view.findViewById<ImageView>(R.id.imageProfile)
@@ -54,9 +95,12 @@ class ProfileFragmento : BasicFragment() {
         val profileDataRegisto =  view.findViewById<TextView>(R.id.profileDataRegisto)
 
         val editProfileImageButtons = view.findViewById<LinearLayout>(R.id.eventImageEditLayout)
+        val editProfileImageChooseButton = view.findViewById<Button>(R.id.btnEditEventImageSelect)
+        val editProfileImageTakePhotoButton = view.findViewById<Button>(R.id.btnEditEventImageCapture)
+        val EditProfileName = view.findViewById<EditText>(R.id.etEditProfileName)
 
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientName = sharedPref.getString("clientName", "Erro a obter o seu nome.");
+        var clientName = sharedPref.getString("clientName", "Erro a obter o seu nome.");
         val clientEmail = sharedPref.getString("clientEmail", "Erro a obter o seu email.");
         val clientType = sharedPref.getString("clientType", "member");
         val clientValidated = sharedPref.getBoolean("clientValidated", true);
@@ -79,14 +123,153 @@ class ProfileFragmento : BasicFragment() {
             profileImage.setImageBitmap(decodedByte)
         }
 
+        var base64String = "";
+
+        getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+
+                // Abre um InputStream para a URI da imagem
+                val inputStream = requireActivity().contentResolver.openInputStream(uri)
+                // Converte o InputStream em Bitmap
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                profileImage.setImageBitmap(bitmap)
+                inputStream?.close()
+
+                // Prepara o OutputStream para a conversão
+                val outputStream = ByteArrayOutputStream()
+                // Comprime o Bitmap em JPEG (ou PNG) no OutputStream
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                // Converte o OutputStream em um array de bytes
+                val imageBytes = outputStream.toByteArray()
+
+                // Codifica os bytes da imagem em Base64 e obtém a String resultante
+                base64String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+
+            }
+        }
+
+        takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
+            if (success) {
+                profileImage.setImageURI(currentPhotoUri)
+
+                // Abre um InputStream para a URI da imagem
+                val inputStream = requireActivity().contentResolver.openInputStream(currentPhotoUri)
+                // Converte o InputStream em Bitmap
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+
+                // Prepara o OutputStream para a conversão
+                val outputStream = ByteArrayOutputStream()
+                // Comprime o Bitmap em JPEG (ou PNG) no OutputStream
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                // Converte o OutputStream em um array de bytes
+                val imageBytes = outputStream.toByteArray()
+
+                // Codifica os bytes da imagem em Base64 e obtém a String resultante
+                base64String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+            }
+        }
+
+        var editMode = false;
+
         fab.setOnClickListener {
-            println("Teste")
-            editProfileImageButtons.visibility = View.VISIBLE
+
+            editMode = !editMode
+
+            if(editMode){
+                editProfileImageButtons.visibility = View.VISIBLE
+                profileName.visibility = View.GONE
+                EditProfileName.visibility = View.VISIBLE
+                fab.setImageResource(R.drawable.baseline_check_24)
+                editProfileImageChooseButton.setOnClickListener {
+                    getContent.launch("image/*")
+                }
+                editProfileImageTakePhotoButton.setOnClickListener {
+                    when {
+                        ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED -> {
+                            // Permissão já concedida, pode abrir a câmera
+                            openCamera()
+                        }
+                        shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA) -> {
+                            // Fornecer uma explicação adicional ao usuário
+                            Toast.makeText(context, "A câmera é necessária para capturar fotos", Toast.LENGTH_LONG).show()
+                        }
+                        else -> {
+                            // Solicitar permissão
+                            requestCameraPermission()
+                        }
+                    }
+                }
+            }else{
+
+
+                val newName = EditProfileName.text.toString()
+                val newImage = base64String
+
+                clientName = sharedPref.getString("clientName", "");
+                val editor = sharedPref.edit()
+
+                if(!newName.equals(clientName) && !newName.equals("") || !newImage.equals("")){
+                    updateProfile(newName, newImage)
+
+                    if(!newName.equals(clientName) && !newName.equals("")){
+                        profileName.text = newName
+                        editor.putString("clientName", newName)
+                    }
+
+                    if(!newImage.equals("")){
+                        editor.putString("clientImage", newImage)
+                    }
+
+                    editor.apply()
+
+                }
+
+                editProfileImageButtons.visibility = View.GONE
+                profileName.visibility = View.VISIBLE
+                EditProfileName.visibility = View.GONE
+                fab.setImageResource(R.drawable.baseline_edit_24)
+            }
+
 
         }
 
         // Inflate the layout for this fragment
         return view
+    }
+
+    private fun getOutputMediaFileUri(): Uri {
+        val contentResolver = requireActivity().applicationContext.contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, "my_image_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+        }
+        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
+    }
+
+    private fun openCamera() {
+        currentPhotoUri = getOutputMediaFileUri()
+        takePictureLauncher.launch(currentPhotoUri)
+    }
+
+    fun updateProfile(newName : String?, newImage : String? ){
+        setLoadingVisibility(true)
+
+        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
+        val clientEmail = sharedPref.getString("clientEmail", "");
+
+        makeRequestWithRetries(
+            requestCall = {
+                RetrofitClient.apiService.editProfile(UpdateProfileRequest(newName, newImage, clientEmail)).execute()
+            },
+            onSuccess = { editProfileResponse ->
+                Toast.makeText(requireContext(), "Perfil editado com sucesso.", Toast.LENGTH_SHORT).show()
+            },
+            onError = { errorMessage ->
+                println(errorMessage)
+                setLoadingVisibility(false)
+            }
+        )
     }
 
     companion object {

@@ -64,10 +64,9 @@
             android:id="@+id/etEditProfileName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/addEventTextEventNameBox"
+            android:hint="Novo nome"
             android:background="@drawable/edittext_background"
             android:padding="15dp"
-            android:layout_marginTop="24dp"
             android:layout_marginHorizontal="10dp"
             android:visibility="gone"/>
 
@@ -80,6 +79,7 @@
             android:text="email@example.com"
             android:textSize="16sp"
             android:textColor="#555555"
+            android:layout_marginTop="5dp"
             android:layout_marginBottom="24dp"/>
 
         <!-- Informações do Perfil -->
@@ -176,6 +176,7 @@
 
     </LinearLayout>
 
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabEditProfile"
         android:layout_width="wrap_content"
@@ -185,5 +186,13 @@
         android:layout_marginRight="16dp"
         android:src="@drawable/baseline_edit_24"
         android:tint="#FFF8E7"/>
+        <ImageView
+            android:id="@+id/loading_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/cotonete"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"/>
 </LinearLayout>
     </ScrollView>
