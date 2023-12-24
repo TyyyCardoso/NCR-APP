@@ -18,8 +18,8 @@
         tools:layout="@layout/fragment_events" />
 
     <fragment
-        android:id="@+id/navigation_settings"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.settingsFragmento"
+        android:id="@+id/navigation_profile"
+        android:name="ipt.lei.dam.ncrapp.activities.navigation.ProfileFragmento"
         android:label="@string/mainNavPersonalButton"
         tools:layout="@layout/fragment_events" />
 

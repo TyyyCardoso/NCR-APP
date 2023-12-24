@@ -1,5 +1,7 @@
 package ipt.lei.dam.ncrapp.activities
 
+import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.view.LayoutInflater
@@ -8,18 +10,24 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.activities.navigation.EventsFragmento
 import ipt.lei.dam.ncrapp.models.EventResponse
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
-class EventsAdapter(private val eventsList: List<EventResponse>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
+class EventsAdapter(private val context: Context, private val eventsList: List<EventResponse>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
 
     var onItemClickListener: ((EventResponse) -> Unit)? = null
+    var onItemClickSubscribeListener: ((EventResponse, Int) -> Unit)? = null
+    var toast: Toast? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val eventImage: ImageView = view.findViewById(R.id.event_image)
@@ -38,6 +46,9 @@ class EventsAdapter(private val eventsList: List<EventResponse>) : RecyclerView.
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val event = eventsList[position]
+
+        val sharedPreferences = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
+        val clientType = sharedPreferences.getString("clientType", "student")
 
         holder.eventImage.setImageResource(R.drawable.default_event_img) // Um placeholder ou imagem padrão
 
@@ -58,8 +69,29 @@ class EventsAdapter(private val eventsList: List<EventResponse>) : RecyclerView.
             onItemClickListener?.invoke(event)
         }
 
-        holder.eventSubscribeBtn.setOnClickListener {
+        if(null!=event.subscribed){
+            if(event.subscribed!!){
+                holder.eventSubscribeBtn.setText("Cancelar")
+                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.buttonRedColor)) // Exemplo para mudar a cor de fundo do botão
+            }
+        }
 
+
+        holder.eventSubscribeBtn.setOnClickListener {
+            if(clientType.equals("student")){
+                if (toast != null) {
+                    toast!!.setText("É necessário fazer login para se inscrever nos eventos")
+                } else {
+                    toast = Toast.makeText(context, "É necessário fazer login para se inscrever nos eventos", Toast.LENGTH_SHORT)
+                }
+                toast!!.show()
+            }else{
+                onItemClickSubscribeListener?.invoke(event, position)
+            }
+        }
+
+        if(clientType.equals("student")){
+            holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
         }
     }
 
@@ -72,6 +104,7 @@ class EventsAdapter(private val eventsList: List<EventResponse>) : RecyclerView.
         val date = inputFormat.parse(dateTimeStr)
         return outputFormat.format(date)
     }
+
 }
 
 data class Event(val title: String, val description: String, val imageUrl: String)

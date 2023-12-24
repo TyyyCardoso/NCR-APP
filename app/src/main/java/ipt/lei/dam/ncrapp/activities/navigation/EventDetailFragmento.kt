@@ -22,10 +22,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatImageView
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
+import ipt.lei.dam.ncrapp.activities.MainActivity
 import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
@@ -85,8 +88,22 @@ class EventDetailFragmento :  BasicFragment() {
         setupLoadingAnimation(view)
 
         val fabEditEvent = view.findViewById<FloatingActionButton>(R.id.fabEditEvent)
-        fabEditEvent.setOnClickListener {
-            toggleEditMode()
+        val backButton = requireActivity().findViewById<ImageView>(R.id.back_button)
+        backButton.visibility = View.VISIBLE
+        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString("clientType", "member");
+
+        if(!clientType.equals("admin")){
+            fabEditEvent.visibility = View.GONE;
+        }else{
+            fabEditEvent.setOnClickListener {
+                toggleEditMode()
+            }
+        }
+
+        backButton.setOnClickListener {
+            val navController = findNavController()
+            navController.navigate(R.id.navigation_events)
         }
 
         // Componentes VIEW
@@ -141,10 +158,7 @@ class EventDetailFragmento :  BasicFragment() {
             eventImage.setImageBitmap(decodedByte)
         }
 
-        val navController = findNavController()
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
-            navController.navigate(R.id.navigation_events)
-        }
+
 
 
         //EDIT MODE FUNCOES

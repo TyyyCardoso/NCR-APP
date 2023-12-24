@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import ipt.lei.dam.ncrapp.R
@@ -11,6 +12,7 @@ import ipt.lei.dam.ncrapp.activities.BaseActivity
 import ipt.lei.dam.ncrapp.activities.MainActivity
 import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
+
 
 class LoginActivity : BaseActivity() {
 
@@ -24,6 +26,7 @@ class LoginActivity : BaseActivity() {
         val loginButton = findViewById<Button>(R.id.login_button)
         val forgotPasswordLabel = findViewById<TextView>(R.id.forgot_password)
         val registerLabel = findViewById<TextView>(R.id.register_prompt)
+        val backButton = findViewById<ImageView>(R.id.backButtonLogin)
 
         val userEmailFromLogin = intent.getStringExtra("userInsertedEmail")
         if(userEmailFromLogin!=null)
@@ -40,6 +43,11 @@ class LoginActivity : BaseActivity() {
 
         registerLabel.setOnClickListener {
             startActivity(Intent(this@LoginActivity, SignUpActivity::class.java))
+            finish()
+        }
+
+        backButton.setOnClickListener {
+            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             finish()
         }
 
@@ -75,6 +83,18 @@ class LoginActivity : BaseActivity() {
                         RetrofitClient.setAuthToken(loginResponse.token ?: "")
                         println(loginResponse.token ?: "")
                         if(loginResponse.isValidated){
+                            val sharedPref = getSharedPreferences("UserInfo", MODE_PRIVATE)
+                            val editor = sharedPref.edit()
+                            editor.putString("clientName", loginResponse.name)
+                            editor.putString("clientEmail", loginResponse.email)
+                            editor.putBoolean("clientValidated", loginResponse.isValidated)
+                            editor.putString("clientType", loginResponse.type)
+                            editor.putString("clientRegistrationDate", loginResponse.registrationDate)
+                            editor.putString("clientImage", loginResponse.image)
+                            editor.apply()
+
+
+
                             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                             finish()
                             setLoadingVisibility(false)

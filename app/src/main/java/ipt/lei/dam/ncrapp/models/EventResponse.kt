@@ -15,7 +15,8 @@ data class EventResponse(
     var transport: Boolean?,
     var createdAt: LocalDateTime?,
     var updatedAt: LocalDateTime?,
-    var image: String?
+    var image: String?,
+    var subscribed: Boolean?
 ) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readValue(Int::class.java.classLoader) as? Int,
@@ -26,7 +27,9 @@ data class EventResponse(
         parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
         TODO("createAt"),
         TODO("updatedAt"),
-        parcel.readString()
+        parcel.readString(),
+        parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
+
     ) {
     }
 
@@ -37,6 +40,7 @@ data class EventResponse(
         parcel.writeString(location)
         parcel.writeValue(transport)
         parcel.writeString(image)
+        parcel.writeValue(subscribed)
     }
 
     override fun describeContents(): Int {

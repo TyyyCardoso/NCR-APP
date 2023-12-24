@@ -2,12 +2,14 @@
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
 import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
+import ipt.lei.dam.ncrapp.models.GetEventsRequest
 import ipt.lei.dam.ncrapp.models.LoginRequest
 import ipt.lei.dam.ncrapp.models.LoginResponse
 import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
 import ipt.lei.dam.ncrapp.models.SendOTPRequest
 import ipt.lei.dam.ncrapp.models.SignUpRequest
 import ipt.lei.dam.ncrapp.models.SignUpResponse
+import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPResponse
 import okhttp3.ResponseBody
@@ -42,8 +44,8 @@ interface APIService {
         /**
          * Events
          */
-        @GET("event/all")
-        fun getEvents(): Call<List<EventResponse>>
+        @POST("event/all")
+        fun getEvents(@Body getEventsRequest: GetEventsRequest): Call<List<EventResponse>>
 
         @POST("event")
         fun addEvent(@Body eventRequest: EventRequest) : Call<ResponseBody>
@@ -53,4 +55,11 @@ interface APIService {
 
         @DELETE("event/{id}")
         fun deleteEvent(@Path("id") id: Int) : Call<ResponseBody>
+
+        @POST("event/subscribe")
+        fun subscribeEvent(@Body subscribeEventRequest: SubscribeEventRequest) : Call<ResponseBody>
+
+        @POST("event/cancel")
+        fun cancelarInscricao(@Body subscribeEventRequest: SubscribeEventRequest) : Call<ResponseBody>
+
 }

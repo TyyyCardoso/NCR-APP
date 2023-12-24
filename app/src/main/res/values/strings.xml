@@ -7,7 +7,7 @@
     <!-- MAIN SCREEN TEXTS -->
     <string name="mainNavEventsButton">Eventos</string>
     <string name="mainNavSabiasButton">Sabias Que</string>
-    <string name="mainNavPersonalButton">Pessoal</string>
+    <string name="mainNavPersonalButton">Perfil</string>
     <string name="mainEventTabIncreverBtn">Increver-me</string>
     <string name="mainEventTabDetalhesBtn">Detalhes</string>
     <!-- ADD EVENT SCREEN TEXTS -->

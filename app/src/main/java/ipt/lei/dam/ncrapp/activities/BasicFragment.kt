@@ -1,5 +1,6 @@
 package ipt.lei.dam.ncrapp.activities
 
+import android.content.Context.MODE_PRIVATE
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -20,6 +21,7 @@ open class BasicFragment : Fragment() {
         loadingImage = view.findViewById(R.id.loading_image)
         rotationAnimation = AnimationUtils.loadAnimation(this.context, R.anim.rotate_loading)
     }
+
 
     protected fun setLoadingVisibility(visible: Boolean) {
         if (visible) {

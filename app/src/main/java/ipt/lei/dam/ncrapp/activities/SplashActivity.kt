@@ -1,5 +1,6 @@
 package ipt.lei.dam.ncr.activities
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -9,6 +10,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.activities.MainActivity
 import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -29,6 +31,10 @@ class SplashActivity : AppCompatActivity() {
         // Start the logo animation
         logoView.startAnimation(logoAnimation)
 
+        // To clear all SharedPreferences data
+        val sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
+        sharedPreferences.edit().clear().apply()
+
         // Listener for logo animation
         logoAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation?) {}
@@ -39,7 +45,7 @@ class SplashActivity : AppCompatActivity() {
 
                 // Delay for 2 seconds before starting MainActivity
                 Handler(Looper.getMainLooper()).postDelayed({
-                    startActivity(Intent(this@SplashActivity, LoginActivity::class.java))
+                    startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                     finish()
                 }, 2000)  // 2000 milliseconds delay
             }
