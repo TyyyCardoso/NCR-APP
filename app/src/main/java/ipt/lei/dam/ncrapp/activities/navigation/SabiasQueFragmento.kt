@@ -5,28 +5,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.activities.BasicFragment
+import ipt.lei.dam.ncrapp.activities.DidYouKnowAdapter
+import ipt.lei.dam.ncrapp.activities.EventsAdapter
+import ipt.lei.dam.ncrapp.models.GetEventsRequest
+import ipt.lei.dam.ncrapp.network.RetrofitClient
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [sabiasQueFragmento.newInstance] factory method to
- * create an instance of this fragment.
- */
-class sabiasQueFragmento : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+class sabiasQueFragmento : BasicFragment() {
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: DidYouKnowAdapter
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+            override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
         }
     }
 
@@ -34,26 +32,60 @@ class sabiasQueFragmento : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_sabias_que, container, false)
+        val view =  inflater.inflate(R.layout.fragment_sabias_que, container, false)
+
+        recyclerView = view.findViewById(R.id.recyclerViewDidYouKnow)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        setupLoadingAnimation(view)
+
+        val navController = findNavController()
+
+        val fab: FloatingActionButton = view.findViewById(R.id.fab_add_didyouknow)
+
+        var doEventRequest = false
+        doEventRequest = true
+        if (doEventRequest) {
+            setLoadingVisibility(true)
+            makeRequestWithRetries(
+                requestCall = {
+                    RetrofitClient.apiService.getDidYouKnow().execute()
+                },
+                onSuccess = { getDidYouKnowList ->
+                    getDidYouKnowList.forEach { didYouKnow ->
+                        println("" + didYouKnow.id + " - " + didYouKnow.title + "")
+
+                    }
+                    setLoadingVisibility(false)
+                    recyclerView.visibility = View.VISIBLE
+                    adapter = DidYouKnowAdapter(requireContext(), getDidYouKnowList).apply {
+                        onItemClickListener = { didYouKnow ->
+
+                            val bundle = Bundle().apply {
+                                putParcelable("myDidYouKow", didYouKnow)
+                            }
+                            navController.navigate(R.id.navigation_didyouknow_details, bundle)
+                        }
+                    }
+                    recyclerView.adapter = adapter
+                },
+                onError = { errorMessage ->
+                    println(errorMessage)
+                    setLoadingVisibility(false)
+                }
+            )
+        }
+
+        return view
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment sabias_que.
-         */
-        // TODO: Rename and change types and number of parameters
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             sabiasQueFragmento().apply {
                 arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+
                 }
             }
     }

@@ -34,4 +34,10 @@
         android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
 
+    <fragment
+        android:id="@+id/navigation_didyouknow_details"
+        android:name="ipt.lei.dam.ncrapp.activities.navigation.SabiasQueDetailsFragmento"
+        android:label="@string/mainNavEventsButton"
+        tools:layout="@layout/fragment_events" />
+
 </navigation>

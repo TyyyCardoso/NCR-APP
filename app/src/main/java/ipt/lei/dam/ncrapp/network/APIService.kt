@@ -1,5 +1,6 @@
 
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
+import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.models.GetEventsRequest
@@ -61,5 +62,11 @@ interface APIService {
 
         @POST("event/cancel")
         fun cancelarInscricao(@Body subscribeEventRequest: SubscribeEventRequest) : Call<ResponseBody>
+
+        /**
+         * DidYouKnow
+         */
+        @GET("didyouknow/all")
+        fun getDidYouKnow() : Call<List<DidYouKnowResponse>>
 
 }
