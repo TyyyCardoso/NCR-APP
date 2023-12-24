@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
-import ipt.lei.dam.ncrapp.models.EventResponse
 
 class DidYouKnowAdapter(private val context: Context, private val didyouknowList: List<DidYouKnowResponse>) : RecyclerView.Adapter<DidYouKnowAdapter.ViewHolder>() {
     var toast: Toast? = null
@@ -25,7 +24,7 @@ class DidYouKnowAdapter(private val context: Context, private val didyouknowList
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.didyouknow_card_item, parent, false)
+            .inflate(R.layout.did_you_know_card_item, parent, false)
         return DidYouKnowAdapter.ViewHolder(view)
     }
 

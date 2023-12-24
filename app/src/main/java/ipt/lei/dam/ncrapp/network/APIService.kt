@@ -1,5 +1,6 @@
 
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
+import ipt.lei.dam.ncrapp.models.DidYouKnowRequest
 import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
@@ -68,5 +69,14 @@ interface APIService {
          */
         @GET("didyouknow/all")
         fun getDidYouKnow() : Call<List<DidYouKnowResponse>>
+
+        @POST("didyouknow")
+        fun addDidYouKnow(@Body didYouKnowRequest: DidYouKnowRequest) : Call<ResponseBody>
+
+        @PUT("didyouknow")
+        fun editDidYouKnow(@Body didYouKnowRequest: DidYouKnowRequest) : Call<ResponseBody>
+
+        @DELETE("didyouknow/{id}")
+        fun deleteDidYouKnow(@Path("id") id: Int) : Call<ResponseBody>
 
 }

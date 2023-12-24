@@ -77,6 +77,14 @@ class EventAddFragmento : BasicFragment() {
         tvSelectedDateTime.text = formatShow.format(calendar.time)
         selectedDateTime = format.format(calendar.time)
 
+        val backButton = requireActivity().findViewById<ImageView>(R.id.back_button)
+        backButton.visibility = View.VISIBLE
+
+        backButton.setOnClickListener {
+            val navController = findNavController()
+            navController.navigate(R.id.navigation_events)
+        }
+
         setupLoadingAnimation(view)
 
         eventImageSelectButton.setOnClickListener {

@@ -26,12 +26,16 @@
     <string name="eventDetailLocationTitle">Localização Evento </string>
     <string name="eventDetailTransportTitle">Tem Transporte? </string>
     <string name="eventDetailDateTitle">Data do Evento </string>
-    <string name="editEventTextEventEditBtn">Editar Evento </string>
-    <string name="editEventTextEventDeleteBtn">Remover Evento </string>
+    <string name="editEventTextEventEditBtn">Guardar </string>
+    <string name="editEventTextEventDeleteBtn">Remover </string>
+    <!-- ADD DIDYOUKNOW SCREEN TEXTS -->
+    <string name="addDidYouKnowTextBtn">Criar Sabias Que </string>
     <!--  DETAILS & EDIT DIDYOUKNOW SCREEN TEXTS -->
     <string name="didYouKnowDetailNameTitle">Sabias que </string>
     <string name="didYouKnowDetailDescriptionTitle">Descrição </string>
     <string name="didYouKnowDetailReferencesTitle">Referências </string>
+    <string name="didYouKnowEditBtn">Guardar </string>
+    <string name="didYouKnowDeleteBtn">Remover </string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>
     <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>

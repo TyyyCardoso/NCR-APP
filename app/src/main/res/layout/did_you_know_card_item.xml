@@ -46,13 +46,21 @@
                 android:layout_height="wrap_content"
                 android:text="Descrição breve do evento..."
                 android:textSize="14sp"
+                android:maxLines="3"
+                android:ellipsize="end"
                 android:textColor="#666"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Referência:"
+                android:text="Referências:"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#00574B"/>
@@ -64,8 +72,12 @@
                 android:layout_height="wrap_content"
                 android:text="Descrição breve do evento..."
                 android:textSize="14sp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:textColor="#666"/>
         </LinearLayout>
+
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

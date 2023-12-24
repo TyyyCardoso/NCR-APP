@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.navigation.SabiasQueDetailsFragmento"
+    tools:context=".activities.navigation.DidYouKnowDetailsFragmento"
     android:background="#FFF8E7">
 
     <ScrollView
@@ -121,7 +121,7 @@
                 style="@style/CustomButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/editEventTextEventEditBtn"
+                android:text="@string/didYouKnowEditBtn"
                 android:layout_marginBottom="8dp"
                 android:visibility="gone"/>
 
@@ -130,7 +130,7 @@
                 style="@style/CustomRedButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/editEventTextEventDeleteBtn"
+                android:text="@string/didYouKnowDeleteBtn"
                 android:layout_marginBottom="8dp"
                 android:visibility="gone"/>
 
