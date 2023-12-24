@@ -95,7 +95,7 @@ class DidYouKnowAddFragmento : BasicFragment() {
                             if (toast != null) {
                                 toast!!.setText("Sabias Que criado com sucesso")
                             } else {
-                                toast = Toast.makeText(requireActivity(), "Sabias Quecriado com sucesso", Toast.LENGTH_SHORT)
+                                toast = Toast.makeText(requireActivity(), "Sabias Que criado com sucesso", Toast.LENGTH_SHORT)
                             }
                             toast!!.show()
 

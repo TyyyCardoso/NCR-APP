@@ -12,6 +12,7 @@ import ipt.lei.dam.ncrapp.models.SendOTPRequest
 import ipt.lei.dam.ncrapp.models.SignUpRequest
 import ipt.lei.dam.ncrapp.models.SignUpResponse
 import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
+import ipt.lei.dam.ncrapp.models.UpdateProfileRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPResponse
 import okhttp3.ResponseBody
@@ -42,6 +43,9 @@ interface APIService {
 
         @POST("auth/send")
         fun sendOTP(@Body request: SendOTPRequest): Call<ResponseBody>
+
+        @POST("profile/edit")
+        fun editProfile(@Body editProfileRequest: UpdateProfileRequest): Call<ResponseBody>
 
         /**
          * Events

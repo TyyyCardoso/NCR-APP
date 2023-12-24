@@ -3,7 +3,9 @@ package ipt.lei.dam.ncrapp.activities.navigation
 import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.ContentValues
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
@@ -22,8 +24,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageView
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
@@ -68,6 +73,10 @@ class EventDetailFragmento :  BasicFragment() {
     private val calendar = Calendar.getInstance()
     val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
     val formatShow = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
+    private lateinit var getContent: ActivityResultLauncher<String>
+    private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
+    private lateinit var currentPhotoUri: Uri
 
     //Componentes de DELETE
     private lateinit var btnRemoveEvent: Button
@@ -128,6 +137,51 @@ class EventDetailFragmento :  BasicFragment() {
         // Componentes DELETE
         btnRemoveEvent =  view.findViewById(R.id.btnDeleteEvent)
 
+        getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let {
+
+                // Abre um InputStream para a URI da imagem
+                val inputStream = requireActivity().contentResolver.openInputStream(uri)
+                // Converte o InputStream em Bitmap
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                eventImage.setImageBitmap(bitmap)
+                inputStream?.close()
+
+                // Prepara o OutputStream para a conversão
+                val outputStream = ByteArrayOutputStream()
+                // Comprime o Bitmap em JPEG (ou PNG) no OutputStream
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                // Converte o OutputStream em um array de bytes
+                val imageBytes = outputStream.toByteArray()
+
+                // Codifica os bytes da imagem em Base64 e obtém a String resultante
+                eventSelectedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+
+            }
+        }
+
+        takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
+            if (success) {
+                eventImage.setImageURI(currentPhotoUri)
+
+                // Abre um InputStream para a URI da imagem
+                val inputStream = requireActivity().contentResolver.openInputStream(currentPhotoUri)
+                // Converte o InputStream em Bitmap
+                val bitmap = BitmapFactory.decodeStream(inputStream)
+                inputStream?.close()
+
+                // Prepara o OutputStream para a conversão
+                val outputStream = ByteArrayOutputStream()
+                // Comprime o Bitmap em JPEG (ou PNG) no OutputStream
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
+                // Converte o OutputStream em um array de bytes
+                val imageBytes = outputStream.toByteArray()
+
+                // Codifica os bytes da imagem em Base64 e obtém a String resultante
+                eventSelectedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+            }
+        }
+
         //Obter evento do bundle
         event = arguments?.getParcelable<EventResponse>("myEvent")!!
 
@@ -171,11 +225,24 @@ class EventDetailFragmento :  BasicFragment() {
         }
 
         eventImageSelectButton.setOnClickListener {
-            pickImageFromGallery()
+            getContent.launch("image/*")
         }
 
         eventImagemCaptureButton.setOnClickListener {
-            captureImageFromCamera()
+            when {
+                ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED -> {
+                    // Permissão já concedida, pode abrir a câmera
+                    openCamera()
+                }
+                shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA) -> {
+                    // Fornecer uma explicação adicional ao usuário
+                    Toast.makeText(context, "A câmera é necessária para capturar fotos", Toast.LENGTH_LONG).show()
+                }
+                else -> {
+                    // Solicitar permissão
+                    requestCameraPermission()
+                }
+            }
         }
 
         btnRemoveEvent.setOnClickListener {
@@ -254,7 +321,7 @@ class EventDetailFragmento :  BasicFragment() {
                 transport = event.transport!!,
                 createdAt = event.createdAt.toString(),
                 updatedAt = now.format(formatter),
-                image = eventSelectedImage
+                image = "data:image/png;base64," + eventSelectedImage
             )
 
             var doEventRequest = false
@@ -376,66 +443,38 @@ class EventDetailFragmento :  BasicFragment() {
         return outputFormat.format(date)
     }
 
-    private fun pickImageFromGallery() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        startActivityForResult(intent, REQUEST_CODE_PICK_IMAGE)
+    private fun requestCameraPermission() {
+        requestPermissions(arrayOf(android.Manifest.permission.CAMERA),
+            REQUEST_CODE_CAPTURE_IMAGE
+        )
     }
 
-    private fun captureImageFromCamera() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        startActivityForResult(intent, REQUEST_CODE_CAPTURE_IMAGE)
-    }
-
-    // Dentro do seu Fragmento
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            val imageUri = data?.data
-            updateImageView(imageUri)
-        } else if(requestCode == REQUEST_CODE_CAPTURE_IMAGE && resultCode == Activity.RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            updateImageViewWithBitmap(imageBitmap)
-        }
-    }
-
-    private fun updateImageView(uri: Uri?) {
-        println("########!!!!!!!Atualizando imagem")
-        uri?.let {
-            val imageView = view?.findViewById<ImageView>(R.id.eventDetailImage)
-            imageView?.setImageURI(uri)
-            if (imageView != null) {
-                //imageView.setImageBitmap(uriToBitmap(uri))
-                var myBitmap : Bitmap? = uriToBitmap(uri)
-                var myBase64 : String? = myBitmap?.let { it1 -> bitmapToBase64(it1) }
-                if (myBase64 != null) {
-                    eventSelectedImage = "data:image/png;base64," + myBase64
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            REQUEST_CODE_CAPTURE_IMAGE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    // Permissão concedida, pode abrir a câmera
+                    openCamera()
+                } else {
+                    // Permissão negada, lide com a situação
+                    Toast.makeText(context, "Permissão de câmera necessária", Toast.LENGTH_LONG).show()
                 }
             }
         }
     }
 
-    private fun updateImageViewWithBitmap(bitmap: Bitmap) {
-        val imageView = view?.findViewById<ImageView>(R.id.eventDetailImage)
-        if (imageView != null) {
-            imageView.setImageBitmap(bitmap)
-            var myBase64 : String? = bitmap?.let { it1 -> bitmapToBase64(it1) }
-            if (myBase64 != null) {
-                eventSelectedImage = "data:image/png;base64," + myBase64
-            }
+    private fun openCamera() {
+        currentPhotoUri = getOutputMediaFileUri()
+        takePictureLauncher.launch(currentPhotoUri)
+    }
+
+    private fun getOutputMediaFileUri(): Uri {
+        val contentResolver = requireActivity().applicationContext.contentResolver
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, "my_image_${System.currentTimeMillis()}.jpg")
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
         }
-    }
-
-    fun uriToBitmap(uri: Uri): Bitmap? {
-        val inputStream = context?.contentResolver?.openInputStream(uri)
-        return inputStream?.use { BitmapFactory.decodeStream(it) }
-    }
-
-    fun bitmapToBase64(bitmap: Bitmap): String {
-        val outputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-        val byteArray = outputStream.toByteArray()
-        return Base64.encodeToString(byteArray, Base64.DEFAULT)
+        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
     }
 
 
