@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.navigation.sabiasQueFragmento">
+
+    <ImageView
+        android:id="@+id/loading_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/cotonete"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:visibility="visible"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewDidYouKnow"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="56dp"
+        android:clipToPadding="false"
+        android:visibility="gone"/>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_didyouknow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginBottom="72dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/baseline_add_24"
+        android:visibility="visible"
+        android:tint="#FFF8E7"/>
+
+
+</FrameLayout>

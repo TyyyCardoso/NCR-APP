@@ -1,5 +1,7 @@
 
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
+import ipt.lei.dam.ncrapp.models.DidYouKnowRequest
+import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.models.GetEventsRequest
@@ -10,7 +12,6 @@ import ipt.lei.dam.ncrapp.models.SendOTPRequest
 import ipt.lei.dam.ncrapp.models.SignUpRequest
 import ipt.lei.dam.ncrapp.models.SignUpResponse
 import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
-import ipt.lei.dam.ncrapp.models.UpdateProfileRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPResponse
 import okhttp3.ResponseBody
@@ -64,9 +65,18 @@ interface APIService {
         fun cancelarInscricao(@Body subscribeEventRequest: SubscribeEventRequest) : Call<ResponseBody>
 
         /**
-         * Profile
+         * DidYouKnow
          */
-        @POST("profile/edit")
-        fun editProfile(@Body editProfileRequest: UpdateProfileRequest): Call<ResponseBody>
+        @GET("didyouknow/all")
+        fun getDidYouKnow() : Call<List<DidYouKnowResponse>>
+
+        @POST("didyouknow")
+        fun addDidYouKnow(@Body didYouKnowRequest: DidYouKnowRequest) : Call<ResponseBody>
+
+        @PUT("didyouknow")
+        fun editDidYouKnow(@Body didYouKnowRequest: DidYouKnowRequest) : Call<ResponseBody>
+
+        @DELETE("didyouknow/{id}")
+        fun deleteDidYouKnow(@Path("id") id: Int) : Call<ResponseBody>
 
 }

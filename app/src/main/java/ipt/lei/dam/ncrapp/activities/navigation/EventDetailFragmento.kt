@@ -221,17 +221,6 @@ class EventDetailFragmento :  BasicFragment() {
     }
     private fun saveEvent(){
         if(editMode){
-            //Atualizar objeto event
-            event.name = etEventName.text.toString()
-            event.description = etEventDescription.text.toString()
-            event.location = etEventLocation.text.toString()
-            event.transport = checkboxEditEventTransport.isChecked
-
-            //Atualizar VIEW
-            eventName.text = event.name
-            eventDescription.text = event.description
-            eventLocation.text = event.location
-
             //Atualizar em BD
             saveEventBD()
 
@@ -243,6 +232,16 @@ class EventDetailFragmento :  BasicFragment() {
 
     private fun saveEventBD(){
         if(validateFields()){
+            //Atualizar objeto event
+            event.name = etEventName.text.toString()
+            event.description = etEventDescription.text.toString()
+            event.location = etEventLocation.text.toString()
+            event.transport = checkboxEditEventTransport.isChecked
+
+            //Atualizar VIEW
+            eventName.text = event.name
+            eventDescription.text = event.description
+            eventLocation.text = event.location
             val now = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
