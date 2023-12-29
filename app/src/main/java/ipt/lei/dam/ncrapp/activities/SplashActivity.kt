@@ -10,8 +10,10 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.activities.Event
 import ipt.lei.dam.ncrapp.activities.MainActivity
 import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
+import ipt.lei.dam.ncrapp.activities.navigation.EventsFragmento
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,6 +44,8 @@ class SplashActivity : AppCompatActivity() {
             override fun onAnimationEnd(animation: Animation?) {
                 // Start rotation animation after logo animation ends
                 loadingImageView.startAnimation(rotateLoadingAnimation)
+
+
 
                 // Delay for 2 seconds before starting MainActivity
                 Handler(Looper.getMainLooper()).postDelayed({
