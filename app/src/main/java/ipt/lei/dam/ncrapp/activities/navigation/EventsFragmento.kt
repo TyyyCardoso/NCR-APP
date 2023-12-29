@@ -80,15 +80,15 @@ class EventsFragmento : BasicFragment() {
 
         // Configure o listener de atualização
         swipeRefreshLayout.setOnRefreshListener {
-            // Chamada à API para atualizar os eventos
+
             getEventsFromApi(
                 onEventsLoaded = { eventList ->
-                    // Aqui, você pode usar a lista de eventos obtida
+
                     myListEvents = eventList
                     updateRecyclerView(myListEvents!!)
                 },
                 onError = { errorMessage ->
-                    // Lide com o erro, se necessário
+
                 }
             )
         }
@@ -98,12 +98,12 @@ class EventsFragmento : BasicFragment() {
         } else {
             getEventsFromApi(
                 onEventsLoaded = { eventList ->
-                    // Aqui, você pode usar a lista de eventos obtida
+
                     myListEvents = eventList
                     updateRecyclerView(myListEvents!!)
                 },
                 onError = { errorMessage ->
-                    // Lide com o erro, se necessário
+
                 }
             )
         }
