@@ -9,22 +9,30 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
 import ipt.lei.dam.ncrapp.activities.DidYouKnowAdapter
+import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
+import ipt.lei.dam.ncrapp.models.GetEventsRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 
 class sabiasQueFragmento : BasicFragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DidYouKnowAdapter
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
             override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
 
         }
+    }
+
+    companion object {
+        var myDidYouKnowList: List<DidYouKnowResponse>? = null
     }
 
     override fun onCreateView(
@@ -35,6 +43,8 @@ class sabiasQueFragmento : BasicFragment() {
 
         recyclerView = view.findViewById(R.id.recyclerViewDidYouKnow)
         recyclerView.layoutManager = LinearLayoutManager(context)
+
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayoutDidYouKnow)
 
         setupLoadingAnimation(view)
 
@@ -60,35 +70,29 @@ class sabiasQueFragmento : BasicFragment() {
             backButton.visibility = View.INVISIBLE
         } catch (e: Exception) { }
 
-        var doEventRequest = false
-        doEventRequest = true
-        if (doEventRequest) {
+        swipeRefreshLayout.setOnRefreshListener {
             setLoadingVisibility(true)
-            makeRequestWithRetries(
-                requestCall = {
-                    RetrofitClient.apiService.getDidYouKnow().execute()
-                },
-                onSuccess = { getDidYouKnowList ->
-                    getDidYouKnowList.forEach { didYouKnow ->
-                        println("" + didYouKnow.id + " - " + didYouKnow.title + "")
-
-                    }
-                    setLoadingVisibility(false)
-                    recyclerView.visibility = View.VISIBLE
-                    adapter = DidYouKnowAdapter(requireContext(), getDidYouKnowList).apply {
-                        onItemClickListener = { didYouKnow ->
-
-                            val bundle = Bundle().apply {
-                                putParcelable("myDidYouKow", didYouKnow)
-                            }
-                            navController.navigate(R.id.navigation_didyouknow_details, bundle)
-                        }
-                    }
-                    recyclerView.adapter = adapter
+            getDidYouKnowFromApi (
+                onDidYouKnowLoaded = { didYouKnowList ->
+                    myDidYouKnowList = didYouKnowList
+                    updateRecyclerView(myDidYouKnowList!!)
                 },
                 onError = { errorMessage ->
-                    println(errorMessage)
-                    setLoadingVisibility(false)
+
+                }
+            )
+        }
+
+        if(null != myDidYouKnowList && !myDidYouKnowList!!.isEmpty()){
+            updateRecyclerView(myDidYouKnowList!!)
+        } else {
+            getDidYouKnowFromApi (
+                onDidYouKnowLoaded = { didYouKnowList ->
+                    myDidYouKnowList = didYouKnowList
+                    updateRecyclerView(myDidYouKnowList!!)
+                },
+                onError = { errorMessage ->
+
                 }
             )
         }
@@ -96,14 +100,39 @@ class sabiasQueFragmento : BasicFragment() {
         return view
     }
 
-    companion object {
-
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            sabiasQueFragmento().apply {
-                arguments = Bundle().apply {
-
-                }
+    fun getDidYouKnowFromApi(onDidYouKnowLoaded: (List<DidYouKnowResponse>) -> Unit, onError: (String) -> Unit) {
+        makeRequestWithRetries(
+            requestCall = {
+                RetrofitClient.apiService.getDidYouKnow().execute()
+            },
+            onSuccess = { didYouKnowList ->
+                onDidYouKnowLoaded(didYouKnowList)
+            },
+            onError = { errorMessage ->
+                onError(errorMessage)
             }
+        )
+    }
+
+    private fun updateRecyclerView(didYouKnowList: List<DidYouKnowResponse>){
+        didYouKnowList.forEach { didYouKnow ->
+            println("" + didYouKnow.id + " - " + didYouKnow.title + "")
+
+        }
+        setLoadingVisibility(false)
+        recyclerView.visibility = View.VISIBLE
+        adapter = DidYouKnowAdapter(requireContext(), didYouKnowList).apply {
+            onItemClickListener = { didYouKnow ->
+
+                val bundle = Bundle().apply {
+                    putParcelable("myDidYouKow", didYouKnow)
+                }
+                findNavController().navigate(R.id.navigation_didyouknow_details, bundle)
+            }
+        }
+        recyclerView.adapter = adapter
+
+        swipeRefreshLayout.isRefreshing = false
+        setLoadingVisibility(false)
     }
 }

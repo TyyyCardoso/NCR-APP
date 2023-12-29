@@ -2,8 +2,6 @@ package ipt.lei.dam.ncrapp.activities
 
 import android.content.Context
 import android.content.res.ColorStateList
-import android.graphics.BitmapFactory
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,16 +9,13 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
-import ipt.lei.dam.ncrapp.activities.navigation.EventsFragmento
 import ipt.lei.dam.ncrapp.models.EventResponse
+import ipt.lei.dam.ncrapp.network.RetrofitClient
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 
 class EventsAdapter(private val context: Context, private val eventsList: List<EventResponse>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
@@ -50,13 +45,17 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
         val sharedPreferences = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
         val clientType = sharedPreferences.getString("clientType", "student")
 
-        holder.eventImage.setImageResource(R.drawable.default_event_img) // Um placeholder ou imagem padrão
 
         if (!event.image.isNullOrBlank()){
-            val base64Image: String = event.image!!.split(",").get(1)
-            val decodedString: ByteArray = Base64.decode(base64Image, Base64.DEFAULT)
-            val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-            holder.eventImage.setImageBitmap(decodedByte)
+            val url = "" + RetrofitClient.BASE_URL + "event/images/" + event.image
+            println("Event: " + event.name + "getting image from: " + url)
+            Picasso.get()
+                .load(url)
+                .fit()
+                .centerCrop()
+                .placeholder(R.drawable.default_event_img)
+                .error(R.drawable.baseline_settings_24)
+                .into(holder.eventImage)
         }
 
         holder.eventName.text = event.name

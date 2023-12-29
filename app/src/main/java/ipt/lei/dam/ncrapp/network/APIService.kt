@@ -2,7 +2,6 @@
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
 import ipt.lei.dam.ncrapp.models.DidYouKnowRequest
 import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
-import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.models.GetEventsRequest
 import ipt.lei.dam.ncrapp.models.LoginRequest
@@ -15,14 +14,17 @@ import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
 import ipt.lei.dam.ncrapp.models.UpdateProfileRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPResponse
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
 import retrofit2.http.PUT
+import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface APIService {
@@ -53,11 +55,30 @@ interface APIService {
         @POST("event/all")
         fun getEvents(@Body getEventsRequest: GetEventsRequest): Call<List<EventResponse>>
 
+        @Multipart
         @POST("event")
-        fun addEvent(@Body eventRequest: EventRequest) : Call<ResponseBody>
+        fun addEvent(
+                @Part("name") name: RequestBody,
+                @Part("description") description: RequestBody,
+                @Part("date") date: RequestBody,
+                @Part("location") location: RequestBody,
+                @Part("transport") transport: RequestBody,
+                @Part image: MultipartBody.Part
+        ): Call<Void>
 
+        @Multipart
         @PUT("event")
-        fun editEvent(@Body eventRequest: EventRequest) : Call<ResponseBody>
+        fun editEvent(
+                @Part("id") id: RequestBody,
+                @Part("name") name: RequestBody,
+                @Part("description") description: RequestBody,
+                @Part("date") date: RequestBody,
+                @Part("location") location: RequestBody,
+                @Part("transport") transport: RequestBody,
+                @Part("createdAt") createdAt: RequestBody,
+                @Part image: MultipartBody.Part,
+                @Part("imageFileName") imageFileName: RequestBody,
+        ) : Call<Void>
 
         @DELETE("event/{id}")
         fun deleteEvent(@Path("id") id: Int) : Call<ResponseBody>

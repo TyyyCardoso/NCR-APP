@@ -3,7 +3,6 @@ package ipt.lei.dam.ncrapp.activities.navigation
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -11,10 +10,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
 import ipt.lei.dam.ncrapp.activities.EventsAdapter
+import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.models.GetEventsRequest
 import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
@@ -22,6 +23,18 @@ import ipt.lei.dam.ncrapp.network.RetrofitClient
 class EventsFragmento : BasicFragment() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: EventsAdapter
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+
+
+    companion object {
+        var myListEvents: List<EventResponse>? = null
+        var needRefresh: Boolean = false
+        fun setMyNeedRefresh(state : Boolean){
+            needRefresh = state
+        }
+    }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,10 +49,12 @@ class EventsFragmento : BasicFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_events, container, false)
-
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
+        swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
 
+        println("LOADING EVENTS FRAGMENTO.................")
+        
         setupLoadingAnimation(view)
 
         val navController = findNavController()
@@ -56,63 +71,114 @@ class EventsFragmento : BasicFragment() {
 
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         val clientType = sharedPref.getString("clientType", "member");
-        val clientEmail = sharedPref.getString("clientEmail", "");
 
         if(!clientType.equals("admin")){
-            fab.visibility = GONE;
+            //fab.visibility = GONE;
+            fab.setOnClickListener {
+                navController.navigate(R.id.navigation_events_add)
+            }
         }else{
             fab.setOnClickListener {
                 navController.navigate(R.id.navigation_events_add)
             }
         }
 
+        // Configure o listener de atualização
+        swipeRefreshLayout.setOnRefreshListener {
+            getEventsFromApi(
+                onEventsLoaded = { eventList ->
+                    myListEvents = eventList
+                    updateRecyclerView(myListEvents!!)
+                },
+                onError = { errorMessage ->
 
-        var doEventRequest = false
-            doEventRequest = true
-            if (doEventRequest) {
-                setLoadingVisibility(true)
-                makeRequestWithRetries(
-                    requestCall = {
-                        RetrofitClient.apiService.getEvents(GetEventsRequest(clientEmail)).execute()
-                    },
-                    onSuccess = { EventResponseList ->
-                        EventResponseList.forEach { event ->
-                            println("" + event.id + " - " + event.name + " - " + event.createdAt)
+                }
+            )
+        }
 
-                        }
-                        setLoadingVisibility(false)
-                        recyclerView.visibility = View.VISIBLE
-                        adapter = EventsAdapter(requireContext(), EventResponseList).apply {
-                            onItemClickListener = { event ->
-
-                                val bundle = Bundle().apply {
-                                    putParcelable("myEvent", event)
-                                }
-                                navController.navigate(R.id.navigation_events_details, bundle)
-                            }
-                            onItemClickSubscribeListener = { event, position ->
-                                if(event.subscribed == true){
-                                    cancelarInscricao(event.id)
-                                    event.subscribed = false;
-                                    adapter.notifyItemChanged(position)
-                                }else{
-                                    inscreverEvento(event.id)
-                                    event.subscribed = true;
-                                    adapter.notifyItemChanged(position)
-                                }
-
-                            }
-                        }
-                        recyclerView.adapter = adapter
+        if(null != myListEvents && !myListEvents!!.isEmpty()){
+            if(needRefresh){
+                getEventsFromApi(
+                    onEventsLoaded = { eventList ->
+                        myListEvents = eventList
+                        updateRecyclerView(myListEvents!!)
+                        setMyNeedRefresh(false)
                     },
                     onError = { errorMessage ->
-                        println(errorMessage)
-                        setLoadingVisibility(false)
                     }
                 )
+            } else {
+                updateRecyclerView(myListEvents!!)
             }
 
+        } else {
+            getEventsFromApi(
+                onEventsLoaded = { eventList ->
+
+                    myListEvents = eventList
+                    updateRecyclerView(myListEvents!!)
+                },
+                onError = { errorMessage ->
+
+                }
+            )
+
+        }
+
         return view
+
+    }
+
+    fun getEventsFromApi(onEventsLoaded: (List<EventResponse>) -> Unit, onError: (String) -> Unit) {
+        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
+        val clientEmail = sharedPref.getString("clientEmail", "")
+
+        makeRequestWithRetries(
+            requestCall = {
+                RetrofitClient.apiService.getEvents(GetEventsRequest(clientEmail)).execute()
+            },
+            onSuccess = { eventList ->
+                onEventsLoaded(eventList)
+            },
+            onError = { errorMessage ->
+                onError(errorMessage)
+            }
+        )
+    }
+
+    private fun updateRecyclerView(eventList: List<EventResponse>) {
+        // Esta função é chamada quando a lista de eventos está pronta para uso
+        eventList.forEach { event ->
+            println("${event.id} - ${event.name} - ${event.createdAt}")
+        }
+        setLoadingVisibility(false)
+        recyclerView.visibility = View.VISIBLE
+
+        // Atualize o RecyclerView com os novos dados
+        adapter = EventsAdapter(requireContext(), eventList).apply {
+            onItemClickListener = { event ->
+                val bundle = Bundle().apply {
+                    putParcelable("myEvent", event)
+                }
+                findNavController().navigate(R.id.navigation_events_details, bundle)
+            }
+            onItemClickSubscribeListener = { event, position ->
+                if (event.subscribed == true) {
+                    cancelarInscricao(event.id)
+                    event.subscribed = false
+                    adapter.notifyItemChanged(position)
+                } else {
+                    inscreverEvento(event.id)
+                    event.subscribed = true
+                    adapter.notifyItemChanged(position)
+                }
+            }
+        }
+        println("SETTING ADAPTER")
+        recyclerView.adapter = adapter
+
+        // Termine a animação de atualização
+        swipeRefreshLayout.isRefreshing = false
     }
 
     fun inscreverEvento(id : Int?){

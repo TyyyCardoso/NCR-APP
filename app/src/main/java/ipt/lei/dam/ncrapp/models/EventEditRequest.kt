@@ -1,6 +1,8 @@
 package ipt.lei.dam.ncrapp.models
 
-data class EventRequest(
+import android.net.Uri
+
+data class EventEditRequest(
     val id: Int,
     val name: String,
     val description: String,
@@ -8,6 +10,6 @@ data class EventRequest(
     val location: String,
     val transport: Boolean,
     val createdAt: String,
-    val updatedAt: String,
-    val image: String
+    val image: Uri?,
+    val imageFileName: String
 )
