@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+   <group android:id="@+id/Principal" android:checkableBehavior="single">
+
+       <item
+           android:id="@+id/navigation_sabias"
+           android:icon="@drawable/baseline_question_mark_24"
+           android:title="@string/mainNavSabiasButton" />
+
+       <item
+           android:id="@+id/navigation_events"
+           android:icon="@drawable/baseline_event_note_24"
+           android:title="@string/mainNavEventsButton" />
+
+       <item
+           android:id="@+id/navigation_profile"
+           android:icon="@drawable/baseline_account_circle_24"
+           android:title="@string/mainNavPersonalButton" />
+
+   </group>
+    <group android:id="@+id/Secundário" android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/Staff"
+            android:icon="@drawable/baseline_question_mark_24"
+            android:title="Staff" />
+
+        <item
+            android:id="@+id/Horarios"
+            android:icon="@drawable/baseline_event_note_24"
+            android:title="Horarios" />
+
+        <item
+            android:id="@+id/Info"
+            android:icon="@drawable/baseline_account_circle_24"
+            android:title="Info" />
+
+    </group>
+    <group android:id="@+id/Saida" android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/saida"
+            android:icon="@drawable/baseline_logout_24"
+            android:title="Sair" />
+
+    </group>
+</menu>
