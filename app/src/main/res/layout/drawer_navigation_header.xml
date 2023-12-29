@@ -6,21 +6,20 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingTop="16dp"
-    android:background="@drawable/button_background">
+    android:background="#FFF8E7">
 
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/logo">
-
     </ImageView>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Sample Title"
-        android:textColor="@color/white"
+        android:textColor="@color/buttonColor"
         android:textSize="18sp"
         android:textStyle="bold"/>
 

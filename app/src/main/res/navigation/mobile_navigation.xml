@@ -45,4 +45,10 @@
         android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
 
+    <fragment
+        android:id="@+id/navigation_staff"
+        android:name="ipt.lei.dam.ncrapp.activities.navigation.StaffFragment"
+        android:label="@string/mainNavEventsButton"
+        tools:layout="@layout/fragment_events" />
+
 </navigation>

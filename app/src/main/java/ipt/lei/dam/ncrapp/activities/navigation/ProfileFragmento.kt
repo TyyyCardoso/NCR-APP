@@ -93,11 +93,13 @@ class ProfileFragmento : BasicFragment() {
         val profileTipoCliente =  view.findViewById<TextView>(R.id.profileTipoCliente)
         val profileValidated =  view.findViewById<TextView>(R.id.profileValidado)
         val profileDataRegisto =  view.findViewById<TextView>(R.id.profileDataRegisto)
+        val profileAbout = view.findViewById<TextView>(R.id.profileAboutMe)
 
         val editProfileImageButtons = view.findViewById<LinearLayout>(R.id.eventImageEditLayout)
         val editProfileImageChooseButton = view.findViewById<Button>(R.id.btnEditEventImageSelect)
         val editProfileImageTakePhotoButton = view.findViewById<Button>(R.id.btnEditEventImageCapture)
         val EditProfileName = view.findViewById<EditText>(R.id.etEditProfileName)
+        val EditProfileAboutMe = view.findViewById<EditText>(R.id.editProfileAboutMe)
 
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         var clientName = sharedPref.getString("clientName", "Erro a obter o seu nome.");
@@ -106,6 +108,7 @@ class ProfileFragmento : BasicFragment() {
         val clientValidated = sharedPref.getBoolean("clientValidated", true);
         val clientDataRegisto = sharedPref.getString("clientRegistrationDate", "Erro ao obter a sua data de registo");
         val clientImage = sharedPref.getString("clientImage", "");
+        val clientAbout = sharedPref.getString("clientAbout", "Say something about you...");
 
         profileName.text = clientName
         profileEmail.text = clientEmail
@@ -122,6 +125,7 @@ class ProfileFragmento : BasicFragment() {
             // Definir o Bitmap no ImageView
             profileImage.setImageBitmap(decodedByte)
         }
+        profileAbout.text = clientAbout
 
         var base64String = "";
 
@@ -180,6 +184,9 @@ class ProfileFragmento : BasicFragment() {
                 editProfileImageButtons.visibility = View.VISIBLE
                 profileName.visibility = View.GONE
                 EditProfileName.visibility = View.VISIBLE
+                profileAbout.visibility = View.GONE
+                EditProfileAboutMe.visibility = View.VISIBLE
+
                 fab.setImageResource(R.drawable.baseline_check_24)
                 editProfileImageChooseButton.setOnClickListener {
                     getContent.launch("image/*")
@@ -205,12 +212,13 @@ class ProfileFragmento : BasicFragment() {
 
                 val newName = EditProfileName.text.toString()
                 val newImage = base64String
+                val newAbout = EditProfileAboutMe.text.toString()
 
                 clientName = sharedPref.getString("clientName", "");
                 val editor = sharedPref.edit()
 
-                if(!newName.equals(clientName) && !newName.equals("") || !newImage.equals("")){
-                    updateProfile(newName, newImage)
+                if(!newName.equals(clientName) && !newName.equals("") || !newImage.equals("") || !newAbout.equals("")){
+                    updateProfile(newName, newImage, newAbout)
 
                     if(!newName.equals(clientName) && !newName.equals("")){
                         profileName.text = newName
@@ -221,14 +229,23 @@ class ProfileFragmento : BasicFragment() {
                         editor.putString("clientImage", newImage)
                     }
 
+                    if(!newAbout.equals("")){
+                        profileAbout.text = newAbout
+                        editor.putString("clientAbout", newAbout)
+                    }
+
                     editor.apply()
 
                 }
 
                 editProfileImageButtons.visibility = View.GONE
                 profileName.visibility = View.VISIBLE
+                profileAbout.visibility = View.VISIBLE
                 EditProfileName.visibility = View.GONE
+                EditProfileAboutMe.visibility = View.GONE
                 fab.setImageResource(R.drawable.baseline_edit_24)
+
+
             }
 
 
@@ -252,7 +269,7 @@ class ProfileFragmento : BasicFragment() {
         takePictureLauncher.launch(currentPhotoUri)
     }
 
-    fun updateProfile(newName : String?, newImage : String? ){
+    fun updateProfile(newName : String?, newImage : String?, newAbout : String? ){
         setLoadingVisibility(true)
 
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
@@ -260,7 +277,7 @@ class ProfileFragmento : BasicFragment() {
 
         makeRequestWithRetries(
             requestCall = {
-                RetrofitClient.apiService.editProfile(UpdateProfileRequest(newName, newImage, clientEmail)).execute()
+                RetrofitClient.apiService.editProfile(UpdateProfileRequest(newName, newImage, clientEmail, newAbout)).execute()
             },
             onSuccess = { editProfileResponse ->
                 Toast.makeText(requireContext(), "Perfil editado com sucesso.", Toast.LENGTH_SHORT).show()

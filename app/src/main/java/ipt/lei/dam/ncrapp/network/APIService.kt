@@ -10,6 +10,7 @@ import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
 import ipt.lei.dam.ncrapp.models.SendOTPRequest
 import ipt.lei.dam.ncrapp.models.SignUpRequest
 import ipt.lei.dam.ncrapp.models.SignUpResponse
+import ipt.lei.dam.ncrapp.models.StaffMemberResponse
 import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
 import ipt.lei.dam.ncrapp.models.UpdateProfileRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
@@ -48,6 +49,13 @@ interface APIService {
 
         @POST("profile/edit")
         fun editProfile(@Body editProfileRequest: UpdateProfileRequest): Call<ResponseBody>
+
+        /**
+         * Staff
+         */
+
+        @GET("staff/all")
+        fun getStaff(): Call<List<StaffMemberResponse>>
 
         /**
          * Events

@@ -91,6 +91,7 @@ class LoginActivity : BaseActivity() {
                             editor.putString("clientType", loginResponse.type)
                             editor.putString("clientRegistrationDate", loginResponse.registrationDate)
                             editor.putString("clientImage", loginResponse.image)
+                            editor.putString("clientAbout", loginResponse.about)
                             editor.apply()
 
 

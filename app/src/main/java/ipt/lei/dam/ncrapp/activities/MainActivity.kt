@@ -35,44 +35,58 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var drawerLayout: DrawerLayout
+    private lateinit var bottomNavigationView: BottomNavigationView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        //Construção da toolbar
+        val toolbar: Toolbar = findViewById(R.id.toolbar_custom)
+        val toolbarBackButton: ImageView = findViewById(R.id.back_button)
+        val toolbarLoginContainer: LinearLayout = findViewById(R.id.entrar_container)
+        val toolbarLoginContainerText: TextView = findViewById(R.id.containerText)
+        val toolbarLoginImage: ImageView = findViewById(R.id.containerImage)
 
-        //Referencia ao BottomNavigationView
-        val navView: BottomNavigationView = binding.navView
-        drawerLayout = binding.drawerLayout
+        setSupportActionBar(toolbar)
+        val actionBar = supportActionBar
+        actionBar?.setDisplayShowTitleEnabled(false)
+        toolbarBackButton.visibility = GONE;
 
-        val navigationDrawerView = findViewById<NavigationView>(R.id.nav_side_view)
-
-        navigationDrawerView.setNavigationItemSelectedListener(this)
-
-
-
-        //Referencia ao Fragment principal que fica por cima do BottomNavigationView
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        //Referencia aos destinos (id de menu item que é == ao id usado em mobile_navegation)
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_events, R.id.navigation_sabias, R.id.navigation_profile
-            )
-        )
-        //setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
-
+        //Inicialização do objeto de cache
         val sharedPref = getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
+        //Obter tipo de cliente da cache
         var clientType = sharedPref.getString("clientType", "student");
 
+        //Obter views de navegação (Side and bottom navigation)
+        bottomNavigationView = binding.navView
+        drawerLayout = binding.drawerLayout
 
+        //Referencia ao Fragment principal que fica por cima do BottomNavigationView para dar set no controlador
+        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        bottomNavigationView.setupWithNavController(navController)
 
-        navView.setOnItemSelectedListener { item ->
+        //Obtenção da referência da navegação do drawer menu
+        val navigationDrawerView = findViewById<NavigationView>(R.id.nav_side_view)
+        navigationDrawerView.setNavigationItemSelectedListener(this)
+        //Criado o toggle para o drawer
+        val toggle = ActionBarDrawerToggle(this,drawerLayout,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+        //View selecionada por defeito
+        navigationDrawerView.setCheckedItem(R.id.navigation_events)
+
+        //Alterar o design caso o client esteja logado
+        if(!clientType.equals("student")){
+            toolbarLoginContainerText.text = "Sair"
+            toolbarLoginImage.setImageResource(R.drawable.baseline_logout_24)
+        }
+
+        bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_profile -> {
+                    navigationDrawerView.setCheckedItem(R.id.navigation_profile)
                     clientType = sharedPref.getString("clientType", "student");
                     if(clientType.equals("student")){
                         AlertDialog.Builder(this)
@@ -93,10 +107,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
                 }
                 R.id.navigation_sabias -> {
+                    navigationDrawerView.setCheckedItem(R.id.navigation_sabias)
                     findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_sabias)
                     true
                 }
                 R.id.navigation_events -> {
+                    navigationDrawerView.setCheckedItem(R.id.navigation_events)
                     findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
                     true
                 }
@@ -104,27 +120,6 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
         }
-
-
-        val toolbar: Toolbar = findViewById(R.id.toolbar_custom)
-        val toolbarBackButton: ImageView = findViewById(R.id.back_button)
-        val toolbarLoginContainer: LinearLayout = findViewById(R.id.entrar_container)
-        val toolbarLoginContainerText: TextView = findViewById(R.id.containerText)
-        val toolbarLoginImage: ImageView = findViewById(R.id.containerImage)
-
-        setSupportActionBar(toolbar)
-        // Get the ActionBar here and set the title to null
-        val actionBar = supportActionBar
-        actionBar?.setDisplayShowTitleEnabled(false)  // Hide the default title
-        toolbarBackButton.visibility = GONE;
-
-        if(!clientType.equals("student")){
-            toolbarLoginContainerText.text = "Sair"
-            toolbarLoginImage.setImageResource(R.drawable.baseline_logout_24) // Use o nome do resource drawable
-        }
-
-
-
 
         toolbarLoginContainer.setOnClickListener {
             clientType = sharedPref.getString("clientType", "student");
@@ -142,20 +137,29 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
         }
-
-
-        val toggle = ActionBarDrawerToggle(this,drawerLayout,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        drawerLayout.addDrawerListener(toggle)
-        toggle.syncState()
-
-        navigationDrawerView.setCheckedItem(R.id.navigation_events)
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        val sharedPref = getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         when(item.itemId) {
             R.id.navigation_profile -> {
-                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_profile)
-                true
+                var clientType = sharedPref.getString("clientType", "student");
+                if(clientType.equals("student")){
+                    AlertDialog.Builder(this)
+                        .setTitle("Aviso")
+                        .setMessage("Tem que fazer login para poder aceder ao seu perfil.")
+                        .setNeutralButton("Mais tarde") { dialog, which ->
+                        }
+                        .setPositiveButton(" Fazer Login") { dialog, which ->
+                            startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                            finish()
+                        }
+                        .show()
+                    false
+                }else{
+                    findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_profile)
+                    true
+                }
             }
             R.id.navigation_sabias -> {
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_sabias)
@@ -165,10 +169,33 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
                 true
             }
+            R.id.navigation_staff -> {
+                clearBottomNavigationSelection()
+                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_staff)
+                true
+            }
+            R.id.navigation_schedule -> {
+                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_schedule)
+                true
+            }
+            R.id.navigation_info -> {
+                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_info)
+                true
+            }
+            R.id.navigation_logout -> {
+                false
+            }
             else -> true
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    private fun clearBottomNavigationSelection() {
+        val size = bottomNavigationView.menu.size()
+        for (i in 0 until size) {
+            bottomNavigationView.menu.getItem(i).isChecked = false
+        }
     }
 
 }
