@@ -1,11 +1,8 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.ContentValues
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -27,21 +24,30 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
-import ipt.lei.dam.ncrapp.models.EventRequest
+import ipt.lei.dam.ncrapp.activities.navigation.EventsFragmento.Companion.setMyNeedRefresh
+import ipt.lei.dam.ncrapp.models.EventAddRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.ByteArrayOutputStream
+import java.io.File
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
 
 class EventAddFragmento : BasicFragment() {
     private var eventSelectedImage: String = ""
+    private var eventSelectedImageUri: Uri? = null
     private lateinit var eventNameEditText: EditText
     private lateinit var eventDescEditText: EditText
     private lateinit var eventLocalEditText: EditText
@@ -92,27 +98,16 @@ class EventAddFragmento : BasicFragment() {
         backButton.visibility = View.VISIBLE
 
         getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
+            uri?.let { selectedImageUri ->
 
-                // Abre um InputStream para a URI da imagem
-                val inputStream = requireActivity().contentResolver.openInputStream(uri)
-                // Converte o InputStream em Bitmap
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                eventImage.setImageBitmap(bitmap)
-                inputStream?.close()
+                Picasso.get().load(selectedImageUri).into(eventImage)
 
-                // Prepara o OutputStream para a conversão
-                val outputStream = ByteArrayOutputStream()
-                // Comprime o Bitmap em JPEG (ou PNG) no OutputStream
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                // Converte o OutputStream em um array de bytes
-                val imageBytes = outputStream.toByteArray()
 
-                // Codifica os bytes da imagem em Base64 e obtém a String resultante
-                eventSelectedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT)
-
+                // Armazena o arquivo no eventRequest.image
+                eventSelectedImageUri = selectedImageUri
             }
         }
+
 
         takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
@@ -137,8 +132,7 @@ class EventAddFragmento : BasicFragment() {
         }
 
         backButton.setOnClickListener {
-            val navController = findNavController()
-            navController.navigate(R.id.navigation_events)
+            findNavController().navigate(R.id.navigation_events)
         }
 
         setupLoadingAnimation(view)
@@ -176,62 +170,118 @@ class EventAddFragmento : BasicFragment() {
 
                 val eventTransport = eventTransportCheckbox.isChecked
 
-                // Obtendo a data e hora atual
-                val now = LocalDateTime.now()
-                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
-
                 // Criando o objeto EventResponse
-                val eventRequest = EventRequest(
-                    id = -1,
+                val event = EventAddRequest(
                     name = eventName,
                     description = eventDesc,
                     date = selectedDateTime,
                     location = eventLocal,
                     transport = eventTransport,
-                    createdAt = now.format(formatter),
-                    updatedAt = now.format(formatter),
-                    image = "data:image/png;base64," + eventSelectedImage
+                    image = eventSelectedImageUri
                 )
 
-                var doEventRequest = false
+                val namePart = RequestBody.create(MultipartBody.FORM, event.name)
+                val descriptionPart = RequestBody.create(MultipartBody.FORM, event.description)
+                val datePart = RequestBody.create(MultipartBody.FORM, event.date)
+                val locationPart = RequestBody.create(MultipartBody.FORM, event.location)
+                val transportPart = RequestBody.create(MultipartBody.FORM, event.transport.toString())
 
-                doEventRequest = true
-                if (doEventRequest) {
+                println("Fields validating, checking image...")
+
+                if(event.image != null){
+                    println("Image inserted")
+                    val imageFile = File(getRealPathFromUri(event.image))
+                    val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
+                    val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
+
+                    val call = RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart)
                     setLoadingVisibility(true)
-                    makeRequestWithRetries(
-                        requestCall = {
-                            RetrofitClient.apiService.addEvent(eventRequest).execute()
-                        },
-                        onSuccess = { isAdded ->
-                            setLoadingVisibility(false)
 
-                            val navController = findNavController()
-                            navController.navigate(R.id.navigation_events)
+                    call.enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                // Tratamento de sucesso
+                                setLoadingVisibility(false)
 
-                            if (toast != null) {
-                                toast!!.setText("Evento criado com sucesso")
+                                setMyNeedRefresh(true)
+
+                                val navOptions = NavOptions.Builder()
+                                    .setPopUpTo(R.id.navigation_events, true)
+                                    .build()
+
+
+                                findNavController().navigate(R.id.navigation_events, null, navOptions)
+
+                                if (toast != null) {
+                                    toast!!.setText("Evento criado com sucesso")
+                                } else {
+                                    toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
+                                }
+                                toast!!.show()
                             } else {
-                                toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
+                                // Tratamento de erro
+                                setLoadingVisibility(false)
                             }
-                            toast!!.show()
-
-                        },
-                        onError = { errorMessage ->
-                            if (toast != null) {
-                                toast!!.setText(errorMessage)
-                            } else {
-                                toast = Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT)
-                            }
-                            toast!!.show()
-                            setLoadingVisibility(false)
                         }
-                    )
+
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            // Tratamento de falha
+                        }
+                    })
+                } else {
+                    println("Using default image")
+                    val emptyRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), ByteArray(0))
+                    val imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
+                    val call = RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart)
+                    setLoadingVisibility(true)
+                    println("Using default image2")
+                    call.enqueue(object : Callback<Void> {
+                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                            if (response.isSuccessful) {
+                                // Tratamento de sucesso
+
+                                setLoadingVisibility(false)
+                                setMyNeedRefresh(true)
+
+                                findNavController().navigate(R.id.navigation_events)
+
+                                if (toast != null) {
+                                    toast!!.setText("Evento criado com sucesso")
+                                } else {
+                                    toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
+                                }
+                                toast!!.show()
+                            } else {
+                                // Tratamento de erro
+                                println("Using default image error")
+                                setLoadingVisibility(false)
+                            }
+                        }
+
+                        override fun onFailure(call: Call<Void>, t: Throwable) {
+                            // Tratamento de falha
+                        }
+                    })
                 }
+
+
+
+
             }
 
 
         }
         return view
+    }
+
+    private fun getRealPathFromUri(uri: Uri): String? {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = requireActivity().contentResolver.query(uri, projection, null, null, null)
+        val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor?.moveToFirst()
+        val filePath = cursor?.getString(columnIndex ?: -1)
+        cursor?.close()
+        return filePath
     }
 
     private fun pickDateTime() {

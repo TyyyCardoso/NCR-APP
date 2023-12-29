@@ -1,10 +1,8 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
-import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.ContentValues
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -23,24 +21,19 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.addCallback
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.AppCompatImageView
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
-import ipt.lei.dam.ncrapp.activities.MainActivity
-import ipt.lei.dam.ncrapp.models.EventRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
 
@@ -206,10 +199,15 @@ class EventDetailFragmento :  BasicFragment() {
         eventSelectedImage = event?.image.toString()
 
         if (!event?.image.isNullOrBlank()){
-            val base64Image: String = event?.image!!.split(",").get(1)
-            val decodedString: ByteArray = Base64.decode(base64Image, Base64.DEFAULT)
-            val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-            eventImage.setImageBitmap(decodedByte)
+            val url = "" + RetrofitClient.BASE_URL + "event/images/" + event.image
+            println("Event: " + event.name + "getting image from: " + url)
+            Picasso.get()
+                .load(url)
+                .resize(400, 200) // Substitua "width" e "height" pelos valores desejados
+                .centerInside()
+                .placeholder(R.drawable.default_event_img)
+                .error(R.drawable.baseline_settings_24)
+                .into(eventImage)
         }
 
 
@@ -289,7 +287,7 @@ class EventDetailFragmento :  BasicFragment() {
     private fun saveEvent(){
         if(editMode){
             //Atualizar em BD
-            saveEventBD()
+            //saveEventBD()
 
             //Voltar ao VIEW
             toggleEditMode()
@@ -297,6 +295,7 @@ class EventDetailFragmento :  BasicFragment() {
         }
     }
 
+    /*
     private fun saveEventBD(){
         if(validateFields()){
             //Atualizar objeto event
@@ -312,7 +311,7 @@ class EventDetailFragmento :  BasicFragment() {
             val now = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 
-            val eventRequest  = EventRequest(
+            val eventRequest  = EventAddRequest(
                 id = event.id!!,
                 name = event.name!!,
                 description = event.description!!,
@@ -321,7 +320,7 @@ class EventDetailFragmento :  BasicFragment() {
                 transport = event.transport!!,
                 createdAt = event.createdAt.toString(),
                 updatedAt = now.format(formatter),
-                image = "data:image/png;base64," + eventSelectedImage
+                //image = "data:image/png;base64," + eventSelectedImage
             )
 
             var doEventRequest = false
@@ -361,7 +360,7 @@ class EventDetailFragmento :  BasicFragment() {
 
         }
     }
-
+    */
     private fun validateFields(): Boolean{
         if (etEventName.text.toString().trim().isEmpty()) {
             etEventName.error = "Introduza um nome"

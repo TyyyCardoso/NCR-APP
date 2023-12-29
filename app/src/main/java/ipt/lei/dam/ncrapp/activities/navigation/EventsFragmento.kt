@@ -1,10 +1,8 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
@@ -14,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.gson.Gson
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
 import ipt.lei.dam.ncrapp.activities.EventsAdapter
@@ -31,7 +28,10 @@ class EventsFragmento : BasicFragment() {
 
     companion object {
         var myListEvents: List<EventResponse>? = null
-
+        var needRefresh: Boolean = false
+        fun setMyNeedRefresh(state : Boolean){
+            needRefresh = state
+        }
     }
 
 
@@ -52,6 +52,8 @@ class EventsFragmento : BasicFragment() {
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(context)
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayout)
+
+        println("LOADING EVENTS FRAGMENTO.................")
         
         setupLoadingAnimation(view)
 
@@ -71,7 +73,10 @@ class EventsFragmento : BasicFragment() {
         val clientType = sharedPref.getString("clientType", "member");
 
         if(!clientType.equals("admin")){
-            fab.visibility = GONE;
+            //fab.visibility = GONE;
+            fab.setOnClickListener {
+                navController.navigate(R.id.navigation_events_add)
+            }
         }else{
             fab.setOnClickListener {
                 navController.navigate(R.id.navigation_events_add)
@@ -80,10 +85,8 @@ class EventsFragmento : BasicFragment() {
 
         // Configure o listener de atualização
         swipeRefreshLayout.setOnRefreshListener {
-
             getEventsFromApi(
                 onEventsLoaded = { eventList ->
-
                     myListEvents = eventList
                     updateRecyclerView(myListEvents!!)
                 },
@@ -94,7 +97,20 @@ class EventsFragmento : BasicFragment() {
         }
 
         if(null != myListEvents && !myListEvents!!.isEmpty()){
-            updateRecyclerView(myListEvents!!)
+            if(needRefresh){
+                getEventsFromApi(
+                    onEventsLoaded = { eventList ->
+                        myListEvents = eventList
+                        updateRecyclerView(myListEvents!!)
+                        setMyNeedRefresh(false)
+                    },
+                    onError = { errorMessage ->
+                    }
+                )
+            } else {
+                updateRecyclerView(myListEvents!!)
+            }
+
         } else {
             getEventsFromApi(
                 onEventsLoaded = { eventList ->
@@ -106,11 +122,11 @@ class EventsFragmento : BasicFragment() {
 
                 }
             )
+
         }
 
-
-
         return view
+
     }
 
     fun getEventsFromApi(onEventsLoaded: (List<EventResponse>) -> Unit, onError: (String) -> Unit) {
@@ -158,64 +174,12 @@ class EventsFragmento : BasicFragment() {
                 }
             }
         }
+        println("SETTING ADAPTER")
         recyclerView.adapter = adapter
 
         // Termine a animação de atualização
         swipeRefreshLayout.isRefreshing = false
     }
-
-    private fun fetchEventsFromApi() {
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientEmail = sharedPref.getString("clientEmail", "")
-
-        setLoadingVisibility(true)
-
-        makeRequestWithRetries(
-            requestCall = {
-                RetrofitClient.apiService.getEvents(GetEventsRequest(clientEmail)).execute()
-            },
-            onSuccess = { EventResponseList ->
-                EventResponseList.forEach { event ->
-                    println("${event.id} - ${event.name} - ${event.createdAt}")
-                }
-                setLoadingVisibility(false)
-                recyclerView.visibility = View.VISIBLE
-
-                // Atualize o RecyclerView com os novos dados
-                adapter = EventsAdapter(requireContext(), EventResponseList).apply {
-                    onItemClickListener = { event ->
-                        val bundle = Bundle().apply {
-                            putParcelable("myEvent", event)
-                        }
-                        findNavController().navigate(R.id.navigation_events_details, bundle)
-                    }
-                    onItemClickSubscribeListener = { event, position ->
-                        if (event.subscribed == true) {
-                            cancelarInscricao(event.id)
-                            event.subscribed = false
-                            adapter.notifyItemChanged(position)
-                        } else {
-                            inscreverEvento(event.id)
-                            event.subscribed = true
-                            adapter.notifyItemChanged(position)
-                        }
-                    }
-                }
-                recyclerView.adapter = adapter
-
-                // Termine a animação de atualização
-                swipeRefreshLayout.isRefreshing = false
-            },
-            onError = { errorMessage ->
-                println(errorMessage)
-                setLoadingVisibility(false)
-
-                // Termine a animação de atualização em caso de erro
-                swipeRefreshLayout.isRefreshing = false
-            }
-        )
-    }
-
 
     fun inscreverEvento(id : Int?){
         setLoadingVisibility(true)
