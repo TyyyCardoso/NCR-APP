@@ -2,7 +2,6 @@
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
 import ipt.lei.dam.ncrapp.models.DidYouKnowRequest
 import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
-import ipt.lei.dam.ncrapp.models.EventAddRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.models.GetEventsRequest
 import ipt.lei.dam.ncrapp.models.LoginRequest
@@ -67,8 +66,19 @@ interface APIService {
                 @Part image: MultipartBody.Part
         ): Call<Void>
 
+        @Multipart
         @PUT("event")
-        fun editEvent(@Body eventRequest: EventAddRequest) : Call<ResponseBody>
+        fun editEvent(
+                @Part("id") id: RequestBody,
+                @Part("name") name: RequestBody,
+                @Part("description") description: RequestBody,
+                @Part("date") date: RequestBody,
+                @Part("location") location: RequestBody,
+                @Part("transport") transport: RequestBody,
+                @Part("createdAt") createdAt: RequestBody,
+                @Part image: MultipartBody.Part,
+                @Part("imageFileName") imageFileName: RequestBody,
+        ) : Call<Void>
 
         @DELETE("event/{id}")
         fun deleteEvent(@Path("id") id: Int) : Call<ResponseBody>

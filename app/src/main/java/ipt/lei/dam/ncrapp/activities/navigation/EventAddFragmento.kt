@@ -188,81 +188,55 @@ class EventAddFragmento : BasicFragment() {
 
                 println("Fields validating, checking image...")
 
+                var imagePart: MultipartBody.Part? = null
+
                 if(event.image != null){
                     println("Image inserted")
                     val imageFile = File(getRealPathFromUri(event.image))
                     val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
-                    val imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
+                    imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
 
-                    val call = RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart)
-                    setLoadingVisibility(true)
-
-                    call.enqueue(object : Callback<Void> {
-                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                            if (response.isSuccessful) {
-                                // Tratamento de sucesso
-                                setLoadingVisibility(false)
-
-                                setMyNeedRefresh(true)
-
-                                val navOptions = NavOptions.Builder()
-                                    .setPopUpTo(R.id.navigation_events, true)
-                                    .build()
-
-
-                                findNavController().navigate(R.id.navigation_events, null, navOptions)
-
-                                if (toast != null) {
-                                    toast!!.setText("Evento criado com sucesso")
-                                } else {
-                                    toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
-                                }
-                                toast!!.show()
-                            } else {
-                                // Tratamento de erro
-                                setLoadingVisibility(false)
-                            }
-                        }
-
-                        override fun onFailure(call: Call<Void>, t: Throwable) {
-                            // Tratamento de falha
-                        }
-                    })
                 } else {
                     println("Using default image")
                     val emptyRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), ByteArray(0))
-                    val imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
-                    val call = RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart)
-                    setLoadingVisibility(true)
-                    println("Using default image2")
-                    call.enqueue(object : Callback<Void> {
-                        override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                            if (response.isSuccessful) {
-                                // Tratamento de sucesso
+                    imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
 
-                                setLoadingVisibility(false)
-                                setMyNeedRefresh(true)
-
-                                findNavController().navigate(R.id.navigation_events)
-
-                                if (toast != null) {
-                                    toast!!.setText("Evento criado com sucesso")
-                                } else {
-                                    toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
-                                }
-                                toast!!.show()
-                            } else {
-                                // Tratamento de erro
-                                println("Using default image error")
-                                setLoadingVisibility(false)
-                            }
-                        }
-
-                        override fun onFailure(call: Call<Void>, t: Throwable) {
-                            // Tratamento de falha
-                        }
-                    })
                 }
+
+                val call = RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart)
+                setLoadingVisibility(true)
+
+                call.enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
+                            // Tratamento de sucesso
+                            setLoadingVisibility(false)
+
+                            setMyNeedRefresh(true)
+
+                            val navOptions = NavOptions.Builder()
+                                .setPopUpTo(R.id.navigation_events, true)
+                                .build()
+
+
+                            findNavController().navigate(R.id.navigation_events, null, navOptions)
+
+                            if (toast != null) {
+                                toast!!.setText("Evento criado com sucesso")
+                            } else {
+                                toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
+                            }
+                            toast!!.show()
+                        } else {
+                            // Tratamento de erro
+                            setLoadingVisibility(false)
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Void>, t: Throwable) {
+                        // Tratamento de falha
+                    }
+                })
 
 
 
