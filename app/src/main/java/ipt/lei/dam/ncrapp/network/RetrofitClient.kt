@@ -18,7 +18,7 @@ object RetrofitClient {
     private val BASE_URL = when(environment) {
         EnvironmentEnum.EMULATOR -> "http://10.0.2.2:8080/ncr/" // Emulator URL
         EnvironmentEnum.DEV -> "http://localhost:8080/ncr/" // Development URL
-        EnvironmentEnum.PROD -> "http://85.244.54.53:8080/ncrAPI/"   // Production URL
+        EnvironmentEnum.PROD -> "http://85.243.90.78:8080/ncrAPI/"   // Production URL
     }
 
     private val authInterceptor = AuthInterceptor()
