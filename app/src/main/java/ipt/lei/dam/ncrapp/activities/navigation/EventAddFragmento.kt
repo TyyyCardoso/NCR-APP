@@ -4,13 +4,10 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.ContentValues
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -38,7 +35,6 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -100,7 +96,13 @@ class EventAddFragmento : BasicFragment() {
         getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let { selectedImageUri ->
 
-                Picasso.get().load(selectedImageUri).into(eventImage)
+                Picasso.get()
+                    .load(selectedImageUri)
+                    .fit()
+                    .centerInside()
+                    //.placeholder(R.drawable.default_event_img)
+                    .error(R.drawable.default_event_img)
+                    .into(eventImage)
 
 
                 // Armazena o arquivo no eventRequest.image
@@ -111,23 +113,14 @@ class EventAddFragmento : BasicFragment() {
 
         takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
-                eventImage.setImageURI(currentPhotoUri)
-
-                // Abre um InputStream para a URI da imagem
-                val inputStream = requireActivity().contentResolver.openInputStream(currentPhotoUri)
-                // Converte o InputStream em Bitmap
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                inputStream?.close()
-
-                // Prepara o OutputStream para a conversão
-                val outputStream = ByteArrayOutputStream()
-                // Comprime o Bitmap em JPEG (ou PNG) no OutputStream
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                // Converte o OutputStream em um array de bytes
-                val imageBytes = outputStream.toByteArray()
-
-                // Codifica os bytes da imagem em Base64 e obtém a String resultante
-                eventSelectedImage = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+                eventSelectedImageUri = currentPhotoUri
+                Picasso.get()
+                    .load(eventSelectedImageUri)
+                    .fit()
+                    .centerInside()
+                    .placeholder(R.drawable.default_event_img)
+                    .error(R.drawable.default_event_img)
+                    .into(eventImage)
             }
         }
 
@@ -204,12 +197,22 @@ class EventAddFragmento : BasicFragment() {
                 }
 
                 val call = RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart)
+                eventSubmitButton.visibility = View.GONE
                 setLoadingVisibility(true)
 
                 call.enqueue(object : Callback<Void> {
                     override fun onResponse(call: Call<Void>, response: Response<Void>) {
+
+                        val responseCodeNum = response.code()
+                        val responseCode = when (responseCodeNum) {
+                            400 -> "Solicitação inválida"
+                            401 -> "Não autorizado"
+                            404 -> "Recurso não encontrado"
+                            413 -> "Tamanho Máximo de IMG: 1MB"
+                            500 -> "Interno do servidor"
+                            else -> "Desconhecido: $responseCodeNum"
+                        }
                         if (response.isSuccessful) {
-                            // Tratamento de sucesso
                             setLoadingVisibility(false)
 
                             setMyNeedRefresh(true)
@@ -222,14 +225,20 @@ class EventAddFragmento : BasicFragment() {
                             findNavController().navigate(R.id.navigation_events, null, navOptions)
 
                             if (toast != null) {
-                                toast!!.setText("Evento criado com sucesso")
+                                toast!!.setText("Evento criado com sucesso.")
                             } else {
-                                toast = Toast.makeText(requireActivity(), "Evento criado com sucesso", Toast.LENGTH_SHORT)
+                                toast = Toast.makeText(requireActivity(), "Evento criado com sucesso.", Toast.LENGTH_SHORT)
                             }
                             toast!!.show()
                         } else {
-                            // Tratamento de erro
                             setLoadingVisibility(false)
+                            eventSubmitButton.visibility = View.VISIBLE
+                            if (toast != null) {
+                                toast!!.setText("ERRO: $responseCode")
+                            } else {
+                                toast = Toast.makeText(requireActivity(), "ERRO: $responseCode", Toast.LENGTH_SHORT)
+                            }
+                            toast!!.show()
                         }
                     }
 

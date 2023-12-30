@@ -170,8 +170,8 @@
             <ImageView
                 android:id="@+id/imageviewNewEventImageView"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="centerCrop"
+                android:layout_height="250dp"
+                android:adjustViewBounds="true"
                 android:src="@drawable/default_event_img"/>
 
             <Button

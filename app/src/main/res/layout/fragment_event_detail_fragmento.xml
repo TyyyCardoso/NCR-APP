@@ -11,12 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="56dp">
+
+
     <LinearLayout
+        android:id="@+id/linearLayoutEventDetails"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
-
 
 
         <ImageView
@@ -26,6 +28,7 @@
             android:adjustViewBounds="true"
             android:elevation="4dp"
             android:layout_marginBottom="16dp"/>
+
 
         <LinearLayout
             android:id="@+id/eventImageEditLayout"
@@ -233,6 +236,25 @@
 
         </LinearLayout>
     </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/closeGestureImageViewFAB"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|end"
+        android:layout_marginTop="16dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/baseline_close_24"
+        android:tint="#FFF8E7"
+        android:visibility="gone"/>
+
+    <com.alexvasilkov.gestures.views.GestureImageView
+        android:id="@+id/gestureImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/default_event_img"
+        android:visibility="gone"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabEditEvent"
         android:layout_width="wrap_content"
