@@ -10,11 +10,14 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
+import ipt.lei.dam.ncrapp.activities.navigation.sabiasQueFragmento.Companion.setMyNeedRefresh
 import ipt.lei.dam.ncrapp.models.DidYouKnowRequest
 import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
@@ -119,7 +122,7 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
             didYouKnowReferences.visibility = View.GONE
 
             etDidYouKnowTitle.visibility = View.VISIBLE
-            etDidYouKnowTitle.text = Editable.Factory.getInstance().newEditable(didYouKnow.text)
+            etDidYouKnowTitle.text = Editable.Factory.getInstance().newEditable(didYouKnow.title)
 
             etDidYouKnowDescription.visibility = View.VISIBLE
             etDidYouKnowDescription.text = Editable.Factory.getInstance().newEditable(didYouKnow.text)
@@ -135,7 +138,15 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
             }
 
             btnDidYouKnowDelete.setOnClickListener {
-                deleteDidYouKnow()
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Aviso")
+                    .setMessage("Tem a certeza que quer apagar este Sabias que?")
+                    .setNeutralButton("Não") { dialog, which ->
+                    }
+                    .setPositiveButton("Apagar") { dialog, which ->
+                        deleteDidYouKnow()
+                    }
+                    .show()
             }
 
 
@@ -191,8 +202,15 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
                     onSuccess = { isEditted ->
                         setLoadingVisibility(false)
 
-                        val navController = findNavController()
-                        navController.navigate(R.id.navigation_sabias)
+                        sabiasQueFragmento.setMyNeedRefresh(true)
+
+                        val navOptions = NavOptions.Builder()
+                            .setPopUpTo(R.id.navigation_sabias, true)
+                            .build()
+
+
+                        findNavController().navigate(R.id.navigation_sabias, null, navOptions)
+
 
                         if (toast != null) {
                             toast!!.setText("Sabias Que editado com sucesso")
@@ -229,8 +247,15 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
                 onSuccess = { isEditted ->
                     setLoadingVisibility(false)
 
-                    val navController = findNavController()
-                    navController.navigate(R.id.navigation_sabias)
+                    setMyNeedRefresh(true)
+
+                    val navOptions = NavOptions.Builder()
+                        .setPopUpTo(R.id.navigation_sabias, true)
+                        .build()
+
+
+                    findNavController().navigate(R.id.navigation_sabias, null, navOptions)
+
 
                     if (toast != null) {
                         toast!!.setText("Sabias Que removido com sucesso")

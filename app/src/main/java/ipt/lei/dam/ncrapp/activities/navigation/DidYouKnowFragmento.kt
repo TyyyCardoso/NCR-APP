@@ -15,6 +15,7 @@ import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
 import ipt.lei.dam.ncrapp.activities.DidYouKnowAdapter
 import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
+import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.models.GetEventsRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 
@@ -24,16 +25,21 @@ class sabiasQueFragmento : BasicFragment() {
     private lateinit var adapter: DidYouKnowAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
 
-            override fun onCreate(savedInstanceState: Bundle?) {
+    companion object {
+        var myListDidYouKnow: List<DidYouKnowResponse>? = null
+        var needRefresh: Boolean = false
+        fun setMyNeedRefresh(state : Boolean){
+            needRefresh = state
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
 
         }
     }
 
-    companion object {
-        var myDidYouKnowList: List<DidYouKnowResponse>? = null
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,8 +80,8 @@ class sabiasQueFragmento : BasicFragment() {
             setLoadingVisibility(true)
             getDidYouKnowFromApi (
                 onDidYouKnowLoaded = { didYouKnowList ->
-                    myDidYouKnowList = didYouKnowList
-                    updateRecyclerView(myDidYouKnowList!!)
+                    myListDidYouKnow = didYouKnowList
+                    updateRecyclerView(myListDidYouKnow!!)
                 },
                 onError = { errorMessage ->
 
@@ -83,13 +89,25 @@ class sabiasQueFragmento : BasicFragment() {
             )
         }
 
-        if(null != myDidYouKnowList && !myDidYouKnowList!!.isEmpty()){
-            updateRecyclerView(myDidYouKnowList!!)
+        if(null != myListDidYouKnow && !myListDidYouKnow!!.isEmpty()){
+            if(needRefresh){
+                getDidYouKnowFromApi (
+                    onDidYouKnowLoaded = { didYouKnowList ->
+                        myListDidYouKnow = didYouKnowList
+                        updateRecyclerView(myListDidYouKnow!!)
+                        setMyNeedRefresh(false)
+                    },
+                    onError = { errorMessage ->
+                    }
+                )
+            } else {
+                updateRecyclerView(myListDidYouKnow!!)
+            }
         } else {
             getDidYouKnowFromApi (
                 onDidYouKnowLoaded = { didYouKnowList ->
-                    myDidYouKnowList = didYouKnowList
-                    updateRecyclerView(myDidYouKnowList!!)
+                    myListDidYouKnow = didYouKnowList
+                    updateRecyclerView(myListDidYouKnow!!)
                 },
                 onError = { errorMessage ->
 

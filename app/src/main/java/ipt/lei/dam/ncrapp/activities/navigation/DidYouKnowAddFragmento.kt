@@ -2,7 +2,6 @@ package ipt.lei.dam.ncrapp.activities.navigation
 
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +10,12 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
+import ipt.lei.dam.ncrapp.activities.navigation.sabiasQueFragmento.Companion.setMyNeedRefresh
 import ipt.lei.dam.ncrapp.models.DidYouKnowRequest
-import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -89,8 +89,14 @@ class DidYouKnowAddFragmento : BasicFragment() {
                         onSuccess = { isAdded ->
                             setLoadingVisibility(false)
 
-                            val navController = findNavController()
-                            navController.navigate(R.id.navigation_sabias)
+                            setMyNeedRefresh(true)
+
+                            val navOptions = NavOptions.Builder()
+                                .setPopUpTo(R.id.navigation_sabias, true)
+                                .build()
+
+
+                            findNavController().navigate(R.id.navigation_sabias, null, navOptions)
 
                             if (toast != null) {
                                 toast!!.setText("Sabias Que criado com sucesso")
