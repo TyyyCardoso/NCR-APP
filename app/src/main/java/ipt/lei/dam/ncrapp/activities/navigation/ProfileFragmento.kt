@@ -1,15 +1,11 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
-import android.app.Activity.RESULT_OK
 import android.content.ContentValues
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Base64
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,12 +21,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
-import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
-import ipt.lei.dam.ncrapp.models.UpdateProfileRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
-import java.io.ByteArrayOutputStream
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.File
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -44,9 +45,7 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class ProfileFragmento : BasicFragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var profileSelectedImageUri: Uri? = null
     private lateinit var getContent: ActivityResultLauncher<String>
     private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
     private lateinit var currentPhotoUri: Uri
@@ -55,8 +54,7 @@ class ProfileFragmento : BasicFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+
         }
     }
 
@@ -108,69 +106,55 @@ class ProfileFragmento : BasicFragment() {
         val clientValidated = sharedPref.getBoolean("clientValidated", true);
         val clientDataRegisto = sharedPref.getString("clientRegistrationDate", "Erro ao obter a sua data de registo");
         val clientImage = sharedPref.getString("clientImage", "");
-        val clientAbout = sharedPref.getString("clientAbout", "Say something about you...");
+        val clientAbout = sharedPref.getString("clientAbout", "Diz algo sobre ti...");
 
         profileName.text = clientName
         profileEmail.text = clientEmail
         profileTipoCliente.text = clientType.toString().uppercase()
         profileValidated.text = if (clientValidated) "Sim" else "Não"
         profileDataRegisto.text = clientDataRegisto
-        if(clientImage.toString().isNotEmpty()){
-            // Decodificar base64 para um array de bytes
-            val decodedString: ByteArray = Base64.decode(clientImage, Base64.DEFAULT)
-
-            // Converter array de bytes em Bitmap
-            val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-
-            // Definir o Bitmap no ImageView
-            profileImage.setImageBitmap(decodedByte)
-        }
         profileAbout.text = clientAbout
+
+        val url = "" + RetrofitClient.BASE_URL + "event/images/" + clientImage
+
+        Picasso.get()
+            .load(url)
+            .fit()
+            .centerInside()
+            //.placeholder(R.drawable.default_event_img)
+            .error(R.drawable.baseline_account_circle_24)
+            .into(profileImage)
 
         var base64String = "";
 
         getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            uri?.let {
+            uri?.let { selectedImageUri ->
 
-                // Abre um InputStream para a URI da imagem
-                val inputStream = requireActivity().contentResolver.openInputStream(uri)
-                // Converte o InputStream em Bitmap
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                profileImage.setImageBitmap(bitmap)
-                inputStream?.close()
+                Picasso.get()
+                    .load(selectedImageUri)
+                    .fit()
+                    .centerInside()
+                    //.placeholder(R.drawable.default_event_img)
+                    .error(R.drawable.baseline_account_circle_24)
+                    .into(profileImage)
 
-                // Prepara o OutputStream para a conversão
-                val outputStream = ByteArrayOutputStream()
-                // Comprime o Bitmap em JPEG (ou PNG) no OutputStream
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                // Converte o OutputStream em um array de bytes
-                val imageBytes = outputStream.toByteArray()
 
-                // Codifica os bytes da imagem em Base64 e obtém a String resultante
-                base64String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
-
+                // Armazena o arquivo no eventRequest.image
+                profileSelectedImageUri = selectedImageUri
             }
+
         }
 
         takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
-                profileImage.setImageURI(currentPhotoUri)
-
-                // Abre um InputStream para a URI da imagem
-                val inputStream = requireActivity().contentResolver.openInputStream(currentPhotoUri)
-                // Converte o InputStream em Bitmap
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                inputStream?.close()
-
-                // Prepara o OutputStream para a conversão
-                val outputStream = ByteArrayOutputStream()
-                // Comprime o Bitmap em JPEG (ou PNG) no OutputStream
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, outputStream)
-                // Converte o OutputStream em um array de bytes
-                val imageBytes = outputStream.toByteArray()
-
-                // Codifica os bytes da imagem em Base64 e obtém a String resultante
-                base64String = Base64.encodeToString(imageBytes, Base64.DEFAULT)
+                profileSelectedImageUri = currentPhotoUri
+                Picasso.get()
+                    .load(profileSelectedImageUri)
+                    .fit()
+                    .centerInside()
+                    //.placeholder(R.drawable.default_event_img)
+                    .error(R.drawable.baseline_account_circle_24)
+                    .into(profileImage)
             }
         }
 
@@ -184,8 +168,11 @@ class ProfileFragmento : BasicFragment() {
                 editProfileImageButtons.visibility = View.VISIBLE
                 profileName.visibility = View.GONE
                 EditProfileName.visibility = View.VISIBLE
+                EditProfileName.text = Editable.Factory.getInstance().newEditable(profileName.text)
+
                 profileAbout.visibility = View.GONE
                 EditProfileAboutMe.visibility = View.VISIBLE
+                EditProfileAboutMe.text = Editable.Factory.getInstance().newEditable(profileAbout.text)
 
                 fab.setImageResource(R.drawable.baseline_check_24)
                 editProfileImageChooseButton.setOnClickListener {
@@ -208,52 +195,56 @@ class ProfileFragmento : BasicFragment() {
                     }
                 }
             }else{
+                if (!EditProfileName.text.toString().trim().isEmpty()) {
+                    val newName = EditProfileName.text.toString()
+                    val newImage = profileSelectedImageUri
+                    var newAbout = EditProfileAboutMe.text.toString()
 
+                    clientName = sharedPref.getString("clientName", "");
+                    val editor = sharedPref.edit()
 
-                val newName = EditProfileName.text.toString()
-                val newImage = base64String
-                val newAbout = EditProfileAboutMe.text.toString()
+                    if(!newName.equals("")){
+                        if(!newName.equals(clientName) && !newName.equals("")){
+                            profileName.text = newName
+                            editor.putString("clientName", newName)
+                        }
 
-                clientName = sharedPref.getString("clientName", "");
-                val editor = sharedPref.edit()
+                        if(!newAbout.equals("")){
+                            profileAbout.text = newAbout
+                            editor.putString("clientAbout", newAbout)
+                        } else {
+                            newAbout = "Algo sobre mim..."
+                            profileAbout.text = newAbout
+                            editor.putString("clientAbout", newAbout)
+                        }
 
-                if(!newName.equals(clientName) && !newName.equals("") || !newImage.equals("") || !newAbout.equals("")){
-                    updateProfile(newName, newImage, newAbout)
+                        updateProfile(newName, newImage, newAbout)
 
-                    if(!newName.equals(clientName) && !newName.equals("")){
-                        profileName.text = newName
-                        editor.putString("clientName", newName)
+                        editor.apply()
                     }
 
-                    if(!newImage.equals("")){
-                        editor.putString("clientImage", newImage)
+                    editProfileImageButtons.visibility = View.GONE
+                    profileName.visibility = View.VISIBLE
+                    profileAbout.visibility = View.VISIBLE
+                    EditProfileName.visibility = View.GONE
+                    EditProfileAboutMe.visibility = View.GONE
+                    fab.setImageResource(R.drawable.baseline_edit_24)
+                } else {
+                    EditProfileName.error = "Introduza um nome"
+                    if (toast != null) {
+                        toast!!.setText("Preencher campos corretamente!")
+                    } else {
+                        toast = Toast.makeText(requireActivity(), "Preencher campos corretamente!", Toast.LENGTH_SHORT)
                     }
-
-                    if(!newAbout.equals("")){
-                        profileAbout.text = newAbout
-                        editor.putString("clientAbout", newAbout)
-                    }
-
-                    editor.apply()
-
+                    toast!!.show()
                 }
-
-                editProfileImageButtons.visibility = View.GONE
-                profileName.visibility = View.VISIBLE
-                profileAbout.visibility = View.VISIBLE
-                EditProfileName.visibility = View.GONE
-                EditProfileAboutMe.visibility = View.GONE
-                fab.setImageResource(R.drawable.baseline_edit_24)
-
-
             }
-
-
         }
 
         // Inflate the layout for this fragment
         return view
     }
+
 
     private fun getOutputMediaFileUri(): Uri {
         val contentResolver = requireActivity().applicationContext.contentResolver
@@ -269,43 +260,80 @@ class ProfileFragmento : BasicFragment() {
         takePictureLauncher.launch(currentPhotoUri)
     }
 
-    fun updateProfile(newName : String?, newImage : String?, newAbout : String? ){
+    fun updateProfile(newName : String, newImage : Uri?, newAbout : String ){
         setLoadingVisibility(true)
 
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         val clientEmail = sharedPref.getString("clientEmail", "");
 
-        makeRequestWithRetries(
-            requestCall = {
-                RetrofitClient.apiService.editProfile(UpdateProfileRequest(newName, newImage, clientEmail, newAbout)).execute()
-            },
-            onSuccess = { editProfileResponse ->
-                Toast.makeText(requireContext(), "Perfil editado com sucesso.", Toast.LENGTH_SHORT).show()
-            },
-            onError = { errorMessage ->
-                println(errorMessage)
-                setLoadingVisibility(false)
-            }
-        )
-    }
+        val namePart = RequestBody.create(MultipartBody.FORM, newName)
+        val aboutPart = RequestBody.create(MultipartBody.FORM, newAbout)
+        val emailPart = RequestBody.create(MultipartBody.FORM, clientEmail!!)
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment settings.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            ProfileFragmento().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+        var imagePart: MultipartBody.Part? = null
+
+        if(newImage != null){
+            println("Image inserted")
+            val imageFile = File(getRealPathFromUri(newImage)!!)
+            val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
+            imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
+
+        } else {
+            println("Using default image")
+            val emptyRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), ByteArray(0))
+            imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
+
+        }
+
+        val call = RetrofitClient.apiService.editProfile(namePart, aboutPart, emailPart, imagePart)
+
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                val responseCodeNum = response.code()
+                val responseCode = when (responseCodeNum) {
+                    400 -> "Solicitação inválida"
+                    401 -> "Não autorizado"
+                    404 -> "Recurso não encontrado"
+                    413 -> "Tamanho Máximo de IMG: 1MB"
+                    500 -> "Interno do servidor"
+                    else -> "Desconhecido: $responseCodeNum"
+                }
+                if (response.isSuccessful) {
+                    setLoadingVisibility(false)
+
+
+                    if (toast != null) {
+                        toast!!.setText("Perfil editado com sucesso!")
+                    } else {
+                        toast = Toast.makeText(requireActivity(), "Perfil editado com sucesso!", Toast.LENGTH_SHORT)
+                    }
+                    toast!!.show()
+                } else {
+                    setLoadingVisibility(false)
+                    if (toast != null) {
+                        toast!!.setText("ERRO: $responseCode")
+                    } else {
+                        toast = Toast.makeText(requireActivity(), "ERRO: $responseCode", Toast.LENGTH_SHORT)
+                    }
+                    toast!!.show()
                 }
             }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                // Tratamento de falha
+            }
+        })
+
     }
+
+    private fun getRealPathFromUri(uri: Uri): String? {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = requireActivity().contentResolver.query(uri, projection, null, null, null)
+        val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor?.moveToFirst()
+        val filePath = cursor?.getString(columnIndex ?: -1)
+        cursor?.close()
+        return filePath
+    }
+
 }

@@ -12,7 +12,6 @@ import ipt.lei.dam.ncrapp.models.SignUpRequest
 import ipt.lei.dam.ncrapp.models.SignUpResponse
 import ipt.lei.dam.ncrapp.models.StaffMemberResponse
 import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
-import ipt.lei.dam.ncrapp.models.UpdateProfileRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
 import ipt.lei.dam.ncrapp.models.ValidateOTPResponse
 import okhttp3.MultipartBody
@@ -47,8 +46,14 @@ interface APIService {
         @POST("auth/send")
         fun sendOTP(@Body request: SendOTPRequest): Call<ResponseBody>
 
+        @Multipart
         @POST("profile/edit")
-        fun editProfile(@Body editProfileRequest: UpdateProfileRequest): Call<ResponseBody>
+        fun editProfile(
+                @Part("name") name: RequestBody,
+                @Part("about") about: RequestBody,
+                @Part("email") email: RequestBody,
+                @Part image: MultipartBody.Part
+        ): Call<Void>
 
         /**
          * Staff

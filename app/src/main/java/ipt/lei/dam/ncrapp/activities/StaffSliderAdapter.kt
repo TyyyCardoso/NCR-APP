@@ -1,16 +1,16 @@
 package ipt.lei.dam.ncrapp.activities
 
 import android.content.Context
-import android.graphics.BitmapFactory
-import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.models.StaffMemberResponse
+import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 
 class StaffSliderAdapter(private val context: Context, private var staffMembers: List<StaffMemberResponse>) : RecyclerView.Adapter<StaffSliderAdapter.ViewHolder>() {
@@ -36,12 +36,15 @@ class StaffSliderAdapter(private val context: Context, private var staffMembers:
         holder.staffMemberEmail.text = member.email
 
         if(!member.image.isNullOrEmpty()){
-            val decodedString: ByteArray = Base64.decode(member.image, Base64.DEFAULT)
+            val url = "" + RetrofitClient.BASE_URL + "event/images/" + member.image
 
-            // Converter array de bytes em Bitmap
-            val decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.size)
-
-            holder.staffMemberImage.setImageBitmap(decodedByte)
+            Picasso.get()
+                .load(url)
+                .fit()
+                .centerInside()
+                //.placeholder(R.drawable.default_event_img)
+                .error(R.drawable.baseline_account_circle_24)
+                .into(holder.staffMemberImage)
         }
 
     }
