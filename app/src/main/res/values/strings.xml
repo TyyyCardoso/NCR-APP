@@ -9,6 +9,7 @@
     <string name="mainNavSabiasButton">Sabias Que</string>
     <string name="mainNavPersonalButton">Perfil</string>
     <string name="mainNavStaffButton">Staff</string>
+    <string name="mainNavInfoButton">Info</string>
     <string name="mainEventTabIncreverBtn">Increver-me</string>
     <string name="mainEventTabDetalhesBtn">Detalhes</string>
     <!-- ADD EVENT SCREEN TEXTS -->

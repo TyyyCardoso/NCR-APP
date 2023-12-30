@@ -5,6 +5,12 @@
         <item name="android:windowIsTranslucent">true</item>
     </style>
 
+    <style name="Widget.NcrApp.MaterialButton" parent="Widget.MaterialComponents.Button">
+        <item name="backgroundTint">@color/buttonColor</item>
+        <item name="android:textColor">@android:color/white</item>
+        <!-- Outros atributos do botão -->
+    </style>
+
     <style name="CustomButtonStyle" parent="Widget.AppCompat.Button">
         <item name="android:background">@drawable/button_background</item>
         <item name="android:backgroundTint">@color/buttonColor</item>
@@ -51,9 +57,19 @@
         <item name="android:foreground">?attr/selectableItemBackground</item>
     </style>
 
+    <style name="MyMaterialButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/buttonColor</item>
+        <!-- ...outros atributos... -->
+        <item name="theme">@style/ThemeOverlay.MaterialComponents</item>
+    </style>
+
     <!-- Define the button color in colors.xml -->
     <color name="buttonColor">#00574B</color>
     <color name="buttonRedColor">#DC3545</color>
+    <color name="background">#FFF8E7</color>
+
+
 </resources>
 
 

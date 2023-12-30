@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="1dp"
+    android:background="@color/background"
+    tools:context=".activities.navigation.InfoFragmento">
+
+    <ImageView
+        android:id="@+id/loading_image"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/cotonete"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RadioGroup
+            android:checkedButton="@+id/ncr"
+            android:id="@+id/toggle"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/pink_out_line"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/ncr"
+                android:background="@drawable/toggle_widget_background"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:button="@null"
+                android:gravity="center"
+                android:text="NCR"
+                android:textColor="@color/black" />
+
+            <RadioButton
+                android:layout_marginRight="1dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginBottom="1dp"
+                android:id="@+id/prof"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@drawable/toggle_widget_background"
+                android:button="@null"
+                android:gravity="center"
+                android:text="Professor"
+                android:textColor="@color/black" />
+        </RadioGroup>
+
+        <LinearLayout
+            android:id="@+id/nucleoInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="15dp"
+            android:layout_marginTop="30dp">
+
+            <TextView
+                android:id="@+id/textViewNomeNucleo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Núcleo de Conservação e Restauro"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Descrição do Núcleo -->
+            <TextView
+                android:id="@+id/textViewDescricaoNucleo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Somos um grupo de estudantes de conservação e restauro que visa dinamizar o curso e dar lhe vida! Através de atividades como workshops, palestras entre outros."
+                android:textSize="16sp"
+                android:layout_marginTop="8dp" />
+
+            <!-- Ano de Fundação do Núcleo -->
+            <TextView
+                android:id="@+id/textViewAnoFundacao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ano de Fundação: 2023"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/textViewMembros"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Membros: 15"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:id="@+id/textViewLogo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nosso logo:"
+                android:textSize="16sp"
+                android:layout_marginTop="8dp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/logo">
+
+            </ImageView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/professorInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_margin="15dp"
+            android:visibility="gone"
+            android:layout_marginTop="30dp">
+
+
+            <!-- Indicação do nome do curso, disciplina e ano letivo -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nome do Curso: Engenharia Informática"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Disciplina: Desenvolvimento de Aplicativos Móveis"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ano Letivo: 2023/2024"
+                android:textSize="16sp" />
+
+            <!-- Nº e nome dos autores do trabalho -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Nº de Autores: 2"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Autores: Tiago Cardoso, Tiago Oliveira"
+                android:textSize="16sp" />
+
+            <!-- Identificação das bibliotecas, frameworks e código de terceiros -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bibliotecas e Frameworks:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="- Biblioteca A (Obtida de: www.bibliotecaA.com)"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="- Framework B (Obtido de: www.frameworkB.com)"
+                android:textSize="16sp" />
+
+            <!-- Identificação das credenciais de acesso -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Credenciais de Acesso:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Login: teste123"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Password: qwer123"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
+
+
+</FrameLayout>

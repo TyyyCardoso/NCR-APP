@@ -2,40 +2,35 @@ package ipt.lei.dam.ncrapp.activities
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.ColorStateList
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.View.GONE
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.navigation.NavigationView
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
 import ipt.lei.dam.ncrapp.databinding.ActivityMainBinding
+
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var bottomNavigationView: BottomNavigationView
+    private lateinit var toolbarLoginContainerText: TextView
+    private lateinit var toolbarLoginImage: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,8 +41,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val toolbar: Toolbar = findViewById(R.id.toolbar_custom)
         val toolbarBackButton: ImageView = findViewById(R.id.back_button)
         val toolbarLoginContainer: LinearLayout = findViewById(R.id.entrar_container)
-        val toolbarLoginContainerText: TextView = findViewById(R.id.containerText)
-        val toolbarLoginImage: ImageView = findViewById(R.id.containerImage)
+        toolbarLoginContainerText = findViewById(R.id.containerText)
+        toolbarLoginImage = findViewById(R.id.containerImage)
 
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
@@ -81,6 +76,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         if(!clientType.equals("student")){
             toolbarLoginContainerText.text = "Sair"
             toolbarLoginImage.setImageResource(R.drawable.baseline_logout_24)
+            val menu = navigationDrawerView.menu
+            val logoutItem = menu.findItem(R.id.navigation_logout)
+            logoutItem.isVisible = true
         }
 
         bottomNavigationView.setOnItemSelectedListener { item ->
@@ -150,7 +148,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         .setMessage("Tem que fazer login para poder aceder ao seu perfil.")
                         .setNeutralButton("Mais tarde") { dialog, which ->
                         }
-                        .setPositiveButton(" Fazer Login") { dialog, which ->
+                        .setPositiveButton("Fazer Login") { dialog, which ->
                             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                             finish()
                         }
@@ -175,15 +173,24 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 true
             }
             R.id.navigation_schedule -> {
+                clearBottomNavigationSelection()
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_schedule)
-                true
+                false
             }
             R.id.navigation_info -> {
+                clearBottomNavigationSelection()
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_info)
                 true
             }
             R.id.navigation_logout -> {
-                false
+                val sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
+                sharedPreferences.edit().clear().apply()
+                toolbarLoginContainerText.text = "Entrar"
+                toolbarLoginImage.setImageResource(R.drawable.baseline_person_24) // Use o nome do resource drawab
+                Toast.makeText(this@MainActivity, "Logout efetuado com sucesso.", Toast.LENGTH_SHORT).show()
+                item.isVisible = false
+                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
+                true
             }
             else -> true
         }

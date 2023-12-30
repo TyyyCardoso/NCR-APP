@@ -7,6 +7,7 @@
     android:background="#FFF8E7"
     tools:context=".activities.navigation.StaffFragment">
 
+
     <ImageView
         android:id="@+id/loading_image"
         android:layout_width="40dp"
@@ -49,6 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
 
                 <!-- Profile Name CardView -->
                 <androidx.cardview.widget.CardView

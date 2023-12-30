@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="navigation_view">
+    xmlns:tools="http://schemas.android.com/tools">
 
    <group android:id="@+id/Principal" android:checkableBehavior="single">
 
@@ -36,7 +35,7 @@
         <item
             android:id="@+id/navigation_info"
             android:icon="@drawable/baseline_info_24"
-            android:title="Info" />
+            android:title="@string/mainNavInfoButton"/>
 
     </group>
     <group android:id="@+id/Saida" android:checkableBehavior="single">

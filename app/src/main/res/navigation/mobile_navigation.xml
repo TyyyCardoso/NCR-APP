@@ -51,4 +51,10 @@
         android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
 
+    <fragment
+        android:id="@+id/navigation_info"
+        android:name="ipt.lei.dam.ncrapp.activities.navigation.InfoFragmento"
+        android:label="@string/mainNavInfoButton"
+        tools:layout="@layout/fragment_events" />
+
 </navigation>

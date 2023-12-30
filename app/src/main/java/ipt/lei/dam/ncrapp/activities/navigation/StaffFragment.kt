@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
@@ -44,10 +45,14 @@ class StaffFragment : BasicFragment() {
         val view = inflater.inflate(R.layout.fragment_staff, container, false)
         setupLoadingAnimation(view)
 
+        val backButton = requireActivity().findViewById<ImageView>(R.id.back_button)
+        backButton.visibility = View.GONE
+
         staffSlider = view.findViewById(R.id.staffSlider)
         profileContainer = view.findViewById(R.id.profileContainer)
         indicator = view.findViewById(R.id.indicator)
 
+        indicator?.animatePageSelected(2)
         indicator?.visibility = View.GONE
         staffSlider?.visibility = View.GONE
         profileContainer?.visibility = View.GONE
@@ -74,12 +79,14 @@ class StaffFragment : BasicFragment() {
     private fun displayProfile(member: StaffMemberResponse) {
         // Getting references to the TextViews
         //val emailTextView = view?.findViewById<TextView>(R.id.profile_email)
+
         val sobreUsername = view?.findViewById<TextView>(R.id.sobreUsername)
         val descricaoTextView = view?.findViewById<TextView>(R.id.profile_descricao)
         val telefoneTextView = view?.findViewById<TextView>(R.id.profile_telefone)
         val statusTextView = view?.findViewById<TextView>(R.id.profile_estado)
         val dataEntradaTextView = view?.findViewById<TextView>(R.id.profile_dataEntrada)
 
+        sobreUsername?.text = "Sobre "
         sobreUsername?.text = sobreUsername?.text.toString() + member.name?.split(" ")?.get(0) + "..."
         //emailTextView?.text = member.email
         descricaoTextView?.text = member.descricao
