@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
 import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
@@ -108,7 +109,7 @@ class ProfileFragmento : BasicFragment() {
         val clientValidated = sharedPref.getBoolean("clientValidated", true);
         val clientDataRegisto = sharedPref.getString("clientRegistrationDate", "Erro ao obter a sua data de registo");
         val clientImage = sharedPref.getString("clientImage", "");
-        val clientAbout = sharedPref.getString("clientAbout", "Say something about you...");
+        var clientAbout = sharedPref.getString("clientAbout", "Say something about you...");
 
         profileName.text = clientName
         profileEmail.text = clientEmail
@@ -182,10 +183,16 @@ class ProfileFragmento : BasicFragment() {
 
             if(editMode){
                 editProfileImageButtons.visibility = View.VISIBLE
+
                 profileName.visibility = View.GONE
-                EditProfileName.visibility = View.VISIBLE
                 profileAbout.visibility = View.GONE
+
+                EditProfileName.visibility = View.VISIBLE
                 EditProfileAboutMe.visibility = View.VISIBLE
+
+                EditProfileName.setText(profileName.text)
+                EditProfileAboutMe.setText(profileAbout.text)
+
 
                 fab.setImageResource(R.drawable.baseline_check_24)
                 editProfileImageChooseButton.setOnClickListener {
@@ -209,15 +216,15 @@ class ProfileFragmento : BasicFragment() {
                 }
             }else{
 
-
                 val newName = EditProfileName.text.toString()
                 val newImage = base64String
                 val newAbout = EditProfileAboutMe.text.toString()
 
                 clientName = sharedPref.getString("clientName", "");
+                clientAbout = sharedPref.getString("clientAbout", "");
                 val editor = sharedPref.edit()
 
-                if(!newName.equals(clientName) && !newName.equals("") || !newImage.equals("") || !newAbout.equals("")){
+                if(!newName.equals(clientName) && !newName.equals("") || !newImage.equals("") || !newAbout.equals(clientAbout) && !newAbout.equals("")){
                     updateProfile(newName, newImage, newAbout)
 
                     if(!newName.equals(clientName) && !newName.equals("")){
@@ -229,7 +236,7 @@ class ProfileFragmento : BasicFragment() {
                         editor.putString("clientImage", newImage)
                     }
 
-                    if(!newAbout.equals("")){
+                    if(!newAbout.equals(clientAbout) && !newAbout.equals("")){
                         profileAbout.text = newAbout
                         editor.putString("clientAbout", newAbout)
                     }
