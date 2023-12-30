@@ -73,10 +73,10 @@ class EventsFragmento : BasicFragment() {
         val clientType = sharedPref.getString("clientType", "member");
 
         if(!clientType.equals("admin")){
-            //fab.visibility = GONE;
-            fab.setOnClickListener {
-                navController.navigate(R.id.navigation_events_add)
-            }
+            fab.visibility = View.GONE;
+            //fab.setOnClickListener {
+            //    navController.navigate(R.id.navigation_events_add)
+            //}
         }else{
             fab.setOnClickListener {
                 navController.navigate(R.id.navigation_events_add)

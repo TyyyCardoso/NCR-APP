@@ -52,9 +52,9 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
             Picasso.get()
                 .load(url)
                 .fit()
-                .centerCrop()
-                .placeholder(R.drawable.default_event_img)
-                .error(R.drawable.baseline_settings_24)
+                .centerInside()
+                //.placeholder(R.drawable.default_event_img)
+                .error(R.drawable.default_event_img)
                 .into(holder.eventImage)
         }
 
