@@ -2,11 +2,14 @@ package ipt.lei.dam.ncrapp.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import com.google.android.material.textfield.TextInputLayout
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
 import ipt.lei.dam.ncrapp.activities.MainActivity
@@ -23,6 +26,7 @@ class LoginActivity : BaseActivity() {
         //Obter componentes do ecrã
         val emailEditText = findViewById<EditText>(R.id.email)
         val passwordEditText = findViewById<EditText>(R.id.password)
+        val passwordInputLayout = findViewById<TextInputLayout>(R.id.passwordInputLayout)
         val loginButton = findViewById<Button>(R.id.login_button)
         val forgotPasswordLabel = findViewById<TextView>(R.id.forgot_password)
         val registerLabel = findViewById<TextView>(R.id.register_prompt)
@@ -51,6 +55,20 @@ class LoginActivity : BaseActivity() {
             finish()
         }
 
+        passwordEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                // This method is called before the text is changed.
+            }
+
+            override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
+                passwordInputLayout.isPasswordVisibilityToggleEnabled = true
+            }
+
+            override fun afterTextChanged(editable: Editable) {
+                // This method is called after the text has been changed.
+            }
+        })
+
         loginButton.setOnClickListener {
             //Variável de controlo
             var doLoginRequest = true;
@@ -68,6 +86,7 @@ class LoginActivity : BaseActivity() {
                 doLoginRequest = false;
             }
             if(password.isEmpty()){
+                passwordInputLayout.isPasswordVisibilityToggleEnabled = false
                 passwordEditText.error = getString(R.string.loginPasswordBoxHintNotFilledError)
                 doLoginRequest = false;
             }
