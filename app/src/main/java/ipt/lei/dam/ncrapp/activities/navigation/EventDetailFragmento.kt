@@ -3,6 +3,7 @@ package ipt.lei.dam.ncrapp.activities.navigation
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.ContentValues
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
@@ -20,6 +21,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavOptions
@@ -29,6 +31,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BasicFragment
+import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
 import ipt.lei.dam.ncrapp.models.EventEditRequest
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
@@ -275,7 +278,16 @@ class EventDetailFragmento :  BasicFragment() {
         }
 
         btnRemoveEvent.setOnClickListener {
-            deleteEvent()
+            //deleteEvent()
+            AlertDialog.Builder(requireContext())
+                .setTitle("Aviso")
+                .setMessage("Tem a certeza que quer apagar o evento?")
+                .setNeutralButton("Não") { dialog, which ->
+                }
+                .setPositiveButton("Apagar") { dialog, which ->
+                    deleteEvent()
+                }
+                .show()
         }
         return view
     }
