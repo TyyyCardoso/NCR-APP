@@ -1,6 +1,7 @@
 
 import ipt.lei.dam.ncrapp.models.BiometricLoginRequest
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
+import ipt.lei.dam.ncrapp.models.DefaultResponse
 import ipt.lei.dam.ncrapp.models.DidYouKnowRequest
 import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.models.EventResponse
@@ -57,7 +58,7 @@ interface APIService {
                 @Part("about") about: RequestBody,
                 @Part("email") email: RequestBody,
                 @Part image: MultipartBody.Part
-        ): Call<Void>
+        ): Call<DefaultResponse>
 
         /**
          * Staff

@@ -28,9 +28,6 @@ import ipt.lei.dam.ncrapp.network.RetrofitClient
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -298,44 +295,36 @@ class ProfileFragmento : BasicFragment() {
 
         }
 
-        val call = RetrofitClient.apiService.editProfile(namePart, aboutPart, emailPart, imagePart)
+        makeRequestWithRetries(
+            requestCall = {
+                RetrofitClient.apiService.editProfile(namePart, aboutPart, emailPart, imagePart).execute()
+            },
+            onSuccess = { responseBody ->
 
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                val responseCodeNum = response.code()
-                val responseCode = when (responseCodeNum) {
-                    400 -> "Solicitação inválida"
-                    401 -> "Não autorizado"
-                    404 -> "Recurso não encontrado"
-                    413 -> "Tamanho Máximo de IMG: 1MB"
-                    500 -> "Interno do servidor"
-                    else -> "Desconhecido: $responseCodeNum"
+                if(responseBody.message.isNotBlank()){
+                    val editor = sharedPref.edit()
+                    editor.putString("clientImage", responseBody.message)
+                    editor.apply()
+                    println("" + responseBody.code + " - " + responseBody.message)
                 }
-                if (response.isSuccessful) {
-                    setLoadingVisibility(false)
 
-
-                    if (toast != null) {
-                        toast!!.setText("Perfil editado com sucesso!")
-                    } else {
-                        toast = Toast.makeText(requireActivity(), "Perfil editado com sucesso!", Toast.LENGTH_SHORT)
-                    }
-                    toast!!.show()
+                if (toast != null) {
+                    toast!!.setText("Perfil editado com sucesso")
                 } else {
-                    setLoadingVisibility(false)
-                    if (toast != null) {
-                        toast!!.setText("ERRO: $responseCode")
-                    } else {
-                        toast = Toast.makeText(requireActivity(), "ERRO: $responseCode", Toast.LENGTH_SHORT)
-                    }
-                    toast!!.show()
+                    toast = Toast.makeText(requireActivity(), "Perfil editado com sucesso", Toast.LENGTH_SHORT)
                 }
+                toast!!.show()
+            },
+            onError = { errorMessage ->
+                //println(errorMessage)
+                if (toast != null) {
+                    toast!!.setText("ERRO: $errorMessage")
+                } else {
+                    toast = Toast.makeText(requireActivity(), "ERRO: $errorMessage", Toast.LENGTH_SHORT)
+                }
+                toast!!.show()
             }
-
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                // Tratamento de falha
-            }
-        })
+        )
 
     }
 
