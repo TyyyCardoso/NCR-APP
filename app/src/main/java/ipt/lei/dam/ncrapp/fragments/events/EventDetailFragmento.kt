@@ -377,7 +377,7 @@ class EventDetailFragmento :  BasicFragment() {
             var imagePart: MultipartBody.Part? = null
 
             if(wasImageEdited && eventToEdit.image != null) {
-                val imageFile = File(getRealPathFromUri(eventToEdit.image))
+                val imageFile = compressImage(eventToEdit.image)
                 val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
                 imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
             } else {

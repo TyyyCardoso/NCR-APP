@@ -289,7 +289,7 @@ class ProfileFragmento : BasicFragment() {
 
         if(newImage != null){
             println("Image inserted")
-            val imageFile = File(getRealPathFromUri(newImage)!!)
+            val imageFile = compressImage(newImage)
             val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
             imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
 
