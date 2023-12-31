@@ -72,12 +72,23 @@
         </com.google.android.material.textfield.TextInputLayout>
 
 
+
+        <CheckBox
+            android:id="@+id/checkbox_keep_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Manter sessão iniciada"
+            android:layout_marginStart="5dp"
+            android:layout_gravity="start"
+            android:textColor="#00574B" />
+
         <Button
             android:id="@+id/login_button"
             style="@style/CustomButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/loginButton" />
+
 
         <TextView
             android:id="@+id/forgot_password"

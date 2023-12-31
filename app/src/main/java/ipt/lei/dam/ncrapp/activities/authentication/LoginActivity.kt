@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.widget.Button
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
@@ -103,6 +104,7 @@ class LoginActivity : BaseActivity() {
         val forgotPasswordLabel = findViewById<TextView>(R.id.forgot_password)
         val registerLabel = findViewById<TextView>(R.id.register_prompt)
         val backButton = findViewById<ImageView>(R.id.backButtonLogin)
+        val keepLogin = findViewById<CheckBox>(R.id.checkbox_keep_login)
 
         val userEmailFromLogin = intent.getStringExtra("userInsertedEmail")
         if(userEmailFromLogin!=null)
@@ -185,6 +187,11 @@ class LoginActivity : BaseActivity() {
                             editor.putString("clientRegistrationDate", loginResponse.registrationDate)
                             editor.putString("clientImage", loginResponse.image)
                             editor.putString("clientAbout", loginResponse.about)
+                            if(keepLogin.isChecked){
+                                editor.putBoolean("keepLogin", true)
+                            }else{
+                                editor.putBoolean("keepLogin", false)
+                            }
                             editor.apply()
 
                             val sharedPrefBiometric = getSharedPreferences("BiometricLogin", MODE_PRIVATE)

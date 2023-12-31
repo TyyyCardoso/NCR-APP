@@ -31,8 +31,11 @@ class SplashActivity : AppCompatActivity() {
         logoView.startAnimation(logoAnimation)
 
         //Limpeza do login guardado em cache de forma a resetar o login do utilizador
-        val sharedPreferences = getSharedPreferences(getString(R.string.userInfo), Context.MODE_PRIVATE)
-        sharedPreferences.edit().clear().apply()
+        val userInfo = getSharedPreferences(getString(R.string.userInfo), Context.MODE_PRIVATE)
+        val keepLogin = userInfo.getBoolean("keepLogin", false)
+        if(!keepLogin)
+            userInfo.edit().clear().apply()
+
 
         //Implementado um listener para quando a imagem do logo acabar a sua animação, o loading começar
         logoAnimation.setAnimationListener(object : Animation.AnimationListener {
