@@ -1,7 +1,7 @@
 package ipt.lei.dam.ncrapp.activities
 
-import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View.GONE
@@ -11,7 +11,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -31,13 +30,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var toolbarLoginContainerText: TextView
     private lateinit var toolbarLoginImage: ImageView
+    private lateinit var userInfo : SharedPreferences
+    private lateinit var biometricInfo : SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //Construção da toolbar
+        ////////////////////////////////////////////////////
+        //
+        //  Construção da toolbar
+        //
+        ////////////////////////////////////////////////////
         val toolbar: Toolbar = findViewById(R.id.toolbar_custom)
         val toolbarBackButton: ImageView = findViewById(R.id.back_button)
         val toolbarLoginContainer: LinearLayout = findViewById(R.id.entrar_container)
@@ -47,14 +52,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
         actionBar?.setDisplayShowTitleEnabled(false)
-        toolbarBackButton.visibility = GONE;
+        toolbarBackButton.visibility = GONE
 
-        //Inicialização do objeto de cache
-        val sharedPref = getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        //Obter tipo de cliente da cache
-        var clientType = sharedPref.getString("clientType", "student");
-
-        //Obter views de navegação (Side and bottom navigation)
+        ////////////////////////////////////////////////////
+        //
+        //  Tratar views de navegação
+        //
+        ////////////////////////////////////////////////////
         bottomNavigationView = binding.navView
         drawerLayout = binding.drawerLayout
 
@@ -72,39 +76,52 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //View selecionada por defeito
         navigationDrawerView.setCheckedItem(R.id.navigation_events)
 
-        //Alterar o design caso o client esteja logado
-        if(!clientType.equals("student")){
-            toolbarLoginContainerText.text = "Sair"
+        ////////////////////////////////////////////////////
+        //
+        //  Usado o sharedPreferences para controlar diversos aspectos do UI, por exemplo, se o utilizador está logado
+        //
+        ////////////////////////////////////////////////////
+
+        userInfo = getSharedPreferences(getString(R.string.userInfo), MODE_PRIVATE)
+        biometricInfo = getSharedPreferences(getString(R.string.biometricLogin), MODE_PRIVATE)
+        var clientType = userInfo.getString(getString(R.string.clientType), getString(R.string.estudante))
+
+        //Alterar o design caso o cliente com o login feito
+        if(!clientType.equals(getString(R.string.estudante))){
+            //Alterar toolbar para ter o "Sair"
+            toolbarLoginContainerText.text = getString(R.string.sair)
             toolbarLoginImage.setImageResource(R.drawable.baseline_logout_24)
+
+            //Mostrar no drawer menu, a opção de "Sair"
             val menu = navigationDrawerView.menu
             val logoutItem = menu.findItem(R.id.navigation_logout)
             logoutItem.isVisible = true
 
-            val sharedPreferencesBiometric = getSharedPreferences("BiometricLogin", Context.MODE_PRIVATE)
-            val isBiometric = sharedPreferencesBiometric.getBoolean("isBiometric", false)
-            val isToRequestBiometric = sharedPreferencesBiometric.getBoolean("isToRequestBiometric", true)
+            val isBiometric = biometricInfo.getBoolean(getString(R.string.isUsingBiometric), false)
+            val isToRequestBiometric = biometricInfo.getBoolean(getString(R.string.isToRequestBiometric), true)
 
             if(!isBiometric && isToRequestBiometric){
                 AlertDialog.Builder(this)
-                    .setTitle("Alerta")
-                    .setMessage("Quer ativar o login por impressão digital?")
-                    .setNeutralButton("Mais tarde") { dialog, which ->
-                        val editor = sharedPreferencesBiometric.edit()
-                        editor.putBoolean("isToRequestBiometric", false)
+                    .setTitle(getString(R.string.dialogAlertTitle))
+                    .setMessage(getString(R.string.dialogAlertMessage1))
+                    .setNeutralButton(getString(R.string.dialogAlertNeutralButton)) { _, _ ->
+
+                        val editor = biometricInfo.edit()
+                        editor.putBoolean(getString(R.string.isToRequestBiometric), false)
                         editor.apply()
+
                         AlertDialog.Builder(this)
-                            .setTitle("Informação")
-                            .setMessage("Quando pretender usar impressão digital diriga-se às definições para ativar.")
-                            .setPositiveButton("Ok") { dialog, which ->
+                            .setTitle(getString(R.string.dialogInfoTitle))
+                            .setMessage(getString(R.string.dialogInfoMessage1))
+                            .setPositiveButton(getString(R.string.dialogPositiveButton)) { _, _ ->
                             }
                             .show()
                     }
-                    .setPositiveButton("Ativar") { dialog, which ->
-                        val sharedPreferencesUserInfo = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-                        val editor = sharedPreferencesBiometric.edit()
-                        editor.putBoolean("isUsingBiometric", true)
-                        editor.putString("biometricEmail", sharedPreferencesUserInfo.getString("clientEmail", ""))
-                        editor.putBoolean("isToRequestBiometric", false)
+                    .setPositiveButton(getString(R.string.dialogAlertPositiveButton1)) { _, _ ->
+                        val editor = biometricInfo.edit()
+                        editor.putBoolean(getString(R.string.isUsingBiometric), true)
+                        editor.putString(getString(R.string.biometricEmail), userInfo.getString(getString(R.string.clientEmail), ""))
+                        editor.putBoolean(getString(R.string.isToRequestBiometric), false)
                         editor.apply()
                     }
                     .show()
@@ -112,35 +129,44 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         }
 
+        ////////////////////////////////////////////////////
+        //
+        //  Implementado um listener no bottom navigation para poder navegar e controlar sessão do utilizador
+        //
+        ////////////////////////////////////////////////////
+
         bottomNavigationView.setOnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_profile -> {
-                    navigationDrawerView.setCheckedItem(R.id.navigation_profile)
-                    clientType = sharedPref.getString("clientType", "student");
-                    if(clientType.equals("student")){
+                    clientType = userInfo.getString(getString(R.string.clientType), getString(R.string.estudante))
+                    if(clientType.equals(getString(R.string.estudante))){
                         AlertDialog.Builder(this)
-                            .setTitle("Aviso")
-                            .setMessage("Tem que fazer login para poder aceder ao seu perfil.")
-                            .setNeutralButton("Mais tarde") { dialog, which ->
+                            .setTitle(getString(R.string.dialogAlertTitle))
+                            .setMessage(getString(R.string.dialogAlertMessage2))
+                            .setNeutralButton(getString(R.string.dialogAlertNeutralButton)) { _, _ ->
                             }
-                            .setPositiveButton(" Fazer Login") { dialog, which ->
+                            .setPositiveButton(getString(R.string.dialogAlertPositiveButton2)) { _, _ ->
                                 startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                                 finish()
                             }
                             .show()
                         false
                     }else{
+                        //Selecionar o mesmo menu no drawer navigation
+                        navigationDrawerView.setCheckedItem(R.id.navigation_profile)
                         findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_profile)
                         true
                     }
 
                 }
                 R.id.navigation_sabias -> {
+                    //Selecionar o mesmo menu no drawer navigation
                     navigationDrawerView.setCheckedItem(R.id.navigation_sabias)
                     findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_sabias)
                     true
                 }
                 R.id.navigation_events -> {
+                    //Selecionar o mesmo menu no drawer navigation
                     navigationDrawerView.setCheckedItem(R.id.navigation_events)
                     findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
                     true
@@ -150,58 +176,59 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
         }
 
+        ////////////////////////////////////////////////////
+        //
+        //  Implementado um listener na toolbar de forma ser possivel efetuar um logout ou um login quando necessário
+        //
+        ////////////////////////////////////////////////////
+
         toolbarLoginContainer.setOnClickListener {
-            clientType = sharedPref.getString("clientType", "student");
-            if(clientType.equals("student")){
+            clientType = userInfo.getString(getString(R.string.clientType), getString(R.string.estudante))
+            if(clientType.equals(getString(R.string.estudante))){
+                //Se cliente não está logado, é direcionado para a página de login
                 startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                 finish()
             }else{
-                // To clear all SharedPreferences data
-                val sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-                sharedPreferences.edit().clear().apply()
-                toolbarLoginContainerText.text = "Entrar"
-                toolbarLoginImage.setImageResource(R.drawable.baseline_person_24) // Use o nome do resource drawab
-                Toast.makeText(this@MainActivity, "Logout efetuado com sucesso.", Toast.LENGTH_SHORT).show()
-                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
+                //Cliente está a fazer logout, é feita a limpeza do UserInfo que até agora dita se o cliente está logadou ou não em diversos sitios
+                cleanLogoutSessionAndUpdateUI()
             }
 
         }
     }
 
+    /**
+     *
+     * Método de listener de cliques no menu drawer de navegação
+     *
+     */
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        val sharedPref = getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         when(item.itemId) {
             R.id.navigation_profile -> {
-                var clientType = sharedPref.getString("clientType", "student");
-                if(clientType.equals("student")){
+                val clientType = userInfo.getString(getString(R.string.clientType), getString(R.string.estudante))
+                if(clientType.equals(getString(R.string.estudante))){
                     AlertDialog.Builder(this)
-                        .setTitle("Aviso")
-                        .setMessage("Tem que fazer login para poder aceder ao seu perfil.")
-                        .setNeutralButton("Mais tarde") { dialog, which ->
+                        .setTitle(getString(R.string.dialogAlertTitle))
+                        .setMessage(getString(R.string.dialogAlertMessage2))
+                        .setNeutralButton(getString(R.string.dialogAlertNeutralButton)) { _, _ ->
                         }
-                        .setPositiveButton("Fazer Login") { dialog, which ->
+                        .setPositiveButton(getString(R.string.dialogAlertPositiveButton2)) { _, _ ->
                             startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                             finish()
                         }
                         .show()
-                    false
                 }else{
                     findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_profile)
-                    true
                 }
             }
             R.id.navigation_sabias -> {
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_sabias)
-                true
             }
             R.id.navigation_events -> {
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
-                true
             }
             R.id.navigation_staff -> {
                 clearBottomNavigationSelection()
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_staff)
-                true
             }
             R.id.navigation_schedule -> {
                 Toast.makeText(this@MainActivity, "Brevemente...", Toast.LENGTH_SHORT).show()
@@ -213,24 +240,15 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.navigation_settings-> {
                 clearBottomNavigationSelection()
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_settings)
-                true
             }
             R.id.navigation_info -> {
                 clearBottomNavigationSelection()
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_info)
-                true
             }
             R.id.navigation_logout -> {
-                val sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-                sharedPreferences.edit().clear().apply()
-                toolbarLoginContainerText.text = "Entrar"
-                toolbarLoginImage.setImageResource(R.drawable.baseline_person_24) // Use o nome do resource drawab
-                Toast.makeText(this@MainActivity, "Logout efetuado com sucesso.", Toast.LENGTH_SHORT).show()
-                item.isVisible = false
+                cleanLogoutSessionAndUpdateUI()
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
-                true
             }
-            else -> true
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
@@ -241,6 +259,14 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         for (i in 0 until size) {
             bottomNavigationView.menu.getItem(i).isChecked = false
         }
+    }
+
+    private fun cleanLogoutSessionAndUpdateUI(){
+        userInfo.edit().clear().apply()
+        toolbarLoginContainerText.text = getString(R.string.loginButton)
+        toolbarLoginImage.setImageResource(R.drawable.baseline_person_24)
+        Toast.makeText(this@MainActivity, getString(R.string.toastMessageSuccessLogout), Toast.LENGTH_SHORT).show()
+        findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
     }
 
 }

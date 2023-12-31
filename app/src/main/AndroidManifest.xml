@@ -20,7 +20,7 @@
         android:theme="@style/Theme.NcrAPP"
         tools:targetApi="31">
         <activity
-            android:name="ipt.lei.dam.ncr.activities.SplashActivity"
+            android:name=".activities.SplashActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.NcrAPP">

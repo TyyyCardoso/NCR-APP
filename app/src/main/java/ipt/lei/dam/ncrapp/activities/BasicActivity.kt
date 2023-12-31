@@ -22,11 +22,17 @@ open class BaseActivity : AppCompatActivity() {
         setupLoadingAnimation()
     }
 
+    //Serve para definir a imagem de loading nas activies
     private fun setupLoadingAnimation() {
         loadingImage = findViewById(R.id.loading_image)
         rotationAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_loading)
     }
 
+    /**
+     *
+     * Função usada para mostrar ou deixar de mostrar a imagem de loading (cotonete)
+     *
+     */
     protected fun setLoadingVisibility(visible: Boolean) {
         if (visible) {
             loadingImage.visibility = View.VISIBLE
@@ -37,6 +43,11 @@ open class BaseActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     *
+     * Função que valida se o email inserido está correto e dentro do padrão
+     *
+     */
     fun isEmailValid(email: String) : Boolean {
         val emailRegex = ("^[a-zA-Z0-9_+&*-]+(?:\\." +
                 "[a-zA-Z0-9_+&*-]+)*@" +
@@ -44,20 +55,33 @@ open class BaseActivity : AppCompatActivity() {
                 "A-Z]{2,7}$")
         return email.matches(emailRegex.toRegex())
     }
-    fun <T> makeRequestWithRetries(
-        requestCall: () -> Response<T>,
-        onSuccess: (T) -> Unit,
-        onError: (String) -> Unit,
-        maxAttempts: Int = 3
+
+    /**
+     *
+     * Função que faz as chamadas ao retrofit.
+     * É usada esta função para não se repetir código extensivo ao longo das atividades
+     * Recebe três parâmetros:
+     *  requestCall -> Que é onde vai ser inserida a chamada
+     *  onSuccess -> Que é o que acontece quando a chamada dá sucesso
+     *  onError -> Usado quando a chamada retorna erro
+     *
+     */
+    fun <T> makeRequestWithRetries(requestCall: () -> Response<T>, onSuccess: (T) -> Unit, onError: (String) -> Unit, maxAttempts: Int = 3
     ) {
+        //É usado este método para incorporar a imagem de loading que está a ser reutilizada em praticamente quase todas as atividades
         setLoadingVisibility(true)
+        //É iniciada uma thread para executar a chamada, isto é necessário devido a não bloquear o UI
         Thread {
             var attemptCount = 0
             var successful = false
 
+            // Este é um método implementado com sistema de retries caso a chamada não funcione à primeira, por isso um while que irá iterar enquanto
+            // não esgotar as tentativas ou não ter dado sucesso
             while (attemptCount < maxAttempts && !successful) {
                 try {
+                    //Tratado o requestCall que é definido na atividade (é a chamada a fazer)
                     val response = requestCall()
+                    //Se a resposta foi com sucesso
                     if (response.isSuccessful) {
                         runOnUiThread {
                             onSuccess(response.body()!!)
@@ -65,7 +89,7 @@ open class BaseActivity : AppCompatActivity() {
                         }
                         successful = true
                     } else {
-                        val errorBody = response.errorBody()?.string()
+                        val errorBody = response.errorBody()!!.string()
                         val errorMessage = JSONObject(errorBody).getString("message")
                         runOnUiThread {
                             onError(errorMessage)

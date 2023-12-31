@@ -16,15 +16,18 @@ class ChangePasswordActivity : BaseActivity(){
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_change_password)
 
+        //Obter o id do utilizador da atividade anterior
+        val userID = intent.getIntExtra(getString(R.string.userID), 0)
 
-        val userID = intent.getIntExtra("userID", 0)
-
+        //Carregar design em variáveis
         val passwordEditText = findViewById<EditText>(R.id.etPassword)
         val passwordConfirmEditText = findViewById<EditText>(R.id.etConfirmPassword)
         val btnResetPassword = findViewById<Button>(R.id.btnResetPassword)
         val backToLogin = findViewById<Button>(R.id.btnBackToLogin)
 
+        //Listener para o botão de voltar para trás
         backToLogin.setOnClickListener {
+            //Volta para o ecrã de login
             val intent = Intent(this@ChangePasswordActivity, LoginActivity::class.java)
             startActivity(intent)
             finish()

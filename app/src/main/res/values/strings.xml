@@ -79,11 +79,44 @@
     <string name="signUpEmailBoxInvalid">E-mail inválido.</string>
     <string name="signUpPasswordBoxMinimumLengthError">Palavra-passe tem que ter no minimo 8 caracteres</string>
     <string name="signUpNotEqualError">As palavra-passes têm que ser iguais</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- DIALOGS -->
+    <string name="dialogAlertTitle">Alerta</string>
+    <string name="dialogAlertMessage1">Quer ativar o login por impressão digital?</string>
+    <string name="dialogAlertMessage2">Tem que fazer login para poder aceder ao seu perfil.</string>
+    <string name="dialogAlertNeutralButton">Mais tarde</string>
+    <string name="dialogAlertPositiveButton1">Ativar</string>
+    <string name="dialogAlertPositiveButton2">Fazer Login</string>
+    <string name="dialogInfoTitle">Informação</string>
+    <string name="dialogInfoMessage1">Quando pretender usar impressão digital diriga-se às definições para ativar.</string>
+    <string name="dialogPositiveButton">Ok</string>
+    <!-- INTENT OBJECTS -->
+    <string name="userID">userID</string>
 
 
+    <!-- SESSION OBJECTS -->
+    <string name="biometricLogin">BiometricLogin</string>
+    <string name="isUsingBiometric">isUsingBiometric</string>
+    <string name="biometricEmail">biometricEmail</string>
+    <string name="isToRequestBiometric">isToRequestBiometric</string>
+
+    <string name="userInfo">UserInfo</string>
+    <string name="clientType">clientType</string>
+    <string name="clientEmail">clientEmail</string>
+
+    <!-- TOAST MESSAGES -->
+    <string name="toastMessageSuccessLogout">Logout efetuado com sucesso</string>
+
+
+
+    <!-- CODE STRING -->
     <string name="navigation_drawer_open">Abrir menu de navegação</string>
     <string name="navigation_drawer_close">Fechar menu de navegação</string>
+    <string name="sair">Sair</string>
+    <string name="estudante">student</string>
+
+
+
+
+
 
 </resources>

@@ -1,5 +1,6 @@
-package ipt.lei.dam.ncr.activities
+package ipt.lei.dam.ncrapp.activities
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,45 +11,41 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import ipt.lei.dam.ncrapp.R
-import ipt.lei.dam.ncrapp.activities.MainActivity
 
+@SuppressLint("CustomSplashScreen")
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_NcrAPP)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash)
 
+        //Carregar imagem de logo e imagem de loading da splashScreen
         val logoView = findViewById<View>(R.id.logo_view)
-        val loadingImageView = findViewById<View>(R.id.loading_image) // Your loading image view
+        val loadingImageView = findViewById<View>(R.id.loading_image)
 
-        // Load the logo animation
+        //Carregar as animações da imagem e do logo
         val logoAnimation = AnimationUtils.loadAnimation(this, R.anim.logo_animation)
-
-        // Load the rotation animation
         val rotateLoadingAnimation = AnimationUtils.loadAnimation(this, R.anim.rotate_loading)
 
-        // Start the logo animation
+        //Ativar a animação do logo
         logoView.startAnimation(logoAnimation)
 
-        // To clear all SharedPreferences data
-        val sharedPreferences = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
+        //Limpeza do login guardado em cache de forma a resetar o login do utilizador
+        val sharedPreferences = getSharedPreferences(getString(R.string.userInfo), Context.MODE_PRIVATE)
         sharedPreferences.edit().clear().apply()
 
-        // Listener for logo animation
+        //Implementado um listener para quando a imagem do logo acabar a sua animação, o loading começar
         logoAnimation.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation?) {}
 
             override fun onAnimationEnd(animation: Animation?) {
-                // Start rotation animation after logo animation ends
                 loadingImageView.startAnimation(rotateLoadingAnimation)
 
-
-
-                // Delay for 2 seconds before starting MainActivity
+                // Após dois segundos, entrar na atividade principal
                 Handler(Looper.getMainLooper()).postDelayed({
                     startActivity(Intent(this@SplashActivity, MainActivity::class.java))
                     finish()
-                }, 2000)  // 2000 milliseconds delay
+                }, 2000)//Dois segundos
             }
 
             override fun onAnimationRepeat(animation: Animation?) {}
