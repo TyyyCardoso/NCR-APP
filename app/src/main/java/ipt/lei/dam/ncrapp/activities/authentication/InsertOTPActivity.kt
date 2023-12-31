@@ -56,7 +56,7 @@ class InsertOTPActivity : BaseActivity() {
                     RetrofitClient.apiService.sendOTP(SendOTPRequest(userEmailFromLogin)).execute()
                 },
                 onSuccess = { validateOTPResponse ->
-                    toast = Toast.makeText(this@InsertOTPActivity, "OTP Reenviado!", Toast.LENGTH_SHORT)
+                    toast = Toast.makeText(this@InsertOTPActivity, "Código Reenviado", Toast.LENGTH_SHORT)
                     toast!!.show()
                     iniciarContagemRegressiva()
                     setLoadingVisibility(false)
@@ -81,8 +81,13 @@ class InsertOTPActivity : BaseActivity() {
             var validateOTP = true;
             val otpInserted = otpEditText.text.toString()
 
-            if(otpInserted.isNullOrEmpty() || otpInserted.length!=7){
-                otpEditText.error = getString(R.string.loginEmailBoxNotFilledError)
+            if(otpInserted.isNullOrEmpty()){
+                otpEditText.error = getString(R.string.insertEmptyOTPBoxError)
+                validateOTP = false;
+            }
+
+            if(otpInserted.length!=7 && validateOTP){
+                otpEditText.error = getString(R.string.insertLenghtOTPBoxError)
                 validateOTP = false;
             }
 

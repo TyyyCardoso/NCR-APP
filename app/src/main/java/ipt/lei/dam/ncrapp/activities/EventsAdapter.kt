@@ -16,6 +16,7 @@ import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 import java.text.SimpleDateFormat
+import java.util.Date
 
 
 class EventsAdapter(private val context: Context, private val eventsList: List<EventResponse>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
@@ -68,24 +69,52 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
             onItemClickListener?.invoke(event)
         }
 
+        var eventDate = event.date.toString().substring(0,10)
+
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        var date : Date =  dateFormat.parse(eventDate);
+        val today = Date()
+
+
         if(null!=event.subscribed){
             if(event.subscribed!!){
-                holder.eventSubscribeBtn.setText("Cancelar")
+                holder.eventSubscribeBtn.text = "Cancelar"
                 holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.buttonRedColor)) // Exemplo para mudar a cor de fundo do botão
+            }else if(today.after(date)){
+                holder.eventSubscribeBtn.text = "Já começou"
+                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
             }
+
         }
 
 
         holder.eventSubscribeBtn.setOnClickListener {
-            if(clientType.equals("student")){
-                if (toast != null) {
-                    toast!!.setText("É necessário fazer login para se inscrever nos eventos")
+            if(!today.after(date)) {
+                if (clientType.equals("student")) {
+                    if (toast != null) {
+                        toast!!.setText("É necessário fazer login para se inscrever nos eventos")
+                    } else {
+                        toast = Toast.makeText(
+                            context,
+                            "É necessário fazer login para se inscrever nos eventos",
+                            Toast.LENGTH_SHORT
+                        )
+                    }
+                    toast!!.show()
                 } else {
-                    toast = Toast.makeText(context, "É necessário fazer login para se inscrever nos eventos", Toast.LENGTH_SHORT)
+                    onItemClickSubscribeListener?.invoke(event, position)
+                }
+            }else{
+                if (toast != null) {
+                    toast!!.setText("Este evento já expirou")
+                } else {
+                    toast = Toast.makeText(
+                        context,
+                        "Este evento já expirou",
+                        Toast.LENGTH_SHORT
+                    )
                 }
                 toast!!.show()
-            }else{
-                onItemClickSubscribeListener?.invoke(event, position)
             }
         }
 

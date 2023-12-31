@@ -102,7 +102,7 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
         didYouKnowDescription.text = didYouKnow?.text
         didYouKnowReferences.text = didYouKnow?.references
 
-        if(!clientType.equals("admin")){
+        if(!clientType.equals("ADMINISTRADOR")){
             fabEditDidYouKnow.visibility = View.GONE;
         }else{
             fabEditDidYouKnow.visibility = View.VISIBLE;

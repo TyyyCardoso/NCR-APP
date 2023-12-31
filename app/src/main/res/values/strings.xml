@@ -8,8 +8,8 @@
     <string name="mainNavEventsButton">Eventos</string>
     <string name="mainNavSabiasButton">Sabias Que</string>
     <string name="mainNavPersonalButton">Perfil</string>
-    <string name="mainNavStaffButton">Staff</string>
-    <string name="mainNavInfoButton">Info</string>
+    <string name="mainNavStaffButton">Organização</string>
+    <string name="mainNavInfoButton">Informação</string>
     <string name="mainEventTabIncreverBtn">Increver-me</string>
     <string name="mainEventTabDetalhesBtn">Detalhes</string>
     <!-- ADD EVENT SCREEN TEXTS -->
@@ -23,9 +23,9 @@
     <string name="addEventTextEventAddBtn">Criar Evento </string>
     <string name="addEventTextEventAddTimeDateBtn">Escolher Data </string>
     <!-- DETAILS & EDIT EVENT SCREEN TEXTS -->
-    <string name="eventDetailNameTitle">Nome de Evento </string>
-    <string name="eventDetailDescriptionTitle">Descrição de Evento </string>
-    <string name="eventDetailLocationTitle">Localização Evento </string>
+    <string name="eventDetailNameTitle">Nome do Evento </string>
+    <string name="eventDetailDescriptionTitle">Descrição do Evento </string>
+    <string name="eventDetailLocationTitle">Localização do Evento </string>
     <string name="eventDetailTransportTitle">Tem Transporte? </string>
     <string name="eventDetailDateTitle">Data do Evento </string>
     <string name="editEventTextEventEditBtn">Guardar </string>
@@ -52,9 +52,12 @@
     <string name="recoverPasswordEmailBoxHint">Introduza o seu e-mail</string>
     <string name="recoverPasswordButton">Enviar e-mail</string>
     <!-- INSERT OTP SCREEN TEXTS -->
-    <string name="insertOTPTitle">Se o seu e-mail for válido, terá sido enviado um código para o seu e-mail:</string>
+    <string name="insertOTPTitle">Caso exista uma conta associada ao seu e-mail, foi enviado um código para a sua caixa de entrada:</string>
+    Se uma conta associada ao seu endereço de e-mail existir, um código foi enviado  de e-mail.
     <string name="insertOTPBoxHint">Inserir código</string>
     <string name="insertOTPBoxError">Código inserido inválido</string>
+    <string name="insertEmptyOTPBoxError">O código não pode estar vazio</string>
+    <string name="insertLenghtOTPBoxError">O código tem que ter 7 digitos</string>
     <!-- CHANGE PASSWORD SCREEN TEXTS -->
     <string name="changePasswordTitle">Nova palavra-passe:</string>
     <string name="changePasswordBoxHint">Palavra-passe</string>

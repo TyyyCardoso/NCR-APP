@@ -1,5 +1,6 @@
 package ipt.lei.dam.ncrapp.activities.navigation
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +21,8 @@ import ipt.lei.dam.ncrapp.models.EventResponse
 import ipt.lei.dam.ncrapp.models.GetEventsRequest
 import ipt.lei.dam.ncrapp.models.SubscribeEventRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
+import java.text.SimpleDateFormat
+import java.util.Date
 
 class EventsFragmento : BasicFragment() {
     private lateinit var recyclerView: RecyclerView
@@ -72,7 +76,7 @@ class EventsFragmento : BasicFragment() {
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         val clientType = sharedPref.getString("clientType", "member");
 
-        if(!clientType.equals("admin")){
+        if(!clientType.equals("ADMINISTRADOR")){
             fab.visibility = View.GONE;
             //fab.setOnClickListener {
             //    navController.navigate(R.id.navigation_events_add)
@@ -163,14 +167,23 @@ class EventsFragmento : BasicFragment() {
                 findNavController().navigate(R.id.navigation_events_details, bundle)
             }
             onItemClickSubscribeListener = { event, position ->
-                if (event.subscribed == true) {
-                    cancelarInscricao(event.id)
-                    event.subscribed = false
-                    adapter.notifyItemChanged(position)
-                } else {
-                    inscreverEvento(event.id)
-                    event.subscribed = true
-                    adapter.notifyItemChanged(position)
+                var eventDate = event.date.toString().substring(0,10)
+
+                val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+                var date : Date =  dateFormat.parse(eventDate);
+                val today = Date()
+                if(!today.after(date)) {
+                    if (event.subscribed == true) {
+                        cancelarInscricao(event.id)
+                        event.subscribed = false
+                        adapter.notifyItemChanged(position)
+                    } else {
+                        inscreverEvento(event.id)
+                        event.subscribed = true
+                        adapter.notifyItemChanged(position)
+                    }
+                }else{
+                    Toast.makeText(requireContext(), "Este evento já expirou", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -183,6 +196,7 @@ class EventsFragmento : BasicFragment() {
 
     fun inscreverEvento(id : Int?){
         setLoadingVisibility(true)
+
 
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         val clientEmail = sharedPref.getString("clientEmail", "");

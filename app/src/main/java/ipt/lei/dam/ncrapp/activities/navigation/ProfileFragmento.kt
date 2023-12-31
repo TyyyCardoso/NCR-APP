@@ -32,6 +32,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -102,18 +104,26 @@ class ProfileFragmento : BasicFragment() {
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         var clientName = sharedPref.getString("clientName", "Erro a obter o seu nome.");
         val clientEmail = sharedPref.getString("clientEmail", "Erro a obter o seu email.");
-        val clientType = sharedPref.getString("clientType", "member");
+        val clientType = sharedPref.getString("clientType", "Membro");
         val clientValidated = sharedPref.getBoolean("clientValidated", true);
         val clientDataRegisto = sharedPref.getString("clientRegistrationDate", "Erro ao obter a sua data de registo");
         val clientImage = sharedPref.getString("clientImage", "");
         val clientAbout = sharedPref.getString("clientAbout", "Diz algo sobre ti...");
 
+        var inputFormat :  SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd");
+        var outputFormat :  SimpleDateFormat  =  SimpleDateFormat("dd-MM-yyyy");
+
+        var date : Date = inputFormat.parse(clientDataRegisto);
+        var formattedDate = outputFormat.format(date);
+
         profileName.text = clientName
         profileEmail.text = clientEmail
         profileTipoCliente.text = clientType.toString().uppercase()
-        profileValidated.text = if (clientValidated) "Sim" else "Não"
-        profileDataRegisto.text = clientDataRegisto
+        //profileValidated.text = if (clientValidated) "Sim" else "Não"
+        profileDataRegisto.text = formattedDate
         profileAbout.text = clientAbout
+
+
 
         val url = "" + RetrofitClient.BASE_URL + "event/images/" + clientImage
 
@@ -172,7 +182,10 @@ class ProfileFragmento : BasicFragment() {
 
                 profileAbout.visibility = View.GONE
                 EditProfileAboutMe.visibility = View.VISIBLE
-                EditProfileAboutMe.text = Editable.Factory.getInstance().newEditable(profileAbout.text)
+                if(!profileAbout.text.equals("Diz algo sobre ti...")){
+                    EditProfileAboutMe.text = Editable.Factory.getInstance().newEditable(profileAbout.text)
+                }
+
 
                 fab.setImageResource(R.drawable.baseline_check_24)
                 editProfileImageChooseButton.setOnClickListener {

@@ -61,7 +61,7 @@ class sabiasQueFragmento : BasicFragment() {
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         val clientType = sharedPref.getString("clientType", "member");
 
-        if(!clientType.equals("admin")){
+        if(!clientType.equals("ADMINISTRADOR")){
             fabAddDidYouKnow.visibility = View.GONE;
         }else{
             fabAddDidYouKnow.visibility = View.VISIBLE;

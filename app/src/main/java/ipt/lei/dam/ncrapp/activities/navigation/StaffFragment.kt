@@ -15,6 +15,8 @@ import ipt.lei.dam.ncrapp.activities.StaffSliderAdapter
 import ipt.lei.dam.ncrapp.models.StaffMemberResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 import me.relex.circleindicator.CircleIndicator3
+import java.text.SimpleDateFormat
+import java.util.Date
 
 
 class StaffFragment : BasicFragment() {
@@ -86,13 +88,19 @@ class StaffFragment : BasicFragment() {
         val statusTextView = view?.findViewById<TextView>(R.id.profile_estado)
         val dataEntradaTextView = view?.findViewById<TextView>(R.id.profile_dataEntrada)
 
+        var inputFormat : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd");
+        var outputFormat : SimpleDateFormat =  SimpleDateFormat("dd-MM-yyyy");
+
+        var date : Date = inputFormat.parse(member.dataEntrada);
+        var formattedDate = outputFormat.format(date);
+
         sobreUsername?.text = "Sobre "
         sobreUsername?.text = sobreUsername?.text.toString() + member.name?.split(" ")?.get(0) + "..."
         //emailTextView?.text = member.email
         descricaoTextView?.text = member.descricao
         telefoneTextView?.text = "+"+member.codpais + " " + member.telefone
         statusTextView?.text = member.status
-        dataEntradaTextView?.text = member.dataEntrada
+        dataEntradaTextView?.text = formattedDate
     }
 
 

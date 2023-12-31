@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="#FFF8E7"
     android:padding="32dp"
@@ -43,27 +44,47 @@
         android:layout_marginTop="12dp"
         android:layout_marginHorizontal="10dp" />
 
-    <EditText
-        android:id="@+id/etSignUpPassword"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/passwordInputLayoutSignup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/signUpPasswordBoxHint"
-        android:inputType="textPassword"
-        android:background="@drawable/edittext_background"
-        android:padding="15dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginHorizontal="10dp" />
+        app:hintEnabled="true"
+        app:passwordToggleEnabled="true">
 
-    <EditText
-        android:id="@+id/etSignUpPasswordConfirm"
+        <EditText
+            android:id="@+id/etSignUpPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/signUpPasswordBoxHint"
+            android:inputType="textPassword"
+            android:background="@drawable/edittext_background"
+            android:padding="15dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginHorizontal="10dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/confirmPasswordInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/signUpPasswordConfirmBoxHint"
-        android:inputType="textPassword"
-        android:background="@drawable/edittext_background"
-        android:padding="15dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginHorizontal="10dp" />
+        app:hintEnabled="true"
+        app:passwordToggleEnabled="true">
+
+        <EditText
+            android:id="@+id/etSignUpPasswordConfirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/signUpPasswordConfirmBoxHint"
+            android:inputType="textPassword"
+            android:background="@drawable/edittext_background"
+            android:padding="15dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginHorizontal="10dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+
 
     <Button
         android:id="@+id/btnSignUp"

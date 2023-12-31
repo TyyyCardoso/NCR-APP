@@ -137,7 +137,7 @@ class EventDetailFragmento :  BasicFragment() {
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
         val clientType = sharedPref.getString("clientType", "member");
 
-        if(!clientType.equals("admin")){
+        if(!clientType.equals("ADMINISTRADOR")){
             fabEditEvent.visibility = View.GONE;
             //fabEditEvent.setOnClickListener {
             //    toggleEditMode()
@@ -241,7 +241,7 @@ class EventDetailFragmento :  BasicFragment() {
             linearLayoutEventDetails.visibility = View.VISIBLE
             gestureImageView.visibility = View.GONE
             fabGestureImageView.visibility = View.GONE
-            if(clientType.equals("admin")){
+            if(clientType.equals("ADMINISTRADOR")){
                 fabEditEvent.visibility = View.VISIBLE
             }
         }
@@ -502,6 +502,7 @@ class EventDetailFragmento :  BasicFragment() {
 
             btnPickDateTime.visibility = View.VISIBLE
             checkboxEditEventTransport.visibility = View.VISIBLE
+            eventTransport.visibility = View.GONE
             btnRemoveEvent.visibility = View.VISIBLE
         } else {
             btnEditEventSubmit.visibility = View.INVISIBLE
@@ -519,6 +520,7 @@ class EventDetailFragmento :  BasicFragment() {
 
             eventImageEditLayout.visibility = View.GONE
             checkboxEditEventTransport.visibility = View.GONE
+            eventTransport.visibility = View.VISIBLE
             btnRemoveEvent.visibility = View.GONE
         }
     }

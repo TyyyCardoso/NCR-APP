@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.navigation.EventsFragmento"
-    android:background="#FFF8E7">
+    tools:context=".activities.navigation.EventsFragmento">
 
     <ImageView
         android:id="@+id/loading_image"
