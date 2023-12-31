@@ -7,59 +7,59 @@
 
     <fragment
         android:id="@+id/navigation_events"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.EventsFragmento"
+        android:name="ipt.lei.dam.ncrapp.fragments.events.EventsFragmento"
         android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_sabias"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.sabiasQueFragmento"
+        android:name="ipt.lei.dam.ncrapp.fragments.didyouknow.sabiasQueFragmento"
         android:label="@string/mainNavSabiasButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_profile"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.ProfileFragmento"
+        android:name="ipt.lei.dam.ncrapp.fragments.profile.ProfileFragmento"
         android:label="@string/mainNavPersonalButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_events_details"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.EventDetailFragmento"
+        android:name="ipt.lei.dam.ncrapp.fragments.events.EventDetailFragmento"
         android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
     <fragment
         android:id="@+id/navigation_events_add"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.EventAddFragmento"
+        android:name="ipt.lei.dam.ncrapp.fragments.events.EventAddFragmento"
         android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_didyouknow_details"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.DidYouKnowDetailsFragmento"
+        android:name="ipt.lei.dam.ncrapp.fragments.didyouknow.DidYouKnowDetailsFragmento"
         android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
     <fragment
         android:id="@+id/navigation_didyouknow_add"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.DidYouKnowAddFragmento"
+        android:name="ipt.lei.dam.ncrapp.fragments.didyouknow.DidYouKnowAddFragmento"
         android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_staff"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.StaffFragment"
+        android:name="ipt.lei.dam.ncrapp.fragments.staff.StaffFragment"
         android:label="@string/mainNavEventsButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_info"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.InfoFragmento"
+        android:name="ipt.lei.dam.ncrapp.fragments.info.InfoFragmento"
         android:label="@string/mainNavInfoButton"
         tools:layout="@layout/fragment_events" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="ipt.lei.dam.ncrapp.activities.navigation.SettingsFragmento"
+        android:name="ipt.lei.dam.ncrapp.fragments.settings.SettingsFragmento"
         android:label="@string/mainNavSettingsButton"
         tools:layout="@layout/fragment_events" />
 

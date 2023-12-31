@@ -7,10 +7,8 @@ import android.widget.EditText
 import android.widget.Toast
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
-import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
+import ipt.lei.dam.ncrapp.models.password.RecoverPasswordRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
-import org.json.JSONObject
-import java.io.IOException
 
 class ForgotPasswordActivity : BaseActivity() {
 

@@ -10,10 +10,7 @@ import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.appcompat.app.AppCompatActivity
 import ipt.lei.dam.ncrapp.R
-import ipt.lei.dam.ncrapp.activities.Event
 import ipt.lei.dam.ncrapp.activities.MainActivity
-import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
-import ipt.lei.dam.ncrapp.activities.navigation.EventsFragmento
 
 class SplashActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

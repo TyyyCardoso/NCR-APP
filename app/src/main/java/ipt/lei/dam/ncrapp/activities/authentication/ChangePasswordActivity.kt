@@ -7,7 +7,7 @@ import android.widget.EditText
 import android.widget.Toast
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
-import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
+import ipt.lei.dam.ncrapp.models.password.ChangePasswordRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 class ChangePasswordActivity : BaseActivity(){

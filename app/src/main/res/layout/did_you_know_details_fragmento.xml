@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.navigation.DidYouKnowDetailsFragmento"
+    tools:context=".fragments.didyouknow.DidYouKnowDetailsFragmento"
     android:background="#FFF8E7">
 
     <ScrollView

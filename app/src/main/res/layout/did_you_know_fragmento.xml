@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.navigation.sabiasQueFragmento">
+    tools:context=".fragments.didyouknow.sabiasQueFragmento">
 
     <ImageView
         android:id="@+id/loading_image"

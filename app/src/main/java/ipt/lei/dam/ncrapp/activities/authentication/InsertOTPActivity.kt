@@ -9,9 +9,8 @@ import android.widget.TextView
 import android.widget.Toast
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
-import ipt.lei.dam.ncrapp.models.RecoverPasswordRequest
-import ipt.lei.dam.ncrapp.models.SendOTPRequest
-import ipt.lei.dam.ncrapp.models.ValidateOTPRequest
+import ipt.lei.dam.ncrapp.models.otp.SendOTPRequest
+import ipt.lei.dam.ncrapp.models.otp.ValidateOTPRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 class InsertOTPActivity : BaseActivity() {

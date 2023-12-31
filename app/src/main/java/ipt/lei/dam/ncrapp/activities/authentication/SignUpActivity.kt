@@ -2,7 +2,6 @@ package ipt.lei.dam.ncrapp.activities.authentication
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
@@ -10,11 +9,9 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.textfield.TextInputLayout
-import ipt.lei.dam.ncrapp.activities.MainActivity
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
-import ipt.lei.dam.ncrapp.models.LoginRequest
-import ipt.lei.dam.ncrapp.models.SignUpRequest
+import ipt.lei.dam.ncrapp.models.signup.SignUpRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 class SignUpActivity : BaseActivity() {

@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:padding="1dp"
     android:background="@color/background"
-    tools:context=".activities.navigation.InfoFragmento">
+    tools:context=".fragments.info.InfoFragmento">
 
     <ImageView
         android:id="@+id/loading_image"
