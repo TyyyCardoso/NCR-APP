@@ -91,6 +91,8 @@
     <string name="dialogPositiveButton">Ok</string>
     <!-- INTENT OBJECTS -->
     <string name="userID">userID</string>
+    <string name="userInsertedEmail">userInsertedEmail</string>
+    <string name="type">type</string>
 
 
     <!-- SESSION OBJECTS -->
