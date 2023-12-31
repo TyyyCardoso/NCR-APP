@@ -172,13 +172,9 @@ class EventsFragmento : BasicFragment() {
                 val today = Date()
                 if(!today.after(date)) {
                     if (event.subscribed == true) {
-                        cancelarInscricao(event.id)
-                        event.subscribed = false
-                        adapter.notifyItemChanged(position)
+                        cancelarInscricao(event, position)
                     } else {
-                        inscreverEvento(event.id)
-                        event.subscribed = true
-                        adapter.notifyItemChanged(position)
+                        inscreverEvento(event, position)
                     }
                 }else{
                     Toast.makeText(requireContext(), "Este evento já expirou", Toast.LENGTH_SHORT).show()
@@ -192,7 +188,7 @@ class EventsFragmento : BasicFragment() {
         swipeRefreshLayout.isRefreshing = false
     }
 
-    fun inscreverEvento(id : Int?){
+    fun inscreverEvento(event : EventResponse?, pos : Int){
         setLoadingVisibility(true)
 
 
@@ -201,11 +197,12 @@ class EventsFragmento : BasicFragment() {
 
         makeRequestWithRetries(
             requestCall = {
-                RetrofitClient.apiService.subscribeEvent(SubscribeEventRequest(id, clientEmail)).execute()
+                RetrofitClient.apiService.subscribeEvent(SubscribeEventRequest(event!!.id, clientEmail)).execute()
             },
             onSuccess = { EventResponseList ->
                 Toast.makeText(requireContext(), "Adesão ao evento realizada com sucesso!", Toast.LENGTH_SHORT).show()
-
+                event!!.subscribed = true
+                adapter.notifyItemChanged(pos)
             },
             onError = { errorMessage ->
                 println(errorMessage)
@@ -214,7 +211,7 @@ class EventsFragmento : BasicFragment() {
         )
     }
 
-    fun cancelarInscricao(id : Int?){
+    fun cancelarInscricao(event : EventResponse?, pos: Int){
         setLoadingVisibility(true)
 
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
@@ -222,11 +219,12 @@ class EventsFragmento : BasicFragment() {
 
         makeRequestWithRetries(
             requestCall = {
-                RetrofitClient.apiService.cancelarInscricao(SubscribeEventRequest(id, clientEmail)).execute()
+                RetrofitClient.apiService.cancelarInscricao(SubscribeEventRequest(event!!.id, clientEmail)).execute()
             },
             onSuccess = { EventResponseList ->
                 Toast.makeText(requireContext(), "Cancelamento realizado com sucesso.", Toast.LENGTH_SHORT).show()
-
+                event!!.subscribed = false
+                adapter.notifyItemChanged(pos)
             },
             onError = { errorMessage ->
                 println(errorMessage)
