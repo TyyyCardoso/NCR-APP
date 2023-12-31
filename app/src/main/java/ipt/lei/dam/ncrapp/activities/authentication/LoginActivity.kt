@@ -88,7 +88,7 @@ class LoginActivity : BaseActivity() {
             .build()
 
         val sharedPref = getSharedPreferences("BiometricLogin", MODE_PRIVATE)
-        val isBiometricLogin = sharedPref.getBoolean("isUsingBiometric", false)
+        var isBiometricLogin = sharedPref.getBoolean("isUsingBiometric", false)
 
         if(isBiometricLogin){
             prompt.authenticate(promptInfo)
@@ -187,6 +187,15 @@ class LoginActivity : BaseActivity() {
                             editor.putString("clientAbout", loginResponse.about)
                             editor.apply()
 
+                            val sharedPrefBiometric = getSharedPreferences("BiometricLogin", MODE_PRIVATE)
+                            val biometricEmail = sharedPrefBiometric.getString("biometricEmail", "")
+
+                            if(!loginResponse.email.equals(biometricEmail)){
+                                 val editor = sharedPrefBiometric.edit()
+                                 editor.putBoolean("isUsingBiometric", false)
+                                 editor.putString("biometricEmail", "")
+                                 editor.apply()
+                             }
 
 
                             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
