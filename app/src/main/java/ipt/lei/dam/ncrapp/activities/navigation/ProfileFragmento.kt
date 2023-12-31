@@ -110,8 +110,8 @@ class ProfileFragmento : BasicFragment() {
         val clientImage = sharedPref.getString("clientImage", "");
         val clientAbout = sharedPref.getString("clientAbout", "Diz algo sobre ti...");
 
-        var inputFormat :  SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd");
-        var outputFormat :  SimpleDateFormat  =  SimpleDateFormat("dd-MM-yyyy");
+        var inputFormat = SimpleDateFormat("yyyy-MM-dd");
+        var outputFormat  =  SimpleDateFormat("dd-MM-yyyy");
 
         var date : Date = inputFormat.parse(clientDataRegisto);
         var formattedDate = outputFormat.format(date);

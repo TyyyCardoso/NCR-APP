@@ -79,6 +79,37 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             val menu = navigationDrawerView.menu
             val logoutItem = menu.findItem(R.id.navigation_logout)
             logoutItem.isVisible = true
+
+            val sharedPreferencesBiometric = getSharedPreferences("BiometricLogin", Context.MODE_PRIVATE)
+            val isBiometric = sharedPreferencesBiometric.getBoolean("isBiometric", false)
+            val isToRequestBiometric = sharedPreferencesBiometric.getBoolean("isToRequestBiometric", true)
+
+            if(!isBiometric && isToRequestBiometric){
+                AlertDialog.Builder(this)
+                    .setTitle("Alerta")
+                    .setMessage("Quer ativar o login por impressão digital?")
+                    .setNeutralButton("Mais tarde") { dialog, which ->
+                        val editor = sharedPreferencesBiometric.edit()
+                        editor.putBoolean("isToRequestBiometric", false)
+                        editor.apply()
+                        AlertDialog.Builder(this)
+                            .setTitle("Informação")
+                            .setMessage("Quando pretender usar impressão digital diriga-se às definições para ativar.")
+                            .setPositiveButton("Ok") { dialog, which ->
+                            }
+                            .show()
+                    }
+                    .setPositiveButton("Ativar") { dialog, which ->
+                        val sharedPreferencesUserInfo = getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
+                        val editor = sharedPreferencesBiometric.edit()
+                        editor.putBoolean("isUsingBiometric", true)
+                        editor.putString("biometricEmail", sharedPreferencesUserInfo.getString("clientEmail", ""))
+                        editor.putBoolean("isToRequestBiometric", false)
+                        editor.apply()
+                    }
+                    .show()
+            }
+
         }
 
         bottomNavigationView.setOnItemSelectedListener { item ->
@@ -178,6 +209,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 clearBottomNavigationSelection()
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_schedule)*/
 
+            }
+            R.id.navigation_settings-> {
+                clearBottomNavigationSelection()
+                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_settings)
+                true
             }
             R.id.navigation_info -> {
                 clearBottomNavigationSelection()

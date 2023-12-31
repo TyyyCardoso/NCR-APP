@@ -10,6 +10,7 @@
     <string name="mainNavPersonalButton">Perfil</string>
     <string name="mainNavStaffButton">Organização</string>
     <string name="mainNavInfoButton">Informação</string>
+    <string name="mainNavSettingsButton">Definições</string>
     <string name="mainEventTabIncreverBtn">Increver-me</string>
     <string name="mainEventTabDetalhesBtn">Detalhes</string>
     <!-- ADD EVENT SCREEN TEXTS -->
@@ -53,7 +54,7 @@
     <string name="recoverPasswordButton">Enviar e-mail</string>
     <!-- INSERT OTP SCREEN TEXTS -->
     <string name="insertOTPTitle">Caso exista uma conta associada ao seu e-mail, foi enviado um código para a sua caixa de entrada:</string>
-    Se uma conta associada ao seu endereço de e-mail existir, um código foi enviado  de e-mail.
+    Se uma conta associada ao seu endereço de e-mail existir, um código foi enviado de e-mail.
     <string name="insertOTPBoxHint">Inserir código</string>
     <string name="insertOTPBoxError">Código inserido inválido</string>
     <string name="insertEmptyOTPBoxError">O código não pode estar vazio</string>

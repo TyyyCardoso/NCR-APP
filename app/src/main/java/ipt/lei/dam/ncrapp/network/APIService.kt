@@ -1,4 +1,5 @@
 
+import ipt.lei.dam.ncrapp.models.BiometricLoginRequest
 import ipt.lei.dam.ncrapp.models.ChangePasswordRequest
 import ipt.lei.dam.ncrapp.models.DidYouKnowRequest
 import ipt.lei.dam.ncrapp.models.DidYouKnowResponse
@@ -30,6 +31,9 @@ import retrofit2.http.Path
 interface APIService {
         @POST("auth/login")
         fun login(@Body request: LoginRequest): Call<LoginResponse>
+
+        @POST("auth/biometricLogin")
+        fun biometricLogin(@Body request: BiometricLoginRequest): Call<LoginResponse>
 
         @POST("auth/recover")
         fun recoverPassword(@Body request: RecoverPasswordRequest): Call<ResponseBody>

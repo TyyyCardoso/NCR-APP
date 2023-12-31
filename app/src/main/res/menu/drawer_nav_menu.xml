@@ -41,6 +41,11 @@
     <group android:id="@+id/Saida" android:checkableBehavior="single">
 
         <item
+            android:id="@+id/navigation_settings"
+            android:icon="@drawable/baseline_settings_24"
+            android:title="Definições" />
+
+        <item
             android:id="@+id/navigation_logout"
             android:icon="@drawable/baseline_logout_24"
             android:visible="false"
