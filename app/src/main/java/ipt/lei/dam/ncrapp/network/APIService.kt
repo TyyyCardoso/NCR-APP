@@ -96,7 +96,7 @@ interface APIService {
                 @Part("createdAt") createdAt: RequestBody,
                 @Part image: MultipartBody.Part,
                 @Part("imageFileName") imageFileName: RequestBody,
-        ) : Call<Void>
+        ) : Call<DefaultResponse>
 
         @DELETE("event/{id}")
         fun deleteEvent(@Path("id") id: Int) : Call<ResponseBody>

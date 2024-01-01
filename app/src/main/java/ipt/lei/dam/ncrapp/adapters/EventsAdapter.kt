@@ -20,11 +20,13 @@ import java.util.Date
 
 
 class EventsAdapter(private val context: Context, private val eventsList: List<EventResponse>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
-
+    //Listener para abrir detalhes do evento
     var onItemClickListener: ((EventResponse) -> Unit)? = null
+    //Listener para inscrever no evento
     var onItemClickSubscribeListener: ((EventResponse, Int) -> Unit)? = null
     var toast: Toast? = null
 
+    //Definiçao do viewHolder
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val eventImage: ImageView = view.findViewById(R.id.event_image)
         val eventName: TextView = view.findViewById(R.id.event_name)
@@ -40,13 +42,16 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
         return ViewHolder(view)
     }
 
+    //Para cada item (evento)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        //Obtem o evento do momento
         val event = eventsList[position]
 
+        //Obtem info do user
         val sharedPreferences = context.getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
         val clientType = sharedPreferences.getString("clientType", "student")
 
-
+        //Verifica se existe referencia a imagem
         if (!event.image.isNullOrBlank()){
             val url = "" + RetrofitClient.BASE_URL + "event/images/" + event.image
             println("Event: " + event.name + "getting image from: " + url)
@@ -57,25 +62,26 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
                 //.placeholder(R.drawable.default_event_img)
                 .error(R.drawable.default_event_img)
                 .into(holder.eventImage)
+        } else {
+            holder.eventImage.setImageResource(R.drawable.default_event_img)
         }
 
+        //Atualiza a UI com os valores do Evento
         holder.eventName.text = event.name
         holder.eventDescription.text = event.description
-
-
         holder.eventDate.text = convertDateTime(event.date.toString())
-
         holder.eventDetailsBtn.setOnClickListener {
             onItemClickListener?.invoke(event)
         }
 
+        //Verificar se evento ja passou ou nãp
         var eventDate = event.date.toString().substring(0,10)
 
         val dateFormat = SimpleDateFormat("yyyy-MM-dd")
         var date : Date =  dateFormat.parse(eventDate);
         val today = Date()
 
-
+        //Definir button de subscrever de acordo com data e se esta ou nao inscrito
         if(null!=event.subscribed){
             if(event.subscribed!!){
                 holder.eventSubscribeBtn.text = "Cancelar"
@@ -87,7 +93,7 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
 
         }
 
-
+        //Listener para subcrever
         holder.eventSubscribeBtn.setOnClickListener {
             if(!today.after(date)) {
                 if (clientType.equals("student")) {

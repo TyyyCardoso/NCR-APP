@@ -172,14 +172,20 @@ class EventAddFragmento : BasicFragment() {
         eventSubmitButton.setOnClickListener {
             if(validateFields()){
                 saveEvent()
-
             }
         }
         return view
     }
 
+    /**
+     *
+     * Funcao de guardar evento
+     *
+     */
     private fun saveEvent(){
         setLoadingVisibility(true)
+        eventSubmitButton.visibility = View.GONE
+
         val eventName = eventNameEditText.text.toString()
         val eventDesc = eventDescEditText.text.toString()
         val eventLocal = eventLocalEditText.text.toString()
@@ -196,27 +202,29 @@ class EventAddFragmento : BasicFragment() {
             image = eventSelectedImageUri
         )
 
+        //Contruir parts com toda a info do event
         val namePart = RequestBody.create(MultipartBody.FORM, event.name)
         val descriptionPart = RequestBody.create(MultipartBody.FORM, event.description)
         val datePart = RequestBody.create(MultipartBody.FORM, event.date)
         val locationPart = RequestBody.create(MultipartBody.FORM, event.location)
         val transportPart = RequestBody.create(MultipartBody.FORM, event.transport.toString())
 
+        //Construir part de imagem
         var imagePart: MultipartBody.Part? = null
 
+        //Se foi introduzida uma imagem
         if(event.image != null){
-            println("Image inserted")
             val imageFile = compressImage(event.image)
             val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
             imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
-
         } else {
-            println("Using default image")
+            //Senao, usar imagem default
             val emptyRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), ByteArray(0))
             imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
 
         }
 
+        //Iniciar chamada à API
         makeRequestWithRetries(
             requestCall = {
                 RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart).execute()
@@ -248,6 +256,7 @@ class EventAddFragmento : BasicFragment() {
             },
             onError = { errorMessage ->
                 setLoadingVisibility(false)
+                eventSubmitButton.visibility = View.VISIBLE
                 if (toast != null) {
                     toast!!.setText("ERRO: $errorMessage")
                 } else {
@@ -260,6 +269,11 @@ class EventAddFragmento : BasicFragment() {
 
     }
 
+    /**
+     *
+     * Funcao para abrir popup de escolha de data e hora
+     *
+     */
     private fun pickDateTime() {
         DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
             calendar.set(year, month, dayOfMonth)
@@ -275,6 +289,11 @@ class EventAddFragmento : BasicFragment() {
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
+    /**
+     *
+     * Função para validar campos
+     *
+     */
     private fun validateFields(): Boolean {
         if (eventNameEditText.text.toString().trim().isEmpty()) {
             eventNameEditText.error = "Introduza um nome"

@@ -39,51 +39,65 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 
 class EventDetailFragmento :  BasicFragment() {
-    private var editMode : Boolean = false
-
-    private lateinit var event : EventResponse
-
-    // Componentes VIEW
-    private lateinit var linearLayoutEventDetails : LinearLayout
-    private lateinit var eventImage: ImageView
+    /**
+     * Componentes VIEW
+     */
+    //Text Fields
     private lateinit var eventName: TextView
     private lateinit var eventDescription: TextView
     private lateinit var eventLocation: TextView
-    private lateinit var eventDate: TextView
     private lateinit var eventTransport: TextView
 
-    // Componentes de EDIT
-    private var eventSelectedImage: String = ""
-    private var eventSelectedImageUri: Uri? = null
-    private var wasImageEdited : Boolean = false
+    //DateTimeFields
+    private lateinit var eventDate: TextView
+
+    //Others
+    private lateinit var linearLayoutEventDetails : LinearLayout
+    private lateinit var event : EventResponse
+
+    //Image
+    private lateinit var eventImage: ImageView
+    private lateinit var eventImageBig: GestureImageView
+    private lateinit var eventImageBigCloseBtn: FloatingActionButton
+
+    /**
+     * Componentes EDIT
+     */
+    //Text Fields
     private lateinit var etEventName: EditText
     private lateinit var etEventDescription: EditText
     private lateinit var etEventLocation: EditText
-    private lateinit var btnEditEventSubmit: Button
+
+    //DateTimeFields
+    private lateinit var selectedDateTime: String
     private lateinit var btnPickDateTime: Button
+    private val calendar = Calendar.getInstance()
+
+    //Others
+    private var editMode : Boolean = false
+    private lateinit var checkboxEditEventTransport: CheckBox
+    private lateinit var btnEditEventSubmit: Button
+
+    //Image
+    private var eventSelectedImage: String = ""
+    private var eventSelectedImageUri: Uri? = null
+    private var wasImageEdited : Boolean = false
     private lateinit var eventImageSelectButton: Button
     private lateinit var eventImagemCaptureButton: Button
     private lateinit var eventImageEditLayout: LinearLayout
-    private lateinit var selectedDateTime: String
-    private lateinit var checkboxEditEventTransport: CheckBox
-
-    //Componentes de DELETE
-    private lateinit var btnRemoveEvent: Button
-
-    // DateTime
-    private val calendar = Calendar.getInstance()
-
-    //Images
     private lateinit var getContent: ActivityResultLauncher<String>
     private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
     private lateinit var currentPhotoUri: Uri
+
+    /**
+     * Componentes DELETE
+     */
+    private lateinit var btnRemoveEvent: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,57 +111,49 @@ class EventDetailFragmento :  BasicFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_event_detail_fragmento, container, false)
-
-        // Componentes VIEW
-        linearLayoutEventDetails = view.findViewById(R.id.linearLayoutEventDetails)
-        eventImage = view.findViewById(R.id.eventDetailImage)
+        setupLoadingAnimation(view)
+        /**
+         * REFERENCES TO UI VIEW
+         */
+        //Text Fiels
         eventName =  view.findViewById(R.id.eventDetailName)
         eventDescription =  view.findViewById(R.id.eventDetailDescription)
         eventLocation =  view.findViewById(R.id.eventDetailLocation)
-        eventDate =  view.findViewById(R.id.eventDetailDate)
-        eventTransport =  view.findViewById(R.id.eventDetailTransport)
+        eventTransport =  view.findViewById(R.id.eventDetailTransport) //TextView
+        eventDate =  view.findViewById(R.id.eventDetailDate) //TextView
 
-        val gestureImageView = view.findViewById<GestureImageView>(R.id.gestureImageView)
-        val fabGestureImageView = view.findViewById<FloatingActionButton>(R.id.closeGestureImageViewFAB)
+        //Others
+        linearLayoutEventDetails = view.findViewById(R.id.linearLayoutEventDetails)
+        val backButton = requireActivity().findViewById<ImageView>(R.id.back_button)
+        backButton.visibility = View.VISIBLE
 
-        // Componentes EDIT
+        //Image
+        eventImage = view.findViewById(R.id.eventDetailImage)
+        eventImageBig = view.findViewById(R.id.gestureImageView)
+        eventImageBigCloseBtn = view.findViewById(R.id.closeGestureImageViewFAB)
+
+        /**
+         * REFERENCES TO UI EDIT
+         */
+        //Text Fiels
         etEventName =  view.findViewById(R.id.etEditEventName)
         etEventDescription =  view.findViewById(R.id.etEditEventDesc)
         etEventLocation =  view.findViewById(R.id.etEditEventLocation)
-        btnEditEventSubmit =  view.findViewById(R.id.btnEditEventSubmit)
+
+        //DateTime Fields
         btnPickDateTime =  view.findViewById(R.id.btnPickDateTime)
+
+        //Others
+        btnEditEventSubmit =  view.findViewById(R.id.btnEditEventSubmit)
+        checkboxEditEventTransport =  view.findViewById(R.id.checkboxEditEventTransport)
+        val fabEditEvent = view.findViewById<FloatingActionButton>(R.id.fabEditEvent)
+
+        //Image
         eventImageEditLayout =  view.findViewById(R.id.eventImageEditLayout)
         eventImageSelectButton = view.findViewById(R.id.btnEditEventImageSelect)
         eventImagemCaptureButton =  view.findViewById(R.id.btnEditEventImageCapture)
-        checkboxEditEventTransport =  view.findViewById(R.id.checkboxEditEventTransport)
 
-        // Componentes DELETE
-        btnRemoveEvent =  view.findViewById(R.id.btnDeleteEvent)
-
-        setupLoadingAnimation(view)
-
-        val fabEditEvent = view.findViewById<FloatingActionButton>(R.id.fabEditEvent)
-
-        val backButton = requireActivity().findViewById<ImageView>(R.id.back_button)
-        backButton.visibility = View.VISIBLE
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientType = sharedPref.getString("clientType", "member");
-
-        if(!clientType.equals("ADMINISTRADOR")){
-            fabEditEvent.visibility = View.GONE;
-            //fabEditEvent.setOnClickListener {
-            //    toggleEditMode()
-            //}
-        }else{
-            fabEditEvent.setOnClickListener {
-                toggleEditMode()
-            }
-        }
-
-        backButton.setOnClickListener {
-            findNavController().navigate(R.id.navigation_events)
-        }
-
+        //Image AUX
         getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let { selectedImageUri ->
 
@@ -155,7 +161,6 @@ class EventDetailFragmento :  BasicFragment() {
                     .load(selectedImageUri)
                     .fit()
                     .centerInside()
-                    //.placeholder(R.drawable.default_event_img)
                     .error(R.drawable.default_event_img)
                     .into(eventImage)
 
@@ -172,17 +177,40 @@ class EventDetailFragmento :  BasicFragment() {
                     .load(eventSelectedImageUri)
                     .fit()
                     .centerInside()
-                    //.placeholder(R.drawable.default_event_img)
                     .error(R.drawable.default_event_img)
                     .into(eventImage)
 
             }
         }
 
-        //Obter evento do bundle
-        event = arguments?.getParcelable<EventResponse>("myEvent")!!
+        /**
+         * REFERENCES TO UI DELETE
+         */
+        btnRemoveEvent =  view.findViewById(R.id.btnDeleteEvent)
 
-        println("" + event.id + " - " + event.name + " - " + event.createdAt)
+        /**
+         * ClickListeners base
+         */
+        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString("clientType", "member");
+
+        if(!clientType.equals("ADMINISTRADOR")){
+            fabEditEvent.visibility = View.GONE;
+        }else{
+            fabEditEvent.setOnClickListener {
+                toggleEditMode()
+            }
+        }
+
+        backButton.setOnClickListener {
+            findNavController().navigate(R.id.navigation_events)
+        }
+
+        /**
+         * Carregar eventos para a UI
+         */
+        //Obter evento do bundle
+        event = arguments?.getParcelable("myEvent")!!
 
         //Definir valores VIEW
         eventName.text = event?.name
@@ -205,16 +233,15 @@ class EventDetailFragmento :  BasicFragment() {
 
         if (!event?.image.isNullOrBlank()){
             urlImage = "" + RetrofitClient.BASE_URL + "event/images/" + event.image
-            println("Event: " + event.name + "getting image from: " + urlImage)
             Picasso.get()
                 .load(urlImage)
-                .resize(400, 200) // Substitua "width" e "height" pelos valores desejados
+                .resize(400, 200)
                 .centerCrop()
-                //.placeholder(R.drawable.default_event_img)
                 .error(R.drawable.default_event_img)
                 .into(eventImage)
         }
 
+        //ClickListener de abrir visualização de Imagem BIG
         eventImage.setOnClickListener {
             if (linearLayoutEventDetails.visibility == View.VISIBLE) {
                 linearLayoutEventDetails.visibility = View.GONE
@@ -222,34 +249,38 @@ class EventDetailFragmento :  BasicFragment() {
 
                 Picasso.get()
                     .load(urlImage)
-                    .fit() // Substitua "width" e "height" pelos valores desejados
+                    .fit()
                     .centerInside()
-                    //.placeholder(R.drawable.default_event_img)
                     .error(R.drawable.default_event_img)
-                    .into(gestureImageView)
+                    .into(eventImageBig)
 
-                gestureImageView.visibility = View.VISIBLE
-                fabGestureImageView.visibility = View.VISIBLE
+                eventImageBig.visibility = View.VISIBLE
+                eventImageBigCloseBtn.visibility = View.VISIBLE
             }
         }
 
-        fabGestureImageView.setOnClickListener {
+        //ClickListener de fechar visualização de Imagem BIG
+        eventImageBigCloseBtn.setOnClickListener {
             linearLayoutEventDetails.visibility = View.VISIBLE
-            gestureImageView.visibility = View.GONE
-            fabGestureImageView.visibility = View.GONE
+            eventImageBig.visibility = View.GONE
+            eventImageBigCloseBtn.visibility = View.GONE
             if(clientType.equals("ADMINISTRADOR")){
                 fabEditEvent.visibility = View.VISIBLE
             }
         }
 
-
-        //EDIT MODE FUNCOES
+        /**
+         * ClickListeners para EDITMODE
+         */
         btnPickDateTime.setOnClickListener {
             pickDateTime()
         }
 
         btnEditEventSubmit.setOnClickListener {
-            saveEvent()
+            if(editMode) {
+                //Atualizar em BD
+                saveEventBD()
+            }
         }
 
         eventImageSelectButton.setOnClickListener {
@@ -288,63 +319,58 @@ class EventDetailFragmento :  BasicFragment() {
         return view
     }
 
+    /**
+     *
+     * Função de apagar evento
+     *
+     */
     private fun deleteEvent(){
-        var doEventRequest = false
-        doEventRequest = true
-        if (doEventRequest) {
-            btnRemoveEvent.visibility = View.GONE
-            setLoadingVisibility(true)
-            makeRequestWithRetries(
-                requestCall = {
-                    RetrofitClient.apiService.deleteEvent(event.id!!).execute()
-                },
-                onSuccess = { isEditted ->
-                    setLoadingVisibility(false)
+        btnRemoveEvent.visibility = View.GONE
+        setLoadingVisibility(true)
+        makeRequestWithRetries(
+            requestCall = {
+                RetrofitClient.apiService.deleteEvent(event.id!!).execute()
+            },
+            onSuccess = { isDeleted ->
+                //Atualizar loading
+                setLoadingVisibility(false)
 
-                    EventsFragmento.setMyNeedRefresh(true)
-
-                    val navOptions = NavOptions.Builder()
-                        .setPopUpTo(R.id.navigation_events, true)
-                        .build()
-
-
-                    findNavController().navigate(R.id.navigation_events, null, navOptions)
-
-                    if (toast != null) {
-                        toast!!.setText("Evento removido com sucesso")
-                    } else {
-                        toast = Toast.makeText(requireActivity(), "Evento removido com sucesso", Toast.LENGTH_SHORT)
-                    }
-                    toast!!.show()
-
-                },
-                onError = { errorMessage ->
-                    if (toast != null) {
-                        toast!!.setText(errorMessage)
-                    } else {
-                        toast = Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT)
-                    }
-                    toast!!.show()
-                    btnRemoveEvent.visibility = View.VISIBLE
-                    setLoadingVisibility(false)
+                if (toast != null) {
+                    toast!!.setText("Evento removido com sucesso")
+                } else {
+                    toast = Toast.makeText(requireActivity(), "Evento removido com sucesso", Toast.LENGTH_SHORT)
                 }
-            )
-        }
+                toast!!.show()
+
+                //Informar que deve atualizar recyclerView
+                EventsFragmento.setMyNeedRefresh(true)
+
+                //Redirecionar para eventos
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.navigation_events, true)
+                    .build()
+                findNavController().navigate(R.id.navigation_events, null, navOptions)
+            },
+            onError = { errorMessage ->
+                setLoadingVisibility(false)
+                btnRemoveEvent.visibility = View.VISIBLE
+                if (toast != null) {
+                    toast!!.setText(errorMessage)
+                } else {
+                    toast = Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT)
+                }
+                toast!!.show()
+
+
+            }
+        )
     }
-    private fun saveEvent(){
-        if(editMode){
-            //Atualizar em BD
-            saveEventBD()
-
-            //Voltar ao VIEW
-            toggleEditMode()
-
-        }
-    }
-
 
     private fun saveEventBD(){
         if(validateFields()){
+            btnEditEventSubmit.visibility = View.GONE
+            setLoadingVisibility(true)
+
             //Atualizar objeto event
             val eventName = etEventName.text.toString()
             val eventDesc = etEventDescription.text.toString()
@@ -363,6 +389,7 @@ class EventDetailFragmento :  BasicFragment() {
                 imageFileName = event.image!!
             )
 
+            //Contruir parts com toda a info do event
             val idPart = RequestBody.create(MultipartBody.FORM, eventToEdit.id.toString())
             val namePart = RequestBody.create(MultipartBody.FORM, eventToEdit.name)
             val descriptionPart = RequestBody.create(MultipartBody.FORM, eventToEdit.description)
@@ -372,80 +399,71 @@ class EventDetailFragmento :  BasicFragment() {
             val createdAtPart = RequestBody.create(MultipartBody.FORM, eventToEdit.createdAt)
             val imageFileNamePart = RequestBody.create(MultipartBody.FORM, eventToEdit.imageFileName)
 
+            //Construir part de imagem
             var imagePart: MultipartBody.Part? = null
 
+            //Se foi introduzida/editada uma imagem
             if(wasImageEdited && eventToEdit.image != null) {
                 val imageFile = compressImage(eventToEdit.image)
                 val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
                 imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
             } else {
+                //Senao, usar imagem default/manter imagem
                 val emptyRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), ByteArray(0))
                 imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
             }
-                val call = RetrofitClient.apiService.editEvent(idPart, namePart, descriptionPart, datePart, locationPart, transportPart, createdAtPart, imagePart, imageFileNamePart)
-                btnEditEventSubmit.visibility = View.GONE
-                setLoadingVisibility(true)
 
-                call.enqueue(object : Callback<Void> {
-                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                        val responseCodeNum = response.code()
-                        val responseCode = when (responseCodeNum) {
-                            400 -> "Solicitação inválida"
-                            401 -> "Não autorizado"
-                            404 -> "Recurso não encontrado"
-                            413 -> "Tamanho Máximo de IMG: 1MB"
-                            500 -> "Interno do servidor"
-                            else -> "Desconhecido: $responseCodeNum"
-                        }
-                        if (response.isSuccessful) {
-                            setLoadingVisibility(false)
+            //Iniciar chamada à API
+            makeRequestWithRetries(
+                requestCall = {
+                    RetrofitClient.apiService.editEvent(idPart, namePart, descriptionPart, datePart, locationPart, transportPart, createdAtPart, imagePart, imageFileNamePart).execute()
+                },
+                onSuccess = { responseBody ->
+                    //Atualizar loading
+                    setLoadingVisibility(false)
 
-                            EventsFragmento.setMyNeedRefresh(true)
-
-                            val navOptions = NavOptions.Builder()
-                                .setPopUpTo(R.id.navigation_events, true)
-                                .build()
-
-
-                            findNavController().navigate(R.id.navigation_events, null, navOptions)
-
-                            if (toast != null) {
-                                toast!!.setText("Evento editado com sucesso")
-                            } else {
-                                toast = Toast.makeText(requireActivity(), "Evento editado com sucesso", Toast.LENGTH_SHORT)
-                            }
-                            toast!!.show()
-                        } else {
-                            btnEditEventSubmit.visibility = View.VISIBLE
-                            setLoadingVisibility(false)
-                            if (toast != null) {
-                                toast!!.setText("ERRO: $responseCode")
-                            } else {
-                                toast = Toast.makeText(requireActivity(), "ERRO: $responseCode", Toast.LENGTH_SHORT)
-                            }
-                            toast!!.show()
-                        }
+                    //Informar via Toast
+                    if (toast != null) {
+                        toast!!.setText("Evento editado com sucesso")
+                    } else {
+                        toast = Toast.makeText(
+                            requireActivity(),
+                            "Evento editado com sucesso",
+                            Toast.LENGTH_SHORT
+                        )
                     }
+                    toast!!.show()
 
-                    override fun onFailure(call: Call<Void>, t: Throwable) {
-                        // Tratamento de falha
+                    //Informar que deve atualizar recyclerView
+                    EventsFragmento.setMyNeedRefresh(true)
+
+                    //Redirecionar para eventos
+                    val navOptions = NavOptions.Builder()
+                        .setPopUpTo(R.id.navigation_events, true)
+                        .build()
+                    findNavController().navigate(R.id.navigation_events, null, navOptions)
+                },
+                onError = { errorMessage ->
+                    setLoadingVisibility(false)
+                    btnEditEventSubmit.visibility = View.VISIBLE
+
+                    if (toast != null) {
+                        toast!!.setText("ERRO: $errorMessage")
+                    } else {
+                        toast =
+                            Toast.makeText(requireActivity(), "ERRO: $errorMessage", Toast.LENGTH_SHORT)
                     }
-                })
-
-
+                    toast!!.show()
+                }
+            )
         }
     }
 
-    private fun getRealPathFromUri(uri: Uri): String? {
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = requireActivity().contentResolver.query(uri, projection, null, null, null)
-        val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor?.moveToFirst()
-        val filePath = cursor?.getString(columnIndex ?: -1)
-        cursor?.close()
-        return filePath
-    }
-
+    /**
+     *
+     * Função para validar campos
+     *
+     */
     private fun validateFields(): Boolean{
         if (etEventName.text.toString().trim().isEmpty()) {
             etEventName.error = "Introduza um nome"
@@ -462,6 +480,11 @@ class EventDetailFragmento :  BasicFragment() {
         return true
     }
 
+    /**
+     *
+     * Funcao para abrir popup de escolha de data e hora
+     *
+     */
     private fun pickDateTime() {
         DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
             calendar.set(year, month, dayOfMonth)
@@ -477,6 +500,11 @@ class EventDetailFragmento :  BasicFragment() {
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
+    /**
+     *
+     * Função trocar entre VIEWMODE ou EDITMODE
+     *
+     */
     private fun toggleEditMode() {
         editMode = !editMode
 
@@ -566,16 +594,5 @@ class EventDetailFragmento :  BasicFragment() {
 
     companion object {
         private const val REQUEST_CODE_CAPTURE_IMAGE = 1
-        private const val REQUEST_CODE_PICK_IMAGE = 2
-        @JvmStatic
-        fun newInstance(event: EventResponse): EventDetailFragmento {
-            val args = Bundle()
-
-            args.putParcelable("myEvent", event)
-
-            val fragment = EventDetailFragmento()
-            fragment.arguments = args
-            return fragment
-            }
     }
 }
