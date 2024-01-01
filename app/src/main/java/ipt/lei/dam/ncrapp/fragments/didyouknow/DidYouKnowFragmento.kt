@@ -6,12 +6,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.SharedViewModel
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
 import ipt.lei.dam.ncrapp.adapters.DidYouKnowAdapter
 import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowResponse
@@ -19,6 +22,9 @@ import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 
 class sabiasQueFragmento : BasicFragment() {
+    private var selectedSortOption: String = "recente"
+    private val sharedViewModel: SharedViewModel by activityViewModels()
+    private var isInitialized = false
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: DidYouKnowAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -36,6 +42,21 @@ class sabiasQueFragmento : BasicFragment() {
         arguments?.let {
 
         }
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeSortOption()
+        isInitialized = true
+    }
+
+    private fun observeSortOption() {
+        sharedViewModel.sortOption.observe(viewLifecycleOwner, Observer { sortOption ->
+            if (isInitialized) {
+                selectedSortOption = sortOption
+                updateRecyclerView()
+            }
+        })
     }
 
 
@@ -84,7 +105,7 @@ class sabiasQueFragmento : BasicFragment() {
             getDidYouKnowFromApi (
                 onDidYouKnowLoaded = { didYouKnowList ->
                     myListDidYouKnow = didYouKnowList
-                    updateRecyclerView(myListDidYouKnow!!)
+                    updateRecyclerView()
                 },
                 onError = { errorMessage ->
 
@@ -103,7 +124,7 @@ class sabiasQueFragmento : BasicFragment() {
                 getDidYouKnowFromApi (
                     onDidYouKnowLoaded = { didYouKnowList ->
                         myListDidYouKnow = didYouKnowList
-                        updateRecyclerView(myListDidYouKnow!!)
+                        updateRecyclerView()
                         setMyNeedRefresh(false)
                     },
                     onError = { errorMessage ->
@@ -111,14 +132,14 @@ class sabiasQueFragmento : BasicFragment() {
                 )
             } else {
                 //Se nao e necessário atualizar, simplesmente constroi o recycler view com os sabias que guardados em local
-                updateRecyclerView(myListDidYouKnow!!)
+                updateRecyclerView()
             }
         //Se nao existem sabias que local -> getSabiasQue
         } else {
             getDidYouKnowFromApi (
                 onDidYouKnowLoaded = { didYouKnowList ->
                     myListDidYouKnow = didYouKnowList
-                    updateRecyclerView(myListDidYouKnow!!)
+                    updateRecyclerView()
                 },
                 onError = { errorMessage ->
 
@@ -155,24 +176,35 @@ class sabiasQueFragmento : BasicFragment() {
      *  didYouKnowList -> lista de todos os sabias que
      *
      */
-    private fun updateRecyclerView(didYouKnowList: List<DidYouKnowResponse>){
+    private fun updateRecyclerView(){
         setLoadingVisibility(true)
 
-        // Definiçao do adapter com a lista
-        adapter = DidYouKnowAdapter(requireContext(), didYouKnowList).apply {
-            // Definiçao do clickListener de abrir detalhes
-            onItemClickListener = { didYouKnow ->
-
-                val bundle = Bundle().apply {
-                    putParcelable("myDidYouKow", didYouKnow)
-                }
-                findNavController().navigate(R.id.navigation_didyouknow_details, bundle)
+        if(!myListDidYouKnow.isNullOrEmpty()) {
+            myListDidYouKnow = if(selectedSortOption.equals("recente")) {
+                myListDidYouKnow!!.sortedByDescending { it.createdAt }
+            } else if (selectedSortOption.equals("antigo")){
+                myListDidYouKnow!!.sortedBy { it.createdAt }
+            } else {
+                myListDidYouKnow // Mantém a lista como está se não se encaixar nas condições anteriores
             }
-        }
-        recyclerView.adapter = adapter
 
-        swipeRefreshLayout.isRefreshing = false
-        setLoadingVisibility(false)
-        recyclerView.visibility = View.VISIBLE
+            // Definiçao do adapter com a lista
+            adapter = DidYouKnowAdapter(requireContext(), myListDidYouKnow!!).apply {
+                // Definiçao do clickListener de abrir detalhes
+                onItemClickListener = { didYouKnow ->
+
+                    val bundle = Bundle().apply {
+                        putParcelable("myDidYouKow", didYouKnow)
+                    }
+                    findNavController().navigate(R.id.navigation_didyouknow_details, bundle)
+                }
+            }
+            recyclerView.adapter = adapter
+
+            swipeRefreshLayout.isRefreshing = false
+            setLoadingVisibility(false)
+            recyclerView.visibility = View.VISIBLE
+        }
+
     }
 }

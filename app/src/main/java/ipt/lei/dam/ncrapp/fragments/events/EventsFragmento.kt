@@ -7,12 +7,15 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.SharedViewModel
 import ipt.lei.dam.ncrapp.adapters.EventsAdapter
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
 import ipt.lei.dam.ncrapp.models.events.EventResponse
@@ -23,6 +26,8 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class EventsFragmento : BasicFragment() {
+    private var selectedSortOption: String = "recente"
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: EventsAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
@@ -41,6 +46,18 @@ class EventsFragmento : BasicFragment() {
 
         }
 
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeSortOption()
+    }
+
+    private fun observeSortOption() {
+        sharedViewModel.sortOption.observe(viewLifecycleOwner, Observer { sortOption ->
+            selectedSortOption = sortOption
+            updateRecyclerView()
+        })
     }
 
     override fun onCreateView(
@@ -68,7 +85,10 @@ class EventsFragmento : BasicFragment() {
          * Obter info do user
          */
         val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientType = sharedPref.getString("clientType", "member");
+        val clientType = sharedPref.getString("clientType", "member")
+        val editor = sharedPref.edit()
+        editor.putString("orderBy", selectedSortOption)
+        editor.apply()
 
         /**
          * ClickListeners
@@ -86,7 +106,7 @@ class EventsFragmento : BasicFragment() {
             getEventsFromApi(
                 onEventsLoaded = { eventList ->
                     myListEvents = eventList
-                    updateRecyclerView(myListEvents!!)
+                    updateRecyclerView()
                 },
                 onError = { errorMessage ->
 
@@ -105,7 +125,7 @@ class EventsFragmento : BasicFragment() {
                 getEventsFromApi(
                     onEventsLoaded = { eventList ->
                         myListEvents = eventList
-                        updateRecyclerView(myListEvents!!)
+                        updateRecyclerView()
                         setMyNeedRefresh(false)
                     },
                     onError = { errorMessage ->
@@ -113,7 +133,7 @@ class EventsFragmento : BasicFragment() {
                 )
             } else {
                 //Se nao e necessário atualizar, simplesmente constroi o recycler view com os eventos já guardados em local
-                updateRecyclerView(myListEvents!!)
+                updateRecyclerView()
             }
         //Se nao existem eventos local -> getEvents
         } else {
@@ -121,7 +141,7 @@ class EventsFragmento : BasicFragment() {
                 onEventsLoaded = { eventList ->
 
                     myListEvents = eventList
-                    updateRecyclerView(myListEvents!!)
+                    updateRecyclerView()
                 },
                 onError = { errorMessage ->
 
@@ -163,11 +183,18 @@ class EventsFragmento : BasicFragment() {
      *  eventList -> lista de todos os eventos
      *
      */
-    private fun updateRecyclerView(eventList: List<EventResponse>) {
+    fun updateRecyclerView() {
         setLoadingVisibility(true)
+        println("updating recycler: " + selectedSortOption)
+
+        if(selectedSortOption.equals("recente")){
+            myListEvents = myListEvents!!.sortedByDescending { it.date }
+        } else if (selectedSortOption.equals("antigo")){
+            myListEvents = myListEvents!!.sortedBy { it.date }
+        }
 
         // Definiçao do adapter com a lista de eventos
-        adapter = EventsAdapter(requireContext(), eventList).apply {
+        adapter = EventsAdapter(requireContext(), myListEvents!!).apply {
             // Definiçao do clickListener de abrir detalhes
             onItemClickListener = { event ->
                 val bundle = Bundle().apply {

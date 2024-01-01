@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
@@ -19,19 +20,27 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.SharedViewModel
 import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
 import ipt.lei.dam.ncrapp.databinding.ActivityMainBinding
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    companion object{
+        var selectedSortOption: String = "recente"
+    }
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var bottomNavigationView: BottomNavigationView
     private lateinit var toolbarLoginContainerText: TextView
     private lateinit var toolbarLoginImage: ImageView
+    private lateinit var sortByImage: ImageView
     private lateinit var userInfo : SharedPreferences
     private lateinit var biometricInfo : SharedPreferences
+
+    private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +57,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val toolbarLoginContainer: LinearLayout = findViewById(R.id.entrar_container)
         toolbarLoginContainerText = findViewById(R.id.containerText)
         toolbarLoginImage = findViewById(R.id.containerImage)
+        sortByImage = findViewById(R.id.sort_button)
+
 
         setSupportActionBar(toolbar)
         val actionBar = supportActionBar
@@ -194,6 +205,31 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
         }
+
+        sortByImage.setOnClickListener {
+            val sortOptions = arrayOf("recente", "antigo")
+            var checkedItem = sortOptions.indexOf(selectedSortOption)
+
+            if (checkedItem == -1) checkedItem = 0
+
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.sort_title)
+                .setSingleChoiceItems(sortOptions, checkedItem) { _, which ->
+                    selectedSortOption = sortOptions[which]
+                }
+                .setPositiveButton(R.string.ok) { dialog, _ ->
+                    onSortOptionSelected(selectedSortOption)
+                    dialog.dismiss()
+                }
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
+                    dialog.dismiss()
+                }
+            builder.create().show()
+        }
+    }
+
+    fun onSortOptionSelected(sortOption: String) {
+        sharedViewModel.setSortOption(sortOption)
     }
 
     /**

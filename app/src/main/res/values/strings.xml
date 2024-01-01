@@ -31,6 +31,12 @@
     <string name="eventDetailDateTitle">Data do Evento </string>
     <string name="editEventTextEventEditBtn">Guardar </string>
     <string name="editEventTextEventDeleteBtn">Remover </string>
+    <!-- SORT TEXTS -->
+    <string name="sort_recent">Mais Recente</string>
+    <string name="sort_old">Mais Antigo</string>
+    <string name="sort_title">Ordenar por</string>
+    <string name="ok">Aplicar</string>
+    <string name="cancel">Cancelar</string>
     <!-- ADD DIDYOUKNOW SCREEN TEXTS -->
     <string name="addDidYouKnowTextBtn">Criar Sabias Que </string>
     <!--  DETAILS & EDIT DIDYOUKNOW SCREEN TEXTS -->
