@@ -305,7 +305,6 @@ class EventDetailFragmento :  BasicFragment() {
         }
 
         btnRemoveEvent.setOnClickListener {
-            //deleteEvent()
             AlertDialog.Builder(requireContext())
                 .setTitle("Aviso")
                 .setMessage("Tem a certeza que quer apagar o evento?")
@@ -335,6 +334,7 @@ class EventDetailFragmento :  BasicFragment() {
                 //Atualizar loading
                 setLoadingVisibility(false)
 
+                //Informar via toast
                 if (toast != null) {
                     toast!!.setText("Evento removido com sucesso")
                 } else {
@@ -369,7 +369,7 @@ class EventDetailFragmento :  BasicFragment() {
     private fun saveEventBD(){
         if(validateFields()){
             btnEditEventSubmit.visibility = View.GONE
-            setLoadingVisibility(true)
+
 
             //Atualizar objeto event
             val eventName = etEventName.text.toString()

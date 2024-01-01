@@ -197,7 +197,6 @@ class EventsFragmento : BasicFragment() {
 
         recyclerView.adapter = adapter
 
-        // Termine a animação de atualização
         swipeRefreshLayout.isRefreshing = false
         setLoadingVisibility(false)
         recyclerView.visibility = View.VISIBLE

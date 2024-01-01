@@ -18,36 +18,43 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
 import ipt.lei.dam.ncrapp.fragments.didyouknow.sabiasQueFragmento.Companion.setMyNeedRefresh
-import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowRequest
+import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowAddRequest
+import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowEditRequest
 import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
-import java.util.Locale
 
 
 class DidYouKnowDetailsFragmento : BasicFragment() {
-    private var editMode : Boolean = false
-
-    private lateinit var didYouKnow: DidYouKnowResponse
-
-    //Componentes VIEW
+    /**
+     * Componentes VIEW
+     */
+    //Text Fields
     private lateinit var didYouKnowTitle: TextView
     private lateinit var didYouKnowDescription: TextView
     private lateinit var didYouKnowReferences: TextView
 
-    //Componentes EDIT
+    //Others
+    private lateinit var didYouKnow: DidYouKnowResponse
+
+    /**
+     * Componentes EDIT
+     */
+    //Text Fields
     private lateinit var etDidYouKnowTitle: EditText
     private lateinit var etDidYouKnowDescription: EditText
     private lateinit var etDidYouKnowReferences: EditText
+
+    //Others
+    private var editMode : Boolean = false
     private lateinit var btnDidYouKnowSubmit: Button
-    private val calendar = Calendar.getInstance()
 
-    //Componentes DELETE
+    /**
+     * Componentes DELETE
+     */
     private lateinit var btnDidYouKnowDelete: Button
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,44 +67,44 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view =  inflater.inflate(R.layout.did_you_know_details_fragmento, container, false)
 
         setupLoadingAnimation(view)
 
-        val fabEditDidYouKnow = view.findViewById<FloatingActionButton>(R.id.fabEditDidYouKnow)
-        val backButton = requireActivity().findViewById<ImageView>(R.id.back_button)
-        backButton.visibility = View.VISIBLE
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientType = sharedPref.getString("clientType", "member");
-
-
-        backButton.setOnClickListener {
-            val navController = findNavController()
-            navController.navigate(R.id.navigation_sabias)
-        }
-
-
-
-        didYouKnow = arguments?.getParcelable<DidYouKnowResponse>("myDidYouKow")!!
-
-        //Componentes VIEW
+        /**
+         * REFERENCES TO UI VIEW
+         */
+        //Text Fiels
         didYouKnowTitle = view.findViewById(R.id.DidYouKnowDetailTitle)
         didYouKnowDescription = view.findViewById(R.id.DidYouKnowDetailDescription)
         didYouKnowReferences = view.findViewById(R.id.DidYouKnowDetailReferences)
 
-        //Componentes EDIT
+        //Others
+        val fabEditDidYouKnow = view.findViewById<FloatingActionButton>(R.id.fabEditDidYouKnow)
+        val backButton = requireActivity().findViewById<ImageView>(R.id.back_button)
+        backButton.visibility = View.VISIBLE
+
+        /**
+         * REFERENCES TO UI EDIT
+         */
+        //Text Fiels
         etDidYouKnowTitle = view.findViewById(R.id.etEditDidYouKnowTitle)
         etDidYouKnowDescription = view.findViewById(R.id.etEditDidYouKnowDescription)
         etDidYouKnowReferences = view.findViewById(R.id.etEditDidYouKnowReferences)
+
+        //Others
         btnDidYouKnowSubmit = view.findViewById(R.id.btnEditDidYouKnowSubmit)
 
-        //Componentes DELETE
+        /**
+         * REFERENCES TO UI DELETE
+         */
         btnDidYouKnowDelete = view.findViewById(R.id.btnDeleteDidYouKnow)
 
-        didYouKnowTitle.text = didYouKnow?.title
-        didYouKnowDescription.text = didYouKnow?.text
-        didYouKnowReferences.text = didYouKnow?.references
+        /**
+         * ClickListeners base
+         */
+        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString("clientType", "member");
 
         if(!clientType.equals("ADMINISTRADOR")){
             fabEditDidYouKnow.visibility = View.GONE;
@@ -108,9 +115,30 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
             }
         }
 
+        backButton.setOnClickListener {
+            val navController = findNavController()
+            navController.navigate(R.id.navigation_sabias)
+        }
+
+        //obter do bundle
+        didYouKnow = arguments?.getParcelable<DidYouKnowResponse>("myDidYouKow")!!
+
+        /**
+         * Carregar eventos para a UI
+         */
+        didYouKnowTitle.text = didYouKnow?.title
+        didYouKnowDescription.text = didYouKnow?.text
+        didYouKnowReferences.text = didYouKnow?.references
+
+
         return view
     }
 
+    /**
+     *
+     * Função trocar entre VIEWMODE ou EDITMODE
+     *
+     */
     private fun toggleEditMode() {
         editMode = !editMode
         if (editMode) {
@@ -131,7 +159,9 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
             btnDidYouKnowDelete.visibility = View.VISIBLE
 
             btnDidYouKnowSubmit.setOnClickListener {
-                saveDidYouKnow()
+                if(editMode) {
+                    saveDidYouKnowBD()
+                }
             }
 
             btnDidYouKnowDelete.setOnClickListener {
@@ -161,105 +191,48 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
         }
     }
 
-    private fun saveDidYouKnow(){
-        if(editMode){
-            saveDidYouKnowBD()
-            toggleEditMode()
-        }
-
-    }
-
     private fun saveDidYouKnowBD(){
         if(validateFields()){
-            val now = LocalDateTime.now()
-            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+            btnDidYouKnowSubmit.visibility = View.GONE
+            setLoadingVisibility(true)
 
             didYouKnow.title = etDidYouKnowTitle.text.toString()
             didYouKnow.text = etDidYouKnowDescription.text.toString()
             didYouKnow.references = etDidYouKnowReferences.text.toString()
 
-            val didYouKnowRequest = DidYouKnowRequest(
+            //Construir objeto
+            val didYouKnowRequest = DidYouKnowEditRequest(
                 id = didYouKnow.id!!,
                 title = didYouKnow.title!!,
                 text = didYouKnow.text!!,
                 references = didYouKnow.references!!,
-                createdAt = didYouKnow.createdAt.toString(),
-                updatedAt = now.format(formatter),
-
+                createdAt = didYouKnow.createdAt.toString()
             )
 
-            var doEventRequest = false
-            doEventRequest = true
-            if (doEventRequest) {
-                setLoadingVisibility(true)
-                makeRequestWithRetries(
-                    requestCall = {
-                        RetrofitClient.apiService.editDidYouKnow(didYouKnowRequest).execute()
-                    },
-                    onSuccess = { isEditted ->
-                        setLoadingVisibility(false)
-
-                        sabiasQueFragmento.setMyNeedRefresh(true)
-
-                        val navOptions = NavOptions.Builder()
-                            .setPopUpTo(R.id.navigation_sabias, true)
-                            .build()
-
-
-                        findNavController().navigate(R.id.navigation_sabias, null, navOptions)
-
-
-                        if (toast != null) {
-                            toast!!.setText("Sabias Que editado com sucesso")
-                        } else {
-                            toast = Toast.makeText(requireActivity(), "Sabias Que editado com sucesso", Toast.LENGTH_SHORT)
-                        }
-                        toast!!.show()
-
-                    },
-                    onError = { errorMessage ->
-                        if (toast != null) {
-                            toast!!.setText(errorMessage)
-                        } else {
-                            toast = Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT)
-                        }
-                        toast!!.show()
-                        setLoadingVisibility(false)
-                    }
-                )
-            }
-        }
-    }
-
-    private fun deleteDidYouKnow(){
-        var doEventRequest = false
-        doEventRequest = true
-        if (doEventRequest) {
-            setLoadingVisibility(true)
             makeRequestWithRetries(
                 requestCall = {
-                    println("Deleting did you know with id=" + didYouKnow.id)
-                    RetrofitClient.apiService.deleteDidYouKnow(didYouKnow.id!!).execute()
+                    RetrofitClient.apiService.editDidYouKnow(didYouKnowRequest).execute()
                 },
                 onSuccess = { isEditted ->
+                    //Atualizar loading
                     setLoadingVisibility(false)
 
+                    //Informar via Toast
+                    if (toast != null) {
+                        toast!!.setText("Sabias Que editado com sucesso")
+                    } else {
+                        toast = Toast.makeText(requireActivity(), "Sabias Que editado com sucesso", Toast.LENGTH_SHORT)
+                    }
+                    toast!!.show()
+
+                    //Informar que deve atualizar recyclerView
                     setMyNeedRefresh(true)
 
+                    //Redirecionar
                     val navOptions = NavOptions.Builder()
                         .setPopUpTo(R.id.navigation_sabias, true)
                         .build()
-
-
                     findNavController().navigate(R.id.navigation_sabias, null, navOptions)
-
-
-                    if (toast != null) {
-                        toast!!.setText("Sabias Que removido com sucesso")
-                    } else {
-                        toast = Toast.makeText(requireActivity(), "Sabias Que removido com sucesso", Toast.LENGTH_SHORT)
-                    }
-                    toast!!.show()
 
                 },
                 onError = { errorMessage ->
@@ -270,11 +243,61 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
                     }
                     toast!!.show()
                     setLoadingVisibility(false)
+                    btnDidYouKnowSubmit.visibility = View.GONE
                 }
             )
+
+
         }
     }
 
+    private fun deleteDidYouKnow(){
+        btnDidYouKnowDelete.visibility = View.GONE
+        setLoadingVisibility(true)
+
+        makeRequestWithRetries(
+            requestCall = {
+                RetrofitClient.apiService.deleteDidYouKnow(didYouKnow.id!!).execute()
+            },
+            onSuccess = { isEditted ->
+                //Atualizar loading
+                setLoadingVisibility(false)
+
+                //Informar via toast
+                if (toast != null) {
+                    toast!!.setText("Sabias Que removido com sucesso")
+                } else {
+                    toast = Toast.makeText(requireActivity(), "Sabias Que removido com sucesso", Toast.LENGTH_SHORT)
+                }
+                toast!!.show()
+
+                //Informar que deve atualizar recyclerView
+                setMyNeedRefresh(true)
+
+                //Redirecionar
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.navigation_sabias, true)
+                    .build()
+                findNavController().navigate(R.id.navigation_sabias, null, navOptions)
+            },
+            onError = { errorMessage ->
+                if (toast != null) {
+                    toast!!.setText(errorMessage)
+                } else {
+                    toast = Toast.makeText(requireActivity(), errorMessage, Toast.LENGTH_SHORT)
+                }
+                toast!!.show()
+                setLoadingVisibility(false)
+                btnDidYouKnowDelete.visibility = View.VISIBLE
+            }
+        )
+    }
+
+    /**
+     *
+     * Função para validar campos
+     *
+     */
     private fun validateFields():Boolean{
         if (etDidYouKnowTitle.text.toString().trim().isEmpty()) {
             etDidYouKnowTitle.error = "Introduza um titulo"
@@ -289,20 +312,5 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
             return false
         }
         return true
-    }
-
-    companion object {
-
-        @JvmStatic
-        fun newInstance(didYouKnow: DidYouKnowResponse) : DidYouKnowDetailsFragmento {
-            val args = Bundle()
-
-            args.putParcelable("myDidYouKow", didYouKnow)
-
-            val fragment = DidYouKnowDetailsFragmento()
-            fragment.arguments = args
-            return fragment
-        }
-
     }
 }

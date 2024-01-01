@@ -45,28 +45,14 @@ class sabiasQueFragmento : BasicFragment() {
     ): View? {
         val view =  inflater.inflate(R.layout.did_you_know_fragmento, container, false)
 
+        /**
+         * REFERENCES TO UI
+         */
         recyclerView = view.findViewById(R.id.recyclerViewDidYouKnow)
         recyclerView.layoutManager = LinearLayoutManager(context)
-
         swipeRefreshLayout = view.findViewById(R.id.swipeRefreshLayoutDidYouKnow)
-
         setupLoadingAnimation(view)
-
-        val navController = findNavController()
-
         val fabAddDidYouKnow: FloatingActionButton = view.findViewById(R.id.fab_add_didyouknow)
-
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientType = sharedPref.getString("clientType", "member");
-
-        if(!clientType.equals("ADMINISTRADOR")){
-            fabAddDidYouKnow.visibility = View.GONE;
-        }else{
-            fabAddDidYouKnow.visibility = View.VISIBLE;
-            fabAddDidYouKnow.setOnClickListener {
-                navController.navigate(R.id.navigation_didyouknow_add)
-            }
-        }
 
         try {
             val backButton : ImageView = requireActivity().findViewById(R.id.back_button)
@@ -74,6 +60,25 @@ class sabiasQueFragmento : BasicFragment() {
             backButton.visibility = View.INVISIBLE
         } catch (e: Exception) { }
 
+        /**
+         * Obter info do user
+         */
+        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString("clientType", "member");
+
+        /**
+         * ClickListeners
+         */
+        if(!clientType.equals("ADMINISTRADOR")){
+            fabAddDidYouKnow.visibility = View.GONE;
+        }else{
+            fabAddDidYouKnow.visibility = View.VISIBLE;
+            fabAddDidYouKnow.setOnClickListener {
+                findNavController().navigate(R.id.navigation_didyouknow_add)
+            }
+        }
+
+        //Swipe down refresh
         swipeRefreshLayout.setOnRefreshListener {
             setLoadingVisibility(true)
             getDidYouKnowFromApi (
@@ -87,7 +92,13 @@ class sabiasQueFragmento : BasicFragment() {
             )
         }
 
+        /**
+         * Carregar eventos para a UI
+         */
+        //Se os sabias que já foram descarregados da API
         if(null != myListDidYouKnow && !myListDidYouKnow!!.isEmpty()){
+            //Mas existem ordem de voltar a atualizar (adiciona, editado ou removido algum sabias que)
+            //Volta a fazer um pedido de getSabiasQue
             if(needRefresh){
                 getDidYouKnowFromApi (
                     onDidYouKnowLoaded = { didYouKnowList ->
@@ -99,8 +110,10 @@ class sabiasQueFragmento : BasicFragment() {
                     }
                 )
             } else {
+                //Se nao e necessário atualizar, simplesmente constroi o recycler view com os sabias que guardados em local
                 updateRecyclerView(myListDidYouKnow!!)
             }
+        //Se nao existem sabias que local -> getSabiasQue
         } else {
             getDidYouKnowFromApi (
                 onDidYouKnowLoaded = { didYouKnowList ->
@@ -116,6 +129,11 @@ class sabiasQueFragmento : BasicFragment() {
         return view
     }
 
+    /**
+     *
+     * Função de obter todos os sabias que
+     *
+     */
     fun getDidYouKnowFromApi(onDidYouKnowLoaded: (List<DidYouKnowResponse>) -> Unit, onError: (String) -> Unit) {
         makeRequestWithRetries(
             requestCall = {
@@ -130,14 +148,19 @@ class sabiasQueFragmento : BasicFragment() {
         )
     }
 
+    /**
+     *
+     * Função para atualizar recyclerView com a lista de sabias que
+     * Recebe um parâmetro:
+     *  didYouKnowList -> lista de todos os sabias que
+     *
+     */
     private fun updateRecyclerView(didYouKnowList: List<DidYouKnowResponse>){
-        didYouKnowList.forEach { didYouKnow ->
-            println("" + didYouKnow.id + " - " + didYouKnow.title + "")
+        setLoadingVisibility(true)
 
-        }
-        setLoadingVisibility(false)
-        recyclerView.visibility = View.VISIBLE
+        // Definiçao do adapter com a lista
         adapter = DidYouKnowAdapter(requireContext(), didYouKnowList).apply {
+            // Definiçao do clickListener de abrir detalhes
             onItemClickListener = { didYouKnow ->
 
                 val bundle = Bundle().apply {
@@ -150,5 +173,6 @@ class sabiasQueFragmento : BasicFragment() {
 
         swipeRefreshLayout.isRefreshing = false
         setLoadingVisibility(false)
+        recyclerView.visibility = View.VISIBLE
     }
 }

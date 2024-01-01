@@ -1,6 +1,7 @@
 
 import ipt.lei.dam.ncrapp.models.DefaultResponse
-import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowRequest
+import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowAddRequest
+import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowEditRequest
 import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.models.events.EventResponse
 import ipt.lei.dam.ncrapp.models.events.GetEventsRequest
@@ -114,10 +115,10 @@ interface APIService {
         fun getDidYouKnow() : Call<List<DidYouKnowResponse>>
 
         @POST("didyouknow")
-        fun addDidYouKnow(@Body didYouKnowRequest: DidYouKnowRequest) : Call<ResponseBody>
+        fun addDidYouKnow(@Body didYouKnowRequest: DidYouKnowAddRequest) : Call<DefaultResponse>
 
         @PUT("didyouknow")
-        fun editDidYouKnow(@Body didYouKnowRequest: DidYouKnowRequest) : Call<ResponseBody>
+        fun editDidYouKnow(@Body didYouKnowRequest: DidYouKnowEditRequest) : Call<DefaultResponse>
 
         @DELETE("didyouknow/{id}")
         fun deleteDidYouKnow(@Path("id") id: Int) : Call<ResponseBody>
