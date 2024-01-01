@@ -79,8 +79,6 @@ class EventDetailFragmento :  BasicFragment() {
 
     // DateTime
     private val calendar = Calendar.getInstance()
-    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-    val formatShow = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
     //Images
     private lateinit var getContent: ActivityResultLauncher<String>

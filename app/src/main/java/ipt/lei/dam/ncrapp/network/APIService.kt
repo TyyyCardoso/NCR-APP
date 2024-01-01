@@ -1,21 +1,21 @@
 
-import ipt.lei.dam.ncrapp.models.login.BiometricLoginRequest
-import ipt.lei.dam.ncrapp.models.password.ChangePasswordRequest
 import ipt.lei.dam.ncrapp.models.DefaultResponse
 import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowRequest
 import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.models.events.EventResponse
 import ipt.lei.dam.ncrapp.models.events.GetEventsRequest
+import ipt.lei.dam.ncrapp.models.events.SubscribeEventRequest
+import ipt.lei.dam.ncrapp.models.login.BiometricLoginRequest
 import ipt.lei.dam.ncrapp.models.login.LoginRequest
 import ipt.lei.dam.ncrapp.models.login.LoginResponse
-import ipt.lei.dam.ncrapp.models.password.RecoverPasswordRequest
 import ipt.lei.dam.ncrapp.models.otp.SendOTPRequest
+import ipt.lei.dam.ncrapp.models.otp.ValidateOTPRequest
+import ipt.lei.dam.ncrapp.models.otp.ValidateOTPResponse
+import ipt.lei.dam.ncrapp.models.password.ChangePasswordRequest
+import ipt.lei.dam.ncrapp.models.password.RecoverPasswordRequest
 import ipt.lei.dam.ncrapp.models.signup.SignUpRequest
 import ipt.lei.dam.ncrapp.models.signup.SignUpResponse
 import ipt.lei.dam.ncrapp.models.staff.StaffMemberResponse
-import ipt.lei.dam.ncrapp.models.events.SubscribeEventRequest
-import ipt.lei.dam.ncrapp.models.otp.ValidateOTPRequest
-import ipt.lei.dam.ncrapp.models.otp.ValidateOTPResponse
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -82,7 +82,7 @@ interface APIService {
                 @Part("location") location: RequestBody,
                 @Part("transport") transport: RequestBody,
                 @Part image: MultipartBody.Part
-        ): Call<Void>
+        ): Call<DefaultResponse>
 
         @Multipart
         @PUT("event")

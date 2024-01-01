@@ -16,18 +16,33 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 open class BasicFragment : Fragment() {
     var toast: Toast? = null
     protected lateinit var loadingImage: ImageView
     protected lateinit var rotationAnimation: Animation
 
+    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    val formatShow = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
+
+    /**
+     *
+     * Serve para definir a imagem de loading nas activies
+     *
+     */
     protected fun setupLoadingAnimation(view: View) {
         loadingImage = view.findViewById(R.id.loading_image)
         rotationAnimation = AnimationUtils.loadAnimation(this.context, R.anim.rotate_loading)
     }
 
-
+    /**
+     *
+     * Função usada para mostrar ou deixar de mostrar a imagem de loading (cotonete)
+     *
+     */
     protected fun setLoadingVisibility(visible: Boolean) {
         if (visible) {
             loadingImage.visibility = View.VISIBLE
@@ -38,6 +53,16 @@ open class BasicFragment : Fragment() {
         }
     }
 
+    /**
+     *
+     * Função que faz as chamadas ao retrofit.
+     * É usada esta função para não se repetir código extensivo ao longo das atividades
+     * Recebe três parâmetros:
+     *  requestCall -> Que é onde vai ser inserida a chamada
+     *  onSuccess -> Que é o que acontece quando a chamada dá sucesso
+     *  onError -> Usado quando a chamada retorna erro
+     *
+     */
     protected fun <T> makeRequestWithRetries(
         requestCall: () -> Response<T>,
         onSuccess: (T) -> Unit,
@@ -88,13 +113,22 @@ open class BasicFragment : Fragment() {
         }.start()
     }
 
+    /**
+     *
+     * Função que comprime imagens reduzindo a qualidade e resolução
+     * Recebe um parâmetro:
+     *  imageUri -> imagem selecionada pelo utilizador (galeira ou camara)
+     *
+     */
     fun compressImage(imageUri: Uri): File {
+        // Obtem o ficheiro da imagem
         val originalBitmap = MediaStore.Images.Media.getBitmap(requireActivity().contentResolver, imageUri)
-
-        // Determinar o lado maior e redimensionar se necessário
+        // Maximo tamanho de um dos lados da imagem
         val maxSize = 800
+        //Obter fator de redimensionamento e verificar o lado maior
         val scaleFactor = Math.min(maxSize.toFloat() / originalBitmap.width, maxSize.toFloat() / originalBitmap.height)
 
+        //Se o lado maior for maior que maxSize, a imagem é redimensionada mantendo o seu aspect ratio original
         val resizedBitmap = if (originalBitmap.width > maxSize || originalBitmap.height > maxSize) {
             val newWidth = (originalBitmap.width * scaleFactor).toInt()
             val newHeight = (originalBitmap.height * scaleFactor).toInt()
@@ -103,10 +137,10 @@ open class BasicFragment : Fragment() {
             originalBitmap
         }
 
-        // Criar um arquivo temporário
+        //Definicao do novo ficheiro comprimido
         var file = File(requireContext().cacheDir, "compressed_image.jpg")
 
-        // Comprimir e verificar o tamanho
+        //Inicia o ciclo de reduçao de qualidade até atingir o tamanho máximo de 1MB
         var quality = 100
         do {
             file.createNewFile()
@@ -119,8 +153,8 @@ open class BasicFragment : Fragment() {
                 fos.flush()
             }
 
-            quality -= 10 // Reduzir a qualidade em 10% se o arquivo for maior que 1MB
-        } while (file.length() > 1_048_576 && quality > 0) // 1MB em bytes
+            quality -= 10 // Reduzir a qualidade em 10% se o ficheiro for maior que 1MB
+        } while (file.length() > 1_048_576 && quality > 0) // 1MB
 
         return file
     }

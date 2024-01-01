@@ -44,9 +44,6 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
     private lateinit var etDidYouKnowReferences: EditText
     private lateinit var btnDidYouKnowSubmit: Button
     private val calendar = Calendar.getInstance()
-    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-    val formatShow = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-
 
     //Componentes DELETE
     private lateinit var btnDidYouKnowDelete: Button

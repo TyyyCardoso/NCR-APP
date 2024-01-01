@@ -26,7 +26,6 @@ import androidx.navigation.fragment.findNavController
 import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
-import ipt.lei.dam.ncrapp.fragments.events.EventsFragmento.Companion.setMyNeedRefresh
 import ipt.lei.dam.ncrapp.models.events.EventAddRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -35,31 +34,35 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.File
-import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Locale
 
 
 class EventAddFragmento : BasicFragment() {
-    private var eventSelectedImage: String = ""
+    //Text Fields
     private var eventSelectedImageUri: Uri? = null
     private lateinit var eventNameEditText: EditText
     private lateinit var eventDescEditText: EditText
     private lateinit var eventLocalEditText: EditText
-    private lateinit var eventImage : ImageView
 
+    //DateTime Fields
     private lateinit var btnPickDateTime: Button
     private lateinit var selectedDateTime: String
     private lateinit var tvSelectedDateTime: TextView
     private val calendar = Calendar.getInstance()
 
+    //Others
+    private lateinit var eventTransportCheckbox: CheckBox
+    private lateinit var eventSubmitButton: Button
+
+    //Image
+    private lateinit var eventImage : ImageView
+    private lateinit var eventImageSelectButton: Button
+    private lateinit var eventImagemCaptureButton: Button
+
+    //Image AUX
     private lateinit var getContent: ActivityResultLauncher<String>
     private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
     private lateinit var currentPhotoUri: Uri
-
-    val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
-    val formatShow = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,25 +77,35 @@ class EventAddFragmento : BasicFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_event_add_fragmento, container, false)
+
+        /**
+         * REFERENCES TO UI
+         */
+        //Text Fields
         eventNameEditText = view.findViewById(R.id.etNewEventName)
         eventDescEditText = view.findViewById(R.id.etNewEventDesc)
         eventLocalEditText = view.findViewById(R.id.etNewEventLocal)
-        eventImage = view.findViewById(R.id.imageviewNewEventImageView)
-        val eventTransportCheckbox = view.findViewById<CheckBox>(R.id.checkboxNewEventTransport)
-        val eventSubmitButton = view.findViewById<Button>(R.id.btnNewEventSubmit)
-        val eventImageSelectButton = view.findViewById<Button>(R.id.btnNewEventImageSelect)
-        val eventImagemCaptureButton =  view.findViewById<Button>(R.id.btnNewEventImageCapture)
 
+        //DateTime Fields
         btnPickDateTime = view.findViewById(R.id.btnPickDateTime)
         tvSelectedDateTime = view.findViewById(R.id.tvSelectedDateTime)
         tvSelectedDateTime.text = formatShow.format(calendar.time)
         selectedDateTime = format.format(calendar.time)
 
+        //Others
+        eventTransportCheckbox = view.findViewById(R.id.checkboxNewEventTransport)
+        eventSubmitButton = view.findViewById(R.id.btnNewEventSubmit)
         val backButton = requireActivity().findViewById<ImageView>(R.id.back_button)
         backButton.visibility = View.VISIBLE
 
+        //Image
+        eventImage = view.findViewById(R.id.imageviewNewEventImageView)
+        eventImageSelectButton = view.findViewById(R.id.btnNewEventImageSelect)
+        eventImagemCaptureButton =  view.findViewById(R.id.btnNewEventImageCapture)
+        setupLoadingAnimation(view)
+
+        //Image AUX
         getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let { selectedImageUri ->
 
@@ -124,11 +137,12 @@ class EventAddFragmento : BasicFragment() {
             }
         }
 
+        /**
+         * ClickListeners
+         */
         backButton.setOnClickListener {
             findNavController().navigate(R.id.navigation_events)
         }
-
-        setupLoadingAnimation(view)
 
         eventImageSelectButton.setOnClickListener {
             getContent.launch("image/*")
@@ -157,114 +171,93 @@ class EventAddFragmento : BasicFragment() {
 
         eventSubmitButton.setOnClickListener {
             if(validateFields()){
-                val eventName = eventNameEditText.text.toString()
-                val eventDesc = eventDescEditText.text.toString()
-                val eventLocal = eventLocalEditText.text.toString()
-
-                val eventTransport = eventTransportCheckbox.isChecked
-
-                // Criando o objeto EventResponse
-                val event = EventAddRequest(
-                    name = eventName,
-                    description = eventDesc,
-                    date = selectedDateTime,
-                    location = eventLocal,
-                    transport = eventTransport,
-                    image = eventSelectedImageUri
-                )
-
-                val namePart = RequestBody.create(MultipartBody.FORM, event.name)
-                val descriptionPart = RequestBody.create(MultipartBody.FORM, event.description)
-                val datePart = RequestBody.create(MultipartBody.FORM, event.date)
-                val locationPart = RequestBody.create(MultipartBody.FORM, event.location)
-                val transportPart = RequestBody.create(MultipartBody.FORM, event.transport.toString())
-
-                println("Fields validating, checking image...")
-
-                var imagePart: MultipartBody.Part? = null
-
-                if(event.image != null){
-                    println("Image inserted")
-                    val imageFile = compressImage(event.image)
-                    val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
-                    imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
-
-                } else {
-                    println("Using default image")
-                    val emptyRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), ByteArray(0))
-                    imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
-
-                }
-
-                val call = RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart)
-                eventSubmitButton.visibility = View.GONE
-                setLoadingVisibility(true)
-
-                call.enqueue(object : Callback<Void> {
-                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
-
-                        val responseCodeNum = response.code()
-                        val responseCode = when (responseCodeNum) {
-                            400 -> "Solicitação inválida"
-                            401 -> "Não autorizado"
-                            404 -> "Recurso não encontrado"
-                            413 -> "Tamanho Máximo de IMG: 1MB"
-                            500 -> "Interno do servidor"
-                            else -> "Desconhecido: $responseCodeNum"
-                        }
-                        if (response.isSuccessful) {
-                            setLoadingVisibility(false)
-
-                            setMyNeedRefresh(true)
-
-                            val navOptions = NavOptions.Builder()
-                                .setPopUpTo(R.id.navigation_events, true)
-                                .build()
-
-
-                            findNavController().navigate(R.id.navigation_events, null, navOptions)
-
-                            if (toast != null) {
-                                toast!!.setText("Evento criado com sucesso.")
-                            } else {
-                                toast = Toast.makeText(requireActivity(), "Evento criado com sucesso.", Toast.LENGTH_SHORT)
-                            }
-                            toast!!.show()
-                        } else {
-                            setLoadingVisibility(false)
-                            eventSubmitButton.visibility = View.VISIBLE
-                            if (toast != null) {
-                                toast!!.setText("ERRO: $responseCode")
-                            } else {
-                                toast = Toast.makeText(requireActivity(), "ERRO: $responseCode", Toast.LENGTH_SHORT)
-                            }
-                            toast!!.show()
-                        }
-                    }
-
-                    override fun onFailure(call: Call<Void>, t: Throwable) {
-                        // Tratamento de falha
-                    }
-                })
-
-
-
+                saveEvent()
 
             }
-
-
         }
         return view
     }
 
-    private fun getRealPathFromUri(uri: Uri): String? {
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = requireActivity().contentResolver.query(uri, projection, null, null, null)
-        val columnIndex = cursor?.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor?.moveToFirst()
-        val filePath = cursor?.getString(columnIndex ?: -1)
-        cursor?.close()
-        return filePath
+    private fun saveEvent(){
+        setLoadingVisibility(true)
+        val eventName = eventNameEditText.text.toString()
+        val eventDesc = eventDescEditText.text.toString()
+        val eventLocal = eventLocalEditText.text.toString()
+
+        val eventTransport = eventTransportCheckbox.isChecked
+
+        // Criando o objeto EventResponse
+        val event = EventAddRequest(
+            name = eventName,
+            description = eventDesc,
+            date = selectedDateTime,
+            location = eventLocal,
+            transport = eventTransport,
+            image = eventSelectedImageUri
+        )
+
+        val namePart = RequestBody.create(MultipartBody.FORM, event.name)
+        val descriptionPart = RequestBody.create(MultipartBody.FORM, event.description)
+        val datePart = RequestBody.create(MultipartBody.FORM, event.date)
+        val locationPart = RequestBody.create(MultipartBody.FORM, event.location)
+        val transportPart = RequestBody.create(MultipartBody.FORM, event.transport.toString())
+
+        var imagePart: MultipartBody.Part? = null
+
+        if(event.image != null){
+            println("Image inserted")
+            val imageFile = compressImage(event.image)
+            val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
+            imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
+
+        } else {
+            println("Using default image")
+            val emptyRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), ByteArray(0))
+            imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
+
+        }
+
+        makeRequestWithRetries(
+            requestCall = {
+                RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart).execute()
+            },
+            onSuccess = { responseBody ->
+                //Atualizar loading
+                setLoadingVisibility(false)
+
+                //Informar via Toast
+                if (toast != null) {
+                    toast!!.setText("Evento criado com sucesso")
+                } else {
+                    toast = Toast.makeText(
+                        requireActivity(),
+                        "Evento criado com sucesso",
+                        Toast.LENGTH_SHORT
+                    )
+                }
+                toast!!.show()
+
+                //Informar que deve atualizar recyclerView
+                EventsFragmento.setMyNeedRefresh(true)
+
+                //Redirecionar para eventos
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.navigation_events, true)
+                    .build()
+                findNavController().navigate(R.id.navigation_events, null, navOptions)
+            },
+            onError = { errorMessage ->
+                setLoadingVisibility(false)
+                if (toast != null) {
+                    toast!!.setText("ERRO: $errorMessage")
+                } else {
+                    toast =
+                        Toast.makeText(requireActivity(), "ERRO: $errorMessage", Toast.LENGTH_SHORT)
+                }
+                toast!!.show()
+            }
+        )
+
     }
 
     private fun pickDateTime() {
@@ -330,11 +323,7 @@ class EventAddFragmento : BasicFragment() {
         return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
     }
 
-
-
-
     companion object {
         private const val REQUEST_CODE_CAPTURE_IMAGE = 1
-        private const val REQUEST_CODE_PICK_IMAGE = 2
     }
 }
