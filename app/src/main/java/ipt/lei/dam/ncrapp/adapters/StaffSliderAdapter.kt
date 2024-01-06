@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.models.staff.StaffMemberResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
@@ -38,11 +38,10 @@ class StaffSliderAdapter(private val context: Context, private var staffMembers:
         if(!member.image.isNullOrEmpty()){
             val url = "" + RetrofitClient.BASE_URL + "event/images/" + member.image
 
-            Picasso.get()
+            Glide.with(context)
                 .load(url)
-                .fit()
+                .fitCenter()
                 .centerInside()
-                //.placeholder(R.drawable.default_event_img)
                 .error(R.drawable.baseline_account_circle_24)
                 .into(holder.staffMemberImage)
         }

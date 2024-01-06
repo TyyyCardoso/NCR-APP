@@ -20,8 +20,8 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
 import ipt.lei.dam.ncrapp.network.RetrofitClient
@@ -118,11 +118,10 @@ class ProfileFragmento : BasicFragment() {
 
         val url = "" + RetrofitClient.BASE_URL + "event/images/" + clientImage
 
-        Picasso.get()
+        Glide.with(this)
             .load(url)
-            .fit()
+            .fitCenter()
             .centerInside()
-            //.placeholder(R.drawable.default_event_img)
             .error(R.drawable.baseline_account_circle_24)
             .into(profileImage)
 
@@ -131,14 +130,12 @@ class ProfileFragmento : BasicFragment() {
         getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let { selectedImageUri ->
 
-                Picasso.get()
+                Glide.with(this)
                     .load(selectedImageUri)
-                    .fit()
+                    .fitCenter()
                     .centerInside()
-                    //.placeholder(R.drawable.default_event_img)
                     .error(R.drawable.baseline_account_circle_24)
                     .into(profileImage)
-
 
                 // Armazena o arquivo no eventRequest.image
                 profileSelectedImageUri = selectedImageUri
@@ -149,11 +146,11 @@ class ProfileFragmento : BasicFragment() {
         takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
                 profileSelectedImageUri = currentPhotoUri
-                Picasso.get()
+
+                Glide.with(this)
                     .load(profileSelectedImageUri)
-                    .fit()
+                    .fitCenter()
                     .centerInside()
-                    //.placeholder(R.drawable.default_event_img)
                     .error(R.drawable.baseline_account_circle_24)
                     .into(profileImage)
             }

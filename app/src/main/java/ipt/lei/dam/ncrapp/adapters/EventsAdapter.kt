@@ -11,7 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.models.events.EventResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
@@ -55,11 +55,11 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
         if (!event.image.isNullOrBlank()){
             val url = "" + RetrofitClient.BASE_URL + "event/images/" + event.image
             println("Event: " + event.name + "getting image from: " + url)
-            Picasso.get()
+
+            Glide.with(context)
                 .load(url)
-                .fit()
+                .fitCenter()
                 .centerInside()
-                //.placeholder(R.drawable.default_event_img)
                 .error(R.drawable.default_event_img)
                 .into(holder.eventImage)
         } else {

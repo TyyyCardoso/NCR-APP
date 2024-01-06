@@ -23,7 +23,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
 import ipt.lei.dam.ncrapp.models.events.EventAddRequest
@@ -31,9 +31,6 @@ import ipt.lei.dam.ncrapp.network.RetrofitClient
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.Calendar
 
 
@@ -109,14 +106,12 @@ class EventAddFragmento : BasicFragment() {
         getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let { selectedImageUri ->
 
-                Picasso.get()
+                Glide.with(requireContext())
                     .load(selectedImageUri)
-                    .fit()
+                    .fitCenter()
                     .centerInside()
-                    //.placeholder(R.drawable.default_event_img)
                     .error(R.drawable.default_event_img)
                     .into(eventImage)
-
 
                 // Armazena o arquivo no eventRequest.image
                 eventSelectedImageUri = selectedImageUri
@@ -127,9 +122,10 @@ class EventAddFragmento : BasicFragment() {
         takePictureLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success: Boolean ->
             if (success) {
                 eventSelectedImageUri = currentPhotoUri
-                Picasso.get()
+
+                Glide.with(requireContext())
                     .load(eventSelectedImageUri)
-                    .fit()
+                    .fitCenter()
                     .centerInside()
                     .placeholder(R.drawable.default_event_img)
                     .error(R.drawable.default_event_img)

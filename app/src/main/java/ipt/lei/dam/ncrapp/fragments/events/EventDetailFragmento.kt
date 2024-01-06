@@ -26,8 +26,8 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.alexvasilkov.gestures.views.GestureImageView
+import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.squareup.picasso.Picasso
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
 import ipt.lei.dam.ncrapp.models.events.EventEditRequest
@@ -36,9 +36,6 @@ import ipt.lei.dam.ncrapp.network.RetrofitClient
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -157,9 +154,9 @@ class EventDetailFragmento :  BasicFragment() {
         getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uri?.let { selectedImageUri ->
 
-                Picasso.get()
+                Glide.with(this)
                     .load(selectedImageUri)
-                    .fit()
+                    .fitCenter()
                     .centerInside()
                     .error(R.drawable.default_event_img)
                     .into(eventImage)
@@ -173,9 +170,10 @@ class EventDetailFragmento :  BasicFragment() {
             if (success) {
                 wasImageEdited = true
                 eventSelectedImageUri = currentPhotoUri
-                Picasso.get()
+
+                Glide.with(this)
                     .load(eventSelectedImageUri)
-                    .fit()
+                    .fitCenter()
                     .centerInside()
                     .error(R.drawable.default_event_img)
                     .into(eventImage)
@@ -233,12 +231,15 @@ class EventDetailFragmento :  BasicFragment() {
 
         if (!event?.image.isNullOrBlank()){
             urlImage = "" + RetrofitClient.BASE_URL + "event/images/" + event.image
-            Picasso.get()
+
+            Glide.with(this)
                 .load(urlImage)
-                .resize(400, 200)
-                .centerCrop()
+                .override(400, 200)
+                .fitCenter()
+                .centerInside()
                 .error(R.drawable.default_event_img)
                 .into(eventImage)
+
         }
 
         //ClickListener de abrir visualização de Imagem BIG
@@ -247,9 +248,9 @@ class EventDetailFragmento :  BasicFragment() {
                 linearLayoutEventDetails.visibility = View.GONE
                 fabEditEvent.visibility = View.GONE
 
-                Picasso.get()
+                Glide.with(this)
                     .load(urlImage)
-                    .fit()
+                    .fitCenter()
                     .centerInside()
                     .error(R.drawable.default_event_img)
                     .into(eventImageBig)
