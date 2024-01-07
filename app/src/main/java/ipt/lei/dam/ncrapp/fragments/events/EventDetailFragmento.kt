@@ -51,7 +51,8 @@ class EventDetailFragmento :  BasicFragment() {
     private lateinit var eventTransport: TextView
 
     //DateTimeFields
-    private lateinit var eventDate: TextView
+    private lateinit var eventInitDate: TextView
+    private lateinit var eventEndDate: TextView
 
     //Others
     private lateinit var linearLayoutEventDetails : LinearLayout
@@ -70,9 +71,13 @@ class EventDetailFragmento :  BasicFragment() {
     private lateinit var etEventDescription: EditText
     private lateinit var etEventLocation: EditText
 
+
     //DateTimeFields
-    private lateinit var selectedDateTime: String
-    private lateinit var btnPickDateTime: Button
+    private lateinit var selectedInitDateTime: String
+    private lateinit var selectedEndDateTime: String
+    private lateinit var eventDetailEndDateTitle: TextView
+    private lateinit var btnPickInitDateTime: Button
+    private lateinit var btnPickEndDateTime: Button
     private val calendar = Calendar.getInstance()
 
     //Others
@@ -117,7 +122,9 @@ class EventDetailFragmento :  BasicFragment() {
         eventDescription =  view.findViewById(R.id.eventDetailDescription)
         eventLocation =  view.findViewById(R.id.eventDetailLocation)
         eventTransport =  view.findViewById(R.id.eventDetailTransport) //TextView
-        eventDate =  view.findViewById(R.id.eventDetailDate) //TextView
+        eventInitDate =  view.findViewById(R.id.eventDetailInitDate) //TextView
+        eventEndDate =  view.findViewById(R.id.eventDetailEndDate) //TextView
+        eventDetailEndDateTitle =  view.findViewById(R.id.eventDetailEndDateTitle) //TextView
 
         //Others
         linearLayoutEventDetails = view.findViewById(R.id.linearLayoutEventDetails)
@@ -138,7 +145,8 @@ class EventDetailFragmento :  BasicFragment() {
         etEventLocation =  view.findViewById(R.id.etEditEventLocation)
 
         //DateTime Fields
-        btnPickDateTime =  view.findViewById(R.id.btnPickDateTime)
+        btnPickInitDateTime =  view.findViewById(R.id.btnPickInitDateTime)
+        btnPickEndDateTime =  view.findViewById(R.id.btnPickEndDateTime)
 
         //Others
         btnEditEventSubmit =  view.findViewById(R.id.btnEditEventSubmit)
@@ -214,7 +222,14 @@ class EventDetailFragmento :  BasicFragment() {
         eventName.text = event?.name
         eventDescription.text = event?.description
         eventLocation.text = event?.location
-        eventDate.text = convertDateTime(event.date.toString())
+        eventInitDate.text = convertDateTime(event.initDate.toString())
+        if(event.endDate!=null){
+            eventEndDate.text = convertDateTime(event.endDate.toString())
+        }else{
+            eventEndDate.visibility = View.GONE
+            eventDetailEndDateTitle.visibility = View.GONE
+            btnPickEndDateTime.visibility = View.GONE
+        }
 
         if (event?.transport == true) {
             eventTransport.text = "Sim"
@@ -224,7 +239,8 @@ class EventDetailFragmento :  BasicFragment() {
             checkboxEditEventTransport.isChecked = false
         }
 
-        selectedDateTime = event?.date.toString()
+        selectedInitDateTime = event?.initDate.toString()
+        selectedEndDateTime = event?.endDate.toString()
         eventSelectedImage = event?.image.toString()
 
         var urlImage = ""
@@ -273,9 +289,14 @@ class EventDetailFragmento :  BasicFragment() {
         /**
          * ClickListeners para EDITMODE
          */
-        btnPickDateTime.setOnClickListener {
-            pickDateTime()
+        btnPickInitDateTime.setOnClickListener {
+            pickDateTime(1)
         }
+
+        btnPickEndDateTime.setOnClickListener {
+            pickDateTime(2)
+        }
+
 
         btnEditEventSubmit.setOnClickListener {
             if(editMode) {
@@ -382,7 +403,8 @@ class EventDetailFragmento :  BasicFragment() {
                 id = event.id!!,
                 name = eventName,
                 description = eventDesc,
-                date = selectedDateTime,
+                initDate = selectedInitDateTime,
+                endDate = selectedEndDateTime,
                 location = eventLocal,
                 transport = eventTransport,
                 createdAt = event.createdAt.toString(),
@@ -394,7 +416,8 @@ class EventDetailFragmento :  BasicFragment() {
             val idPart = RequestBody.create(MultipartBody.FORM, eventToEdit.id.toString())
             val namePart = RequestBody.create(MultipartBody.FORM, eventToEdit.name)
             val descriptionPart = RequestBody.create(MultipartBody.FORM, eventToEdit.description)
-            val datePart = RequestBody.create(MultipartBody.FORM, eventToEdit.date)
+            val initDatePart = RequestBody.create(MultipartBody.FORM, eventToEdit.initDate)
+            val endDatePart = RequestBody.create(MultipartBody.FORM, eventToEdit.endDate)
             val locationPart = RequestBody.create(MultipartBody.FORM, eventToEdit.location)
             val transportPart = RequestBody.create(MultipartBody.FORM, eventToEdit.transport.toString())
             val createdAtPart = RequestBody.create(MultipartBody.FORM, eventToEdit.createdAt)
@@ -417,7 +440,7 @@ class EventDetailFragmento :  BasicFragment() {
             //Iniciar chamada à API
             makeRequestWithRetries(
                 requestCall = {
-                    RetrofitClient.apiService.editEvent(idPart, namePart, descriptionPart, datePart, locationPart, transportPart, createdAtPart, imagePart, imageFileNamePart).execute()
+                    RetrofitClient.apiService.editEvent(idPart, namePart, descriptionPart, initDatePart, endDatePart, locationPart, transportPart, createdAtPart, imagePart, imageFileNamePart).execute()
                 },
                 onSuccess = { responseBody ->
                     //Atualizar loading
@@ -486,7 +509,7 @@ class EventDetailFragmento :  BasicFragment() {
      * Funcao para abrir popup de escolha de data e hora
      *
      */
-    private fun pickDateTime() {
+    private fun pickDateTime(type : Int) {
         DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
             calendar.set(year, month, dayOfMonth)
 
@@ -495,8 +518,13 @@ class EventDetailFragmento :  BasicFragment() {
                 calendar.set(Calendar.MINUTE, minute)
                 calendar.set(Calendar.SECOND, 0)
 
-                selectedDateTime = format.format(calendar.time)
-                eventDate.text = formatShow.format(calendar.time)
+                if(type==1){
+                    selectedInitDateTime = format.format(calendar.time)
+                    eventInitDate.text = formatShow.format(calendar.time)
+                }else{
+                    selectedEndDateTime = format.format(calendar.time)
+                    eventEndDate.text = formatShow.format(calendar.time)
+                }
             }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
@@ -525,7 +553,15 @@ class EventDetailFragmento :  BasicFragment() {
 
             eventImageEditLayout.visibility = View.VISIBLE
 
-            btnPickDateTime.visibility = View.VISIBLE
+            btnPickInitDateTime.visibility = View.VISIBLE
+            var eventEndDate = eventEndDate.text
+
+            if(eventEndDate.equals(null) || eventEndDate.isEmpty()){
+                btnPickEndDateTime.visibility = View.GONE
+            }else{
+                btnPickEndDateTime.visibility = View.VISIBLE
+            }
+
             checkboxEditEventTransport.visibility = View.VISIBLE
             eventTransport.visibility = View.GONE
             btnRemoveEvent.visibility = View.VISIBLE
@@ -541,7 +577,8 @@ class EventDetailFragmento :  BasicFragment() {
             eventLocation.visibility = View.VISIBLE
             etEventLocation.visibility = View.GONE
 
-            btnPickDateTime.visibility = View.GONE
+            btnPickInitDateTime.visibility = View.GONE
+            btnPickEndDateTime.visibility = View.GONE
 
             eventImageEditLayout.visibility = View.GONE
             checkboxEditEventTransport.visibility = View.GONE

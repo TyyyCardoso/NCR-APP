@@ -1,6 +1,8 @@
 package ipt.lei.dam.ncrapp.activities.authentication
 
 import android.content.Intent
+import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
@@ -12,6 +14,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
 import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
@@ -32,71 +35,32 @@ class LoginActivity : BaseActivity() {
     private lateinit var prompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
     private lateinit var executor: Executor
+    private lateinit var userInfo : SharedPreferences
+    private lateinit var biometricInfo : SharedPreferences
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        executor = ContextCompat.getMainExecutor(this)
 
-
+        userInfo = getSharedPreferences(getString(R.string.userInfo), MODE_PRIVATE)
+        /**
+         * Iniciada configuração biométrica se tiver disponivel
+         */
 
         val biometricManager = BiometricManager.from(this)
-        when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
-            BiometricManager.BIOMETRIC_SUCCESS ->
-                Log.d("MY_APP_TAG", "App can authenticate using biometrics.")
-            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
-                Log.e("MY_APP_TAG", "No biometric features available on this device.")
-            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
-                Log.e("MY_APP_TAG", "Biometric features are currently unavailable.")
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                // Prompts the user to create credentials that your app accepts.
-                val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
-                    putExtra(Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
-                        BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
-                }
-                startActivityForResult(enrollIntent, 2)
-            }
-        }
+        configureBiometricLogin(biometricManager)
 
-        executor = ContextCompat.getMainExecutor(this)
-        prompt = BiometricPrompt(this, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(errorCode: Int,
-                                                   errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    Toast.makeText(applicationContext,
-                        "Ocorreu um erro na leitura da sua impressão digital", Toast.LENGTH_SHORT)
-                        .show()
-                }
-
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    biometricLogin()
-                }
-
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    Toast.makeText(applicationContext, "Autenticação falhou",
-                        Toast.LENGTH_SHORT)
-                        .show()
-                }
-            })
-
-        promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Nucleo de Conservação e Restauro")
-            .setSubtitle("Entrar com a sua impressão digital:")
-            .setNegativeButtonText("Usar credenciais")
-            .build()
-
-        val sharedPref = getSharedPreferences("BiometricLogin", MODE_PRIVATE)
-        var isBiometricLogin = sharedPref.getBoolean("isUsingBiometric", false)
-
+        biometricInfo = getSharedPreferences(getString(R.string.biometricLogin), MODE_PRIVATE)
+        val isBiometricLogin = biometricInfo.getBoolean(getString(R.string.isUsingBiometric), false)
         if(isBiometricLogin){
             prompt.authenticate(promptInfo)
         }
 
-
-        //Obter componentes do ecrã
+        /**
+         * Obter componentes do ecrã
+         */
         val emailEditText = findViewById<EditText>(R.id.email)
         val passwordEditText = findViewById<EditText>(R.id.password)
         val passwordInputLayout = findViewById<TextInputLayout>(R.id.passwordInputLayout)
@@ -106,48 +70,50 @@ class LoginActivity : BaseActivity() {
         val backButton = findViewById<ImageView>(R.id.backButtonLogin)
         val keepLogin = findViewById<CheckBox>(R.id.checkbox_keep_login)
 
-        val userEmailFromLogin = intent.getStringExtra("userInsertedEmail")
+        //Obter o email do utilizador se este tiver vindo de uma operação de restaurar password
+        val userEmailFromLogin = intent.getStringExtra(getString(R.string.userInsertedEmail))
         if(userEmailFromLogin!=null)
             emailEditText.setText(userEmailFromLogin.toString())
 
+        //Listener para navegar para o ecrã de recuperar password
         forgotPasswordLabel.setOnClickListener {
             val email = emailEditText.text.toString()
             val intent = Intent(this@LoginActivity, ForgotPasswordActivity::class.java)
             if((email.isNotEmpty()) && super.isEmailValid(email))
-                intent.putExtra("userInsertedEmail", email)
+                intent.putExtra(getString(R.string.userInsertedEmail), email)
             startActivity(intent)
             finish()
         }
 
+        //Listener para navegar para o ecrã de registar
         registerLabel.setOnClickListener {
             startActivity(Intent(this@LoginActivity, SignUpActivity::class.java))
             finish()
         }
 
+        //Listener para navegar para o ecrã principal
         backButton.setOnClickListener {
             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
             finish()
         }
 
+        //É adicionada uma validação de o texto foi alterada na box da password de forma ao cliente poder clicar no icone de "Ver password"
         passwordEditText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                // This method is called before the text is changed.
-            }
-
+            override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {
-                passwordInputLayout.isPasswordVisibilityToggleEnabled = true
+                passwordInputLayout.endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
             }
-
-            override fun afterTextChanged(editable: Editable) {
-                // This method is called after the text has been changed.
-            }
+            override fun afterTextChanged(editable: Editable) {}
         })
 
+        /**
+         * Listener para executar o login.
+         * Primeiro são feitas as validações dos campos inseridos pelo cliente
+         *
+         */
         loginButton.setOnClickListener {
             //Variável de controlo
-            var doLoginRequest = true;
-
-
+            var doLoginRequest = true
 
             //Textos
             val email = emailEditText.text.toString()
@@ -155,16 +121,16 @@ class LoginActivity : BaseActivity() {
 
             if(email.isEmpty()){
                 emailEditText.error = getString(R.string.loginEmailBoxNotFilledError)
-                doLoginRequest = false;
+                doLoginRequest = false
             }
             if(!super.isEmailValid(email) && doLoginRequest){
                 emailEditText.error = getString(R.string.loginEmailBoxInvalid)
-                doLoginRequest = false;
+                doLoginRequest = false
             }
             if(password.isEmpty()){
-                passwordInputLayout.isPasswordVisibilityToggleEnabled = false
+                passwordInputLayout.endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
                 passwordEditText.error = getString(R.string.loginPasswordBoxHintNotFilledError)
-                doLoginRequest = false;
+                doLoginRequest = false
             }
 
             if (doLoginRequest) {
@@ -175,33 +141,29 @@ class LoginActivity : BaseActivity() {
                     },
                     onSuccess = { loginResponse ->
                         // Aqui, loginResponse é diretamente o corpo da resposta e não o objeto Response
-                        RetrofitClient.setAuthToken(loginResponse.token ?: "")
-                        println(loginResponse.token ?: "")
+                        RetrofitClient.setAuthToken(loginResponse.token)
+                        println(loginResponse.token)
                         if(loginResponse.isValidated){
-                            val sharedPref = getSharedPreferences("UserInfo", MODE_PRIVATE)
-                            val editor = sharedPref.edit()
-                            editor.putString("clientName", loginResponse.name)
-                            editor.putString("clientEmail", loginResponse.email)
-                            editor.putBoolean("clientValidated", loginResponse.isValidated)
-                            editor.putString("clientType", loginResponse.type)
-                            editor.putString("clientRegistrationDate", loginResponse.registrationDate)
-                            editor.putString("clientImage", loginResponse.image)
-                            editor.putString("clientAbout", loginResponse.about)
-                            if(keepLogin.isChecked){
-                                editor.putBoolean("keepLogin", true)
-                            }else{
-                                editor.putBoolean("keepLogin", false)
-                            }
+                            //Se o login for bem sucedido, informação é guardada no local do telemovel
+                            val editor = userInfo.edit()
+                            editor.putString(getString(R.string.clientName), loginResponse.name)
+                            editor.putString(getString(R.string.clientEmail), loginResponse.email)
+                            editor.putBoolean(getString(R.string.clientValidated), true)
+                            editor.putString(getString(R.string.clientType), loginResponse.type)
+                            editor.putString(getString(R.string.clientRegistrationDate), loginResponse.registrationDate)
+                            editor.putString(getString(R.string.clientImage), loginResponse.image)
+                            editor.putString(getString(R.string.clientAbout), loginResponse.about)
+                            editor.putBoolean(getString(R.string.keepLogin), keepLogin.isChecked)
                             editor.apply()
 
-                            val sharedPrefBiometric = getSharedPreferences("BiometricLogin", MODE_PRIVATE)
-                            val biometricEmail = sharedPrefBiometric.getString("biometricEmail", "")
+                            val biometricEmail = biometricInfo.getString(getString(R.string.biometricEmail), "")
 
+                            //valida se o cliente tem biometrico ativado
                             if(!loginResponse.email.equals(biometricEmail)){
-                                 val editor = sharedPrefBiometric.edit()
-                                 editor.putBoolean("isUsingBiometric", false)
-                                 editor.putString("biometricEmail", "")
-                                 editor.apply()
+                                 val biometricEditor = biometricInfo.edit()
+                                biometricEditor.putBoolean(getString(R.string.isUsingBiometric), false)
+                                biometricEditor.putString(getString(R.string.biometricEmail), "")
+                                biometricEditor.apply()
                              }
 
 
@@ -210,8 +172,8 @@ class LoginActivity : BaseActivity() {
                             setLoadingVisibility(false)
                         }else{
                             val intent = Intent(this@LoginActivity, InsertOTPActivity::class.java)
-                            intent.putExtra("userInsertedEmail", loginResponse.email)
-                            intent.putExtra("type", "2")
+                            intent.putExtra(getString(R.string.userInsertedEmail), loginResponse.email)
+                            intent.putExtra(getString(R.string.type), "2")
                             startActivity(intent)
                             finish()
                             setLoadingVisibility(false)
@@ -233,11 +195,60 @@ class LoginActivity : BaseActivity() {
         }
     }
 
+    private fun configureBiometricLogin(biometricManager : BiometricManager){
+
+        when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
+            BiometricManager.BIOMETRIC_SUCCESS ->
+                Log.d(getString(R.string.appTag), "Aplicação consegue usar biométricos para autenticar")
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
+                Log.e(getString(R.string.appTag), "Dispositivo não suporta biométricos")
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
+                Log.e(getString(R.string.appTag), "Erro na obtenção de funcionalidades biométricas")
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
+                    putExtra(Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
+                        BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+                }
+                startActivityForResult(enrollIntent, 2)
+            }
+        }
+
+        prompt = BiometricPrompt(this, executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(errorCode: Int,
+                                                   errString: CharSequence) {
+                    super.onAuthenticationError(errorCode, errString)
+                    Toast.makeText(applicationContext,
+                        getString(R.string.leituraImpressaoDigitalErro), Toast.LENGTH_SHORT)
+                        .show()
+                }
+
+                override fun onAuthenticationSucceeded(
+                    result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    biometricLogin()
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    Toast.makeText(applicationContext, getString(R.string.falhaAuth),
+                        Toast.LENGTH_SHORT)
+                        .show()
+                }
+            })
+
+        promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle(getString(R.string.app_name))
+            .setSubtitle(getString(R.string.biometricPromptMessage))
+            .setNegativeButtonText(getString(R.string.useCredential))
+            .build()
+
+    }
+
     private fun biometricLogin(){
         setLoadingVisibility(true)
 
-        val sharedPref = getSharedPreferences("BiometricLogin", MODE_PRIVATE)
-        val email = sharedPref.getString("biometricEmail", "")
+        val email = biometricInfo.getString(getString(R.string.biometricEmail), "")
 
         makeRequestWithRetries(
             requestCall = {
@@ -245,18 +256,17 @@ class LoginActivity : BaseActivity() {
             },
             onSuccess = { loginResponse ->
                 // Aqui, loginResponse é diretamente o corpo da resposta e não o objeto Response
-                RetrofitClient.setAuthToken(loginResponse.token ?: "")
-                println(loginResponse.token ?: "")
+                RetrofitClient.setAuthToken(loginResponse.token)
+                println(loginResponse.token)
                 if(loginResponse.isValidated){
-                    val sharedPref = getSharedPreferences("UserInfo", MODE_PRIVATE)
-                    val editor = sharedPref.edit()
-                    editor.putString("clientName", loginResponse.name)
-                    editor.putString("clientEmail", loginResponse.email)
-                    editor.putBoolean("clientValidated", loginResponse.isValidated)
-                    editor.putString("clientType", loginResponse.type)
-                    editor.putString("clientRegistrationDate", loginResponse.registrationDate)
-                    editor.putString("clientImage", loginResponse.image)
-                    editor.putString("clientAbout", loginResponse.about)
+                    val editor = userInfo.edit()
+                    editor.putString(getString(R.string.clientName), loginResponse.name)
+                    editor.putString(getString(R.string.clientEmail), loginResponse.email)
+                    editor.putBoolean(getString(R.string.clientValidated), true)
+                    editor.putString(getString(R.string.clientType), loginResponse.type)
+                    editor.putString(getString(R.string.clientRegistrationDate), loginResponse.registrationDate)
+                    editor.putString(getString(R.string.clientImage), loginResponse.image)
+                    editor.putString(getString(R.string.clientAbout), loginResponse.about)
                     editor.apply()
 
 
@@ -266,8 +276,8 @@ class LoginActivity : BaseActivity() {
                     setLoadingVisibility(false)
                 }else{
                     val intent = Intent(this@LoginActivity, InsertOTPActivity::class.java)
-                    intent.putExtra("userInsertedEmail", loginResponse.email)
-                    intent.putExtra("type", "2")
+                    intent.putExtra(getString(R.string.userInsertedEmail), loginResponse.email)
+                    intent.putExtra(getString(R.string.type), "2")
                     startActivity(intent)
                     finish()
                     setLoadingVisibility(false)

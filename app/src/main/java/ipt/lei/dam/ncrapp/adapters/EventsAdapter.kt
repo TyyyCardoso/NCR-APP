@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -32,6 +33,11 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
         val eventName: TextView = view.findViewById(R.id.event_name)
         val eventDescription: TextView = view.findViewById(R.id.event_description)
         val eventDate: TextView = view.findViewById(R.id.event_date)
+        val eventInitDate: TextView = view.findViewById(R.id.eventInitDate)
+        val eventEndDate: TextView = view.findViewById(R.id.eventEndDate)
+        val layoutData: LinearLayout = view.findViewById(R.id.data)
+        val layoutDataInicio : LinearLayout = view.findViewById(R.id.dataInicio)
+        val layoutDataFim : LinearLayout = view.findViewById(R.id.dataFim)
         val eventSubscribeBtn : Button = view.findViewById(R.id.btnEventSubscribe)
         val eventDetailsBtn : Button = view.findViewById(R.id.btnEventDetails)
     }
@@ -66,22 +72,78 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
             holder.eventImage.setImageResource(R.drawable.default_event_img)
         }
 
+        //Verificar se evento ja passou ou nãp
+        var eventDate : String
+        //Verificar se evento ja passou ou nãp
+        var eventEndDate : String
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
+        val today = Date()
+        var isEventAvailable = true
+
         //Atualiza a UI com os valores do Evento
         holder.eventName.text = event.name
         holder.eventDescription.text = event.description
-        holder.eventDate.text = convertDateTime(event.date.toString())
+        if(event.endDate.equals(null)){
+            holder.layoutData.visibility = View.VISIBLE
+            holder.layoutDataInicio.visibility = View.GONE
+            holder.layoutDataFim.visibility = View.GONE
+            holder.eventDate.text = convertDateTime(event.initDate.toString())
+            eventDate = event.initDate.toString().substring(0,10)
+            var date : Date =  dateFormat.parse(eventDate);
+            if(today.before(date)) {
+                if (null != event.subscribed) {
+                    if (event.subscribed!!) {
+                        holder.eventSubscribeBtn.text = "Cancelar"
+                        holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.buttonRedColor)) // Exemplo para mudar a cor de fundo do botão
+                    }
+                }
+            }else if(today.after(date)){
+                holder.eventSubscribeBtn.text = "Evento terminado"
+                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
+                isEventAvailable = false
+            }else{
+                holder.eventSubscribeBtn.text = "Evento já começou"
+                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
+                isEventAvailable = false
+            }
+
+        }else{
+            holder.layoutData.visibility = View.GONE
+            holder.layoutDataInicio.visibility = View.VISIBLE
+            holder.layoutDataFim.visibility = View.VISIBLE
+            holder.eventInitDate.text = convertDateTime(event.initDate.toString())
+            holder.eventEndDate.text = convertDateTime(event.endDate.toString())
+            eventDate = event.initDate.toString().substring(0,10)
+            eventEndDate = event.endDate.toString().substring(0,10)
+            var initDate : Date =  dateFormat.parse(eventDate);
+            var endDate : Date =  dateFormat.parse(eventEndDate);
+
+            if(today.after(initDate) && today.before(endDate)){
+                if (null != event.subscribed) {
+                    if (event.subscribed!!) {
+                        holder.eventSubscribeBtn.text = "Cancelar"
+                        holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.buttonRedColor)) // Exemplo para mudar a cor de fundo do botão
+                    }
+                }
+            }else if(today.before(initDate)){
+                holder.eventSubscribeBtn.text = "Ainda não começou"
+                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
+                isEventAvailable = false
+            }else if(today.after(endDate)){
+                holder.eventSubscribeBtn.text = "Ainda já acabou"
+                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
+                isEventAvailable = false
+            }
+        }
+
         holder.eventDetailsBtn.setOnClickListener {
             onItemClickListener?.invoke(event)
         }
 
-        //Verificar se evento ja passou ou nãp
-        var eventDate = event.date.toString().substring(0,10)
 
-        val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-        var date : Date =  dateFormat.parse(eventDate);
-        val today = Date()
 
-        //Definir button de subscrever de acordo com data e se esta ou nao inscrito
+        /*
+       //Definir button de subscrever de acordo com data e se esta ou nao inscrito
         if(null!=event.subscribed){
             if(event.subscribed!!){
                 holder.eventSubscribeBtn.text = "Cancelar"
@@ -90,12 +152,11 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
                 holder.eventSubscribeBtn.text = "Já começou"
                 holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
             }
-
-        }
+        }*/
 
         //Listener para subcrever
         holder.eventSubscribeBtn.setOnClickListener {
-            if(!today.after(date)) {
+            if(isEventAvailable) {
                 if (clientType.equals("student")) {
                     if (toast != null) {
                         toast!!.setText("É necessário fazer login para se inscrever nos eventos")
@@ -112,11 +173,11 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
                 }
             }else{
                 if (toast != null) {
-                    toast!!.setText("Este evento já expirou")
+                    toast!!.setText("Este evento não está disponível")
                 } else {
                     toast = Toast.makeText(
                         context,
-                        "Este evento já expirou",
+                        "Este evento não está disponível",
                         Toast.LENGTH_SHORT
                     )
                 }

@@ -42,9 +42,12 @@ class EventAddFragmento : BasicFragment() {
     private lateinit var eventLocalEditText: EditText
 
     //DateTime Fields
-    private lateinit var btnPickDateTime: Button
-    private lateinit var selectedDateTime: String
-    private lateinit var tvSelectedDateTime: TextView
+    private lateinit var btnPickInitDateTime: Button
+    private lateinit var btnPickEndDateTime: Button
+    private lateinit var selectedInitDateTime: String
+    private lateinit var selectedEndDateTime: String
+    private lateinit var tvSelectedInitDateTime: TextView
+    private lateinit var tvSelectedEndDateTime: TextView
     private val calendar = Calendar.getInstance()
 
     //Others
@@ -85,10 +88,14 @@ class EventAddFragmento : BasicFragment() {
         eventLocalEditText = view.findViewById(R.id.etNewEventLocal)
 
         //DateTime Fields
-        btnPickDateTime = view.findViewById(R.id.btnPickDateTime)
-        tvSelectedDateTime = view.findViewById(R.id.tvSelectedDateTime)
-        tvSelectedDateTime.text = formatShow.format(calendar.time)
-        selectedDateTime = format.format(calendar.time)
+        btnPickInitDateTime = view.findViewById(R.id.btnPickInitDateTime)
+        btnPickEndDateTime = view.findViewById(R.id.btnPickEndDateTime)
+        tvSelectedInitDateTime = view.findViewById(R.id.tvSelectedInitDateTime)
+        tvSelectedEndDateTime = view.findViewById(R.id.tvSelectedEndDateTime)
+        tvSelectedInitDateTime.text = formatShow.format(calendar.time)
+        tvSelectedEndDateTime.text = formatShow.format(calendar.time)
+        selectedInitDateTime = format.format(calendar.time)
+        selectedEndDateTime = format.format(calendar.time)
 
         //Others
         eventTransportCheckbox = view.findViewById(R.id.checkboxNewEventTransport)
@@ -161,8 +168,12 @@ class EventAddFragmento : BasicFragment() {
             }
         }
 
-        btnPickDateTime.setOnClickListener {
-            pickDateTime()
+        btnPickInitDateTime.setOnClickListener {
+            pickDateTime(1)
+        }
+
+        btnPickEndDateTime.setOnClickListener {
+            pickDateTime(2)
         }
 
         eventSubmitButton.setOnClickListener {
@@ -192,7 +203,8 @@ class EventAddFragmento : BasicFragment() {
         val event = EventAddRequest(
             name = eventName,
             description = eventDesc,
-            date = selectedDateTime,
+            initDate = selectedInitDateTime,
+            endDate = selectedEndDateTime,
             location = eventLocal,
             transport = eventTransport,
             image = eventSelectedImageUri
@@ -201,7 +213,8 @@ class EventAddFragmento : BasicFragment() {
         //Contruir parts com toda a info do event
         val namePart = RequestBody.create(MultipartBody.FORM, event.name)
         val descriptionPart = RequestBody.create(MultipartBody.FORM, event.description)
-        val datePart = RequestBody.create(MultipartBody.FORM, event.date)
+        val initDatePart = RequestBody.create(MultipartBody.FORM, event.initDate)
+        val endDatePart = RequestBody.create(MultipartBody.FORM, event.endDate)
         val locationPart = RequestBody.create(MultipartBody.FORM, event.location)
         val transportPart = RequestBody.create(MultipartBody.FORM, event.transport.toString())
 
@@ -223,7 +236,7 @@ class EventAddFragmento : BasicFragment() {
         //Iniciar chamada à API
         makeRequestWithRetries(
             requestCall = {
-                RetrofitClient.apiService.addEvent(namePart, descriptionPart, datePart, locationPart, transportPart, imagePart).execute()
+                RetrofitClient.apiService.addEvent(namePart, descriptionPart, initDatePart, endDatePart, locationPart, transportPart, imagePart).execute()
             },
             onSuccess = { responseBody ->
                 //Atualizar loading
@@ -270,7 +283,7 @@ class EventAddFragmento : BasicFragment() {
      * Funcao para abrir popup de escolha de data e hora
      *
      */
-    private fun pickDateTime() {
+    private fun pickDateTime(type: Int) {
         DatePickerDialog(requireContext(), { _, year, month, dayOfMonth ->
             calendar.set(year, month, dayOfMonth)
 
@@ -279,8 +292,14 @@ class EventAddFragmento : BasicFragment() {
                 calendar.set(Calendar.MINUTE, minute)
                 calendar.set(Calendar.SECOND, 0)
 
-                selectedDateTime = format.format(calendar.time)
-                tvSelectedDateTime.text = formatShow.format(calendar.time)
+                if(type==1){
+                    selectedInitDateTime = format.format(calendar.time)
+                    tvSelectedEndDateTime.text = formatShow.format(calendar.time)
+                }else{
+                    selectedInitDateTime = format.format(calendar.time)
+                    tvSelectedEndDateTime.text = formatShow.format(calendar.time)
+                }
+
             }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
     }

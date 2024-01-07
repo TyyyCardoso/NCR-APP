@@ -188,9 +188,9 @@ class EventsFragmento : BasicFragment() {
         println("updating recycler: " + selectedSortOption)
 
         if(selectedSortOption.equals("recente")){
-            myListEvents = myListEvents!!.sortedByDescending { it.date }
+            myListEvents = myListEvents!!.sortedByDescending { it.initDate }
         } else if (selectedSortOption.equals("antigo")){
-            myListEvents = myListEvents!!.sortedBy { it.date }
+            myListEvents = myListEvents!!.sortedBy { it.initDate }
         }
 
         // Definiçao do adapter com a lista de eventos
@@ -205,19 +205,34 @@ class EventsFragmento : BasicFragment() {
 
             // Definiçao do clickListener de subscrever
             onItemClickSubscribeListener = { event, position ->
-                var eventDate = event.date.toString().substring(0,10)
+                var eventInitDate = event.initDate.toString().substring(0,10)
+                var eventEndDate = event.endDate.toString().substring(0,10)
 
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-                var date : Date =  dateFormat.parse(eventDate);
+                var initDate : Date =  dateFormat.parse(eventInitDate);
+                var endDate : Date =  dateFormat.parse(eventEndDate);
                 val today = Date()
-                if(!today.after(date)) {
-                    if (event.subscribed == true) {
-                        cancelarInscricao(event, position)
-                    } else {
-                        inscreverEvento(event, position)
+
+                if(endDate.equals(null)){
+                    if(initDate.before(today)) {
+                        if (event.subscribed == true) {
+                            cancelarInscricao(event, position)
+                        } else {
+                            inscreverEvento(event, position)
+                        }
+                    }else{
+                        Toast.makeText(requireContext(), "Este evento não se encontra disponivel", Toast.LENGTH_SHORT).show()
                     }
                 }else{
-                    Toast.makeText(requireContext(), "Este evento já expirou", Toast.LENGTH_SHORT).show()
+                    if(today.after(initDate) && today.before(endDate)){
+                        if (event.subscribed == true) {
+                            cancelarInscricao(event, position)
+                        } else {
+                            inscreverEvento(event, position)
+                        }
+                    }else{
+                        Toast.makeText(requireContext(), "Este evento não se encontra disponivel", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }

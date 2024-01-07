@@ -10,7 +10,8 @@ data class EventResponse(
     val id: Int?,
     var name: String?,
     var description: String?,
-    var date: LocalDateTime?,  // Supondo que você tenha uma maneira de lidar com LocalDateTime
+    val initDate: String?,
+    val endDate: String?,  // Supondo que você tenha uma maneira de lidar com LocalDateTime
     var location: String?,
     var transport: Boolean?,
     var createdAt: LocalDateTime?,
@@ -22,6 +23,7 @@ data class EventResponse(
         parcel.readValue(Int::class.java.classLoader) as? Int,
         parcel.readString(),
         parcel.readString(),
+        TODO("date"),
         TODO("date"),
         parcel.readString(),
         parcel.readValue(Boolean::class.java.classLoader) as? Boolean,

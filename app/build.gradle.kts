@@ -11,8 +11,8 @@ android {
         applicationId = "ipt.lei.dam.ncrapp"
         minSdk = 24
         targetSdk = 33
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -75,6 +75,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("com.android.volley:volley:1.2.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -88,4 +89,7 @@ dependencies {
     implementation("com.alexvasilkov:gesture-views:2.8.3")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9")
+
 }

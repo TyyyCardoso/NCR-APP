@@ -267,11 +267,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_staff)
             }
             R.id.navigation_schedule -> {
-                Toast.makeText(this@MainActivity, "Brevemente...", Toast.LENGTH_SHORT).show()
-                /*false
                 clearBottomNavigationSelection()
-                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_schedule)*/
-
+                findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_schedule)
             }
             R.id.navigation_settings-> {
                 clearBottomNavigationSelection()

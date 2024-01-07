@@ -126,12 +126,12 @@
             android:id="@+id/eventDetailDateTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/eventDetailDateTitle"
+            android:text="@string/eventDetailInitDateTitle"
             android:textStyle="bold"
             android:paddingBottom="4dp"/>
 
         <TextView
-            android:id="@+id/eventDetailDate"
+            android:id="@+id/eventDetailInitDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="18sp"
@@ -139,7 +139,31 @@
             android:layout_marginTop="10dp" />
 
         <Button
-            android:id="@+id/btnPickDateTime"
+            android:id="@+id/btnPickInitDateTime"
+            style="@style/CustomButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/addEventTextEventAddTimeDateBtn"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/eventDetailEndDateTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/eventDetailEndDateTitle"
+            android:textStyle="bold"
+            android:paddingBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/eventDetailEndDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:padding="8dp"
+            android:layout_marginTop="10dp" />
+
+        <Button
+            android:id="@+id/btnPickEndDateTime"
             style="@style/CustomButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

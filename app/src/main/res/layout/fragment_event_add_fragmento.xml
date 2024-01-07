@@ -95,22 +95,46 @@
                 android:layout_marginVertical="8dp"/>
 
             <TextView
-                android:id="@+id/eventDetailDateTitle"
+                android:id="@+id/eventDetailInitDateTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/eventDetailDateTitle"
+                android:text="@string/eventDetailInitDateTitle"
                 android:textStyle="bold"
                 android:paddingBottom="4dp"/>
 
             <Button
-                android:id="@+id/btnPickDateTime"
+                android:id="@+id/btnPickInitDateTime"
                 style="@style/CustomButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/addEventTextEventAddTimeDateBtn" />
 
             <TextView
-                android:id="@+id/tvSelectedDateTime"
+                android:id="@+id/tvSelectedInitDateTime"
+                android:layout_width="match_parent"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:textSize="26sp"
+                android:textAlignment="center"
+                android:padding="15dp" />
+
+            <TextView
+                android:id="@+id/eventDetailEndDateTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/eventDetailEndDateTitle"
+                android:textStyle="bold"
+                android:paddingBottom="4dp"/>
+
+            <Button
+                android:id="@+id/btnPickEndDateTime"
+                style="@style/CustomButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/addEventTextEventAddTimeDateBtn" />
+
+            <TextView
+                android:id="@+id/tvSelectedEndDateTime"
                 android:layout_width="match_parent"
                 android:textColor="@color/black"
                 android:layout_height="wrap_content"

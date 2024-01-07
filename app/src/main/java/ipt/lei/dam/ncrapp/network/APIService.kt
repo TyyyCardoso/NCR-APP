@@ -14,6 +14,7 @@ import ipt.lei.dam.ncrapp.models.otp.ValidateOTPRequest
 import ipt.lei.dam.ncrapp.models.otp.ValidateOTPResponse
 import ipt.lei.dam.ncrapp.models.password.ChangePasswordRequest
 import ipt.lei.dam.ncrapp.models.password.RecoverPasswordRequest
+import ipt.lei.dam.ncrapp.models.schedule.ScheduleResponse
 import ipt.lei.dam.ncrapp.models.signup.SignUpRequest
 import ipt.lei.dam.ncrapp.models.signup.SignUpResponse
 import ipt.lei.dam.ncrapp.models.staff.StaffMemberResponse
@@ -79,7 +80,8 @@ interface APIService {
         fun addEvent(
                 @Part("name") name: RequestBody,
                 @Part("description") description: RequestBody,
-                @Part("date") date: RequestBody,
+                @Part("initDate") initDate: RequestBody,
+                @Part("endDate") endDate: RequestBody,
                 @Part("location") location: RequestBody,
                 @Part("transport") transport: RequestBody,
                 @Part image: MultipartBody.Part
@@ -91,7 +93,8 @@ interface APIService {
                 @Part("id") id: RequestBody,
                 @Part("name") name: RequestBody,
                 @Part("description") description: RequestBody,
-                @Part("date") date: RequestBody,
+                @Part("initDate") initDate: RequestBody,
+                @Part("endDate") endDate: RequestBody,
                 @Part("location") location: RequestBody,
                 @Part("transport") transport: RequestBody,
                 @Part("createdAt") createdAt: RequestBody,
@@ -122,5 +125,13 @@ interface APIService {
 
         @DELETE("didyouknow/{id}")
         fun deleteDidYouKnow(@Path("id") id: Int) : Call<ResponseBody>
+
+        @GET("docs/all")
+        fun getSchedules() : Call<List<ScheduleResponse>>
+
+        @Multipart
+        @POST("uploadDoc")
+        fun uploadDoc(@Part file: MultipartBody.Part): Call<ResponseBody>
+
 
 }

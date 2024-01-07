@@ -1,4 +1,6 @@
 <resources>
+    <string name="appTag">NCRAPP</string>
+
     <!-- GENERAL SCREEN TEXTS -->
     <string name="app_name">Núcleo de Conservação e Restauro</string>
     <string name="generalBackButton">Voltar</string>
@@ -10,6 +12,7 @@
     <string name="mainNavPersonalButton">Perfil</string>
     <string name="mainNavStaffButton">Organização</string>
     <string name="mainNavInfoButton">Informação</string>
+    <string name="mainNavScheduleButton">Horários</string>
     <string name="mainNavSettingsButton">Definições</string>
     <string name="mainEventTabIncreverBtn">Increver-me</string>
     <string name="mainEventTabDetalhesBtn">Detalhes</string>
@@ -28,7 +31,8 @@
     <string name="eventDetailDescriptionTitle">Descrição do Evento </string>
     <string name="eventDetailLocationTitle">Localização do Evento </string>
     <string name="eventDetailTransportTitle">Tem Transporte? </string>
-    <string name="eventDetailDateTitle">Data do Evento </string>
+    <string name="eventDetailInitDateTitle">Data de inicio do Evento </string>
+    <string name="eventDetailEndDateTitle">Data de fim do Evento </string>
     <string name="editEventTextEventEditBtn">Guardar </string>
     <string name="editEventTextEventDeleteBtn">Remover </string>
     <!-- SORT TEXTS -->
@@ -65,6 +69,9 @@
     <string name="insertOTPBoxError">Código inserido inválido</string>
     <string name="insertEmptyOTPBoxError">O código não pode estar vazio</string>
     <string name="insertLenghtOTPBoxError">O código tem que ter 7 digitos</string>
+    <string name="insertOTPCountdownText">Reenviar código: %1$d segundos</string>
+    <string name="insertOTPCountdownText2">Clique aqui para reenviar um novo código</string>
+
     <!-- CHANGE PASSWORD SCREEN TEXTS -->
     <string name="changePasswordTitle">Nova palavra-passe:</string>
     <string name="changePasswordBoxHint">Palavra-passe</string>
@@ -94,13 +101,15 @@
     <string name="dialogAlertPositiveButton2">Fazer Login</string>
     <string name="dialogInfoTitle">Informação</string>
     <string name="dialogInfoMessage1">Quando pretender usar impressão digital diriga-se às definições para ativar.</string>
-    <string name="dialogPositiveButton">Ok</string>
+    <string name="dialogPositiveButton">OK</string>
     <!-- INTENT OBJECTS -->
     <string name="userID">userID</string>
     <string name="userInsertedEmail">userInsertedEmail</string>
     <string name="type">type</string>
-
-
+    <!-- BIOMETRIC PROMPT -->
+    <string name="biometricPromptMessage">Entrar com a sua impressão digital:</string>
+    <string name="useCredential">Usar credenciais</string>
+    ""
     <!-- SESSION OBJECTS -->
     <string name="biometricLogin">BiometricLogin</string>
     <string name="isUsingBiometric">isUsingBiometric</string>
@@ -110,17 +119,26 @@
     <string name="userInfo">UserInfo</string>
     <string name="clientType">clientType</string>
     <string name="clientEmail">clientEmail</string>
+    <string name="clientName">clientName</string>
+    <string name="clientValidated">clientValidated</string>
+    <string name="clientRegistrationDate">clientRegistrationDate</string>
+    <string name="clientImage">clientImage</string>
+    <string name="clientAbout">clientAbout</string>
+    <string name="keepLogin">keepLogin</string>
 
     <!-- TOAST MESSAGES -->
     <string name="toastMessageSuccessLogout">Logout efetuado com sucesso</string>
-
-
+    <string name="leituraImpressaoDigitalErro">Ocorreu um erro na leitura da sua impressão digital</string>
+    <string name="falhaAuth">Autenticação falhou</string>
+    <string name="accountCreated">Conta criada com sucesso</string>
 
     <!-- CODE STRING -->
     <string name="navigation_drawer_open">Abrir menu de navegação</string>
     <string name="navigation_drawer_close">Fechar menu de navegação</string>
     <string name="sair">Sair</string>
     <string name="estudante">student</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

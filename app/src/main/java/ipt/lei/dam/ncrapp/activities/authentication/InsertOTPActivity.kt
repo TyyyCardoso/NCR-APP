@@ -1,12 +1,14 @@
 package ipt.lei.dam.ncrapp.activities.authentication
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.activities.BaseActivity
 import ipt.lei.dam.ncrapp.models.otp.SendOTPRequest
@@ -18,25 +20,31 @@ class InsertOTPActivity : BaseActivity() {
     private lateinit var countdownTimer: CountDownTimer
     private lateinit var tvCountdown: TextView
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_insert_otp)
 
-
+        //Obtidos elementos de UI
         val otpEditText = findViewById<EditText>(R.id.etOTP)
-        val btnValidateOTP = findViewById<Button>(R.id.btnValidateOTP);
-        val backToRecoverPassword = findViewById<Button>(R.id.btnBackToRecoverPassword);
+        val btnValidateOTP = findViewById<Button>(R.id.btnValidateOTP)
+        val backToRecoverPassword = findViewById<Button>(R.id.btnBackToRecoverPassword)
 
         tvCountdown = findViewById(R.id.tvCountdown)
         tvCountdown.isClickable = false // Inicialmente não clicável
 
-        val userEmailFromLogin = intent.getStringExtra("userInsertedEmail")
-        val type = intent.getStringExtra("type")
+        val userEmailFromLogin = intent.getStringExtra(getString(R.string.userInsertedEmail))
+        val type = intent.getStringExtra(getString(R.string.type))
 
+        //Botão de recuperar password é clicável e leva-nos para uma certa activity dependendo do tipo de operação que estamos a fazer
+        /**
+         * Se type = 1 - > Recuperar palavra-pass
+         * Se type = 2 -> Login
+         */
         backToRecoverPassword.setOnClickListener {
             if(type.equals("1")){
                 val intent = Intent(this@InsertOTPActivity, ForgotPasswordActivity::class.java)
-                intent.putExtra("userInsertedEmail", userEmailFromLogin)
+                intent.putExtra(getString(R.string.userInsertedEmail), userEmailFromLogin)
                 startActivity(intent)
                 finish()
             }else{
@@ -47,8 +55,12 @@ class InsertOTPActivity : BaseActivity() {
 
         }
 
+        //Sempre que é enviado um OTP, é iniciada uma contagem regressiva
         iniciarContagemRegressiva()
 
+        /**
+         * Quando é clicado na label de reenviar código, é feito um request ao servidor
+         */
         tvCountdown.setOnClickListener {
             makeRequestWithRetries(
                 requestCall = {
@@ -59,6 +71,7 @@ class InsertOTPActivity : BaseActivity() {
                     toast!!.show()
                     iniciarContagemRegressiva()
                     setLoadingVisibility(false)
+
                 },
                 onError = { errorMessage ->
                     // Tratamento de erro
@@ -75,19 +88,23 @@ class InsertOTPActivity : BaseActivity() {
             tvCountdown.isClickable = false // Inicialmente não clicável
         }
 
+        /**
+         * Request ao servidor para validar o códgio inserido pelo cliente
+         */
         btnValidateOTP.setOnClickListener {
 
-            var validateOTP = true;
+            var validateOTP = true
             val otpInserted = otpEditText.text.toString()
 
-            if(otpInserted.isNullOrEmpty()){
+            //Validações de campos de inserção pelo cliente
+            if(otpInserted.isEmpty()){
                 otpEditText.error = getString(R.string.insertEmptyOTPBoxError)
-                validateOTP = false;
+                validateOTP = false
             }
 
             if(otpInserted.length!=7 && validateOTP){
                 otpEditText.error = getString(R.string.insertLenghtOTPBoxError)
-                validateOTP = false;
+                validateOTP = false
             }
 
 
@@ -129,18 +146,26 @@ class InsertOTPActivity : BaseActivity() {
         }
     }
 
+    /**
+     *
+     * Método "iniciarContagemRegressiva" server para alterar a label que reenvia código para assim que um código for enviado
+     * Ter que esperar 30 segundos para enviar outro
+     *
+     * É criado um objeto do tipo Timer para controlar se já passaram 30 segundos e através de uma thread é verificado se ainda está a contar, ou se já acabou.
+     *
+     */
     private fun iniciarContagemRegressiva() {
         countdownTimer = object : CountDownTimer(30000, 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 runOnUiThread {
-                    tvCountdown.text = "Reenviar código: ${millisUntilFinished / 1000} segundos"
+                    tvCountdown.text = getString(R.string.insertOTPCountdownText, millisUntilFinished/1000)
                     tvCountdown.isClickable = false // Mantém não clicável durante a contagem
                 }
             }
 
             override fun onFinish() {
                 runOnUiThread {
-                    tvCountdown.text = "Clique aqui para reenviar"
+                    tvCountdown.text = getString(R.string.insertOTPCountdownText2)
                     tvCountdown.isClickable = true // Torna clicável após a contagem terminar
                 }
             }

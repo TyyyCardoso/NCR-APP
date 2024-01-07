@@ -54,15 +54,17 @@
                 android:layout_weight="2"
                 android:layout_height="wrap_content"
                 android:text="Descrição breve do evento..."
+                android:maxLines="3"
                 android:textSize="14sp"
                 android:textColor="#666"/>
         </LinearLayout>
 
-        <!-- LinearLayout para Data -->
         <LinearLayout
+            android:id="@+id/data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:visibility="gone"
             android:layout_marginBottom="8dp">
 
             <TextView
@@ -74,8 +76,65 @@
                 android:textStyle="bold"
                 android:textColor="#00574B"/>
 
+
             <TextView
                 android:id="@+id/event_date"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:text="Data do Evento"
+                android:textSize="14sp"
+                android:textColor="#333"/>
+        </LinearLayout>
+
+        <!-- LinearLayout para Data -->
+        <LinearLayout
+            android:id="@+id/dataInicio"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Data inicio:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#00574B"/>
+
+
+            <TextView
+                android:id="@+id/eventInitDate"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:layout_height="wrap_content"
+                android:text="Data do Evento"
+                android:textSize="14sp"
+                android:textColor="#333"/>
+        </LinearLayout>
+
+        <!-- LinearLayout para Data -->
+        <LinearLayout
+            android:id="@+id/dataFim"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Data fim:"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#00574B"/>
+
+
+            <TextView
+                android:id="@+id/eventEndDate"
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content"
