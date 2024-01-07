@@ -129,9 +129,16 @@ interface APIService {
         @GET("docs/all")
         fun getSchedules() : Call<List<ScheduleResponse>>
 
+        @DELETE("docs/{id}")
+        fun deleteSchedule(@Path("id") id: Int?) : Call<ResponseBody>
+
+
         @Multipart
-        @POST("uploadDoc")
-        fun uploadDoc(@Part file: MultipartBody.Part): Call<ResponseBody>
+        @POST("docs/uploadSchedule")
+        fun uploadDoc(@Part("docName") docName: RequestBody,
+                      @Part("docDescription") docDescription: RequestBody,
+                      @Part("docType") docType: RequestBody,
+                      @Part pdf: MultipartBody.Part): Call<ResponseBody>
 
 
 }

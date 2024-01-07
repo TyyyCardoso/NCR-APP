@@ -69,4 +69,10 @@
         android:label="@string/mainNavSettingsButton"
         tools:layout="@layout/fragment_events" />
 
+    <fragment
+        android:id="@+id/navigation_schedule_add"
+        android:name="ipt.lei.dam.ncrapp.fragments.schedule.ScheduleAddFragment"
+        android:label="@string/mainNavSettingsButton"
+        tools:layout="@layout/fragment_events" />
+
 </navigation>

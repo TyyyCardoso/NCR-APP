@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private val environment = EnvironmentEnum.PROD// Set your current environment here
+    private val environment = EnvironmentEnum.EMULATOR// Set your current environment here
 
      val BASE_URL = when(environment) {
         EnvironmentEnum.EMULATOR -> "http://10.0.2.2:8080/ncr/" // Emulator URL

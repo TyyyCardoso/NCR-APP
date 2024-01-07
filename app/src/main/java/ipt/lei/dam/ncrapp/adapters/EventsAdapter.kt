@@ -23,8 +23,8 @@ import java.util.Date
 class EventsAdapter(private val context: Context, private val eventsList: List<EventResponse>) : RecyclerView.Adapter<EventsAdapter.ViewHolder>() {
     //Listener para abrir detalhes do evento
     var onItemClickListener: ((EventResponse) -> Unit)? = null
-    //Listener para inscrever no evento
     var onItemClickSubscribeListener: ((EventResponse, Int) -> Unit)? = null
+    //Listener para inscrever no evento
     var toast: Toast? = null
 
     //Definiçao do viewHolder

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -9,7 +8,6 @@
     card_view:cardCornerRadius="8dp">
 
     <LinearLayout
-        android:id="@+id/doc_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -25,6 +23,7 @@
 
         <!-- LinearLayout for Textual Information -->
         <LinearLayout
+            android:id="@+id/doc_item"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -48,5 +47,13 @@
                 android:text="Clique para fazer download"
                 android:textSize="14sp"/>
         </LinearLayout>
+
+        <!-- ImageView for Delete Icon -->
+        <ImageView
+            android:id="@+id/delete_document_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:src="@drawable/baseline_delete_24"
+            android:visibility="gone"/>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

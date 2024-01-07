@@ -137,8 +137,8 @@
     <string name="navigation_drawer_close">Fechar menu de navegação</string>
     <string name="sair">Sair</string>
     <string name="estudante">student</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
+    <string name="mainScheduleAddFileName">Nome do ficheiro</string>
+    <string name="mainScheduleCreateSchedule">Criar horário </string>
 
 </resources>

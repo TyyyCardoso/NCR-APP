@@ -1,5 +1,6 @@
 package ipt.lei.dam.ncrapp.adapters
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.os.Environment
@@ -11,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
@@ -19,6 +21,8 @@ import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import com.bumptech.glide.Glide
 import ipt.lei.dam.ncrapp.R
+import ipt.lei.dam.ncrapp.fragments.schedule.ScheduleFragment
+import ipt.lei.dam.ncrapp.models.events.EventResponse
 import ipt.lei.dam.ncrapp.models.schedule.ScheduleResponse
 import ipt.lei.dam.ncrapp.models.staff.StaffMemberResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
@@ -31,8 +35,9 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 
-class ScheduleAdapter(private val context: Context, private var schedules: List<ScheduleResponse>) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>() {
+class ScheduleAdapter(private val context: Context, private var schedules: List<ScheduleResponse>) : RecyclerView.Adapter<ScheduleAdapter.ViewHolder>()  {
 
+    var onItemClickListener: ((ScheduleResponse) -> Unit)? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.schedule_item, parent, false)
@@ -43,10 +48,14 @@ class ScheduleAdapter(private val context: Context, private var schedules: List<
         val scheduleTitle: TextView = view.findViewById(R.id.document_title)
         val scheduleDescription: TextView = view.findViewById(R.id.document_description)
         val doc_item: LinearLayout = view.findViewById(R.id.doc_item)
+        val doc_delete_item: ImageView = view.findViewById(R.id.delete_document_icon)
+        val document_icon: ImageView = view.findViewById(R.id.document_icon)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val schedule = schedules[position]
+
+        val url = "" + RetrofitClient.BASE_URL + "files/docs/" + schedule.docReference
 
         //holder.staffMemberImage. = member.image
         holder.scheduleTitle.text = schedule.docName
@@ -54,12 +63,33 @@ class ScheduleAdapter(private val context: Context, private var schedules: List<
         holder.doc_item.setOnClickListener {
             AlertDialog.Builder(context)
                 .setTitle(context.getString(R.string.dialogAlertTitle))
-                .setMessage("Quer transferir o ficheiro \"" + schedule.docName + "\"")
+                .setMessage("Quer transferir o ficheiro \"" + schedule.docName + "\" ?")
                 .setNeutralButton("Não", null)
                 .setPositiveButton("Sim") { _, _ ->
-                    downloadFile(schedule.docReference, schedule.docName)
+                    downloadFile(url, schedule.docName)
                 }
                 .show()
+        }
+
+        holder.document_icon.setOnClickListener {
+            AlertDialog.Builder(context)
+            .setTitle(context.getString(R.string.dialogAlertTitle))
+            .setMessage("Quer transferir o ficheiro \"" + schedule.docName + "\" ?")
+            .setNeutralButton("Não", null)
+            .setPositiveButton("Sim") { _, _ ->
+                downloadFile(url, schedule.docName)
+            }
+            .show() }
+
+        holder.doc_delete_item.setOnClickListener {
+            onItemClickListener?.invoke(schedule)
+        }
+
+        val sharedPref = context.getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString("clientType", "member");
+
+        if(clientType.equals("ADMINISTRADOR")){
+            holder.doc_delete_item.visibility = View.VISIBLE;
         }
     }
 
@@ -67,6 +97,8 @@ class ScheduleAdapter(private val context: Context, private var schedules: List<
         schedules = newSchedules
         notifyDataSetChanged()
     }
+
+
 
     override fun getItemCount(): Int = schedules.size
 
@@ -78,8 +110,6 @@ class ScheduleAdapter(private val context: Context, private var schedules: List<
                 val inputStream = connection.getInputStream()
 
                 val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-
-                Toast.makeText(context, dir.toString(), Toast.LENGTH_LONG).show()
 
                 val fileName = docName
 
@@ -105,15 +135,15 @@ class ScheduleAdapter(private val context: Context, private var schedules: List<
 
     private fun openFileInDocumentReader(file: File) {
         val uri = FileProvider.getUriForFile(context, "${context.applicationContext.packageName}.provider", file)
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            setDataAndType(uri, "application/pdf")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(uri, "application/pdf")
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_GRANT_READ_URI_PERMISSION
 
-        if (intent.resolveActivity(context.packageManager) != null) {
-            context.startActivity(Intent.createChooser(intent, "Open with"))
-        } else {
+        try{
+            context.startActivity(intent)
+        }catch (e: ActivityNotFoundException) {
             println("Não existe leitor de pdf")
         }
+
     }
 }
