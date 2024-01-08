@@ -14,12 +14,6 @@ import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
 
 class SettingsFragmento : Fragment() {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -28,43 +22,45 @@ class SettingsFragmento : Fragment() {
 
         val checkboxEditEventTransport = view.findViewById<CheckBox>(R.id.checkboxEditEventTransport)
 
-        val sharedPreferencesBiometric = requireContext().getSharedPreferences("BiometricLogin", Context.MODE_PRIVATE)
-        val sharedPreferences = requireContext().getSharedPreferences("UserInfo", Context.MODE_PRIVATE)
-        val isBiometricLogin = sharedPreferencesBiometric.getBoolean("isUsingBiometric", false)
-        val clientType = sharedPreferences.getString("clientType", "student");
+        val sharedPreferencesBiometric = requireContext().getSharedPreferences(getString(R.string.biometricLogin), Context.MODE_PRIVATE)
+        val sharedPreferences = requireContext().getSharedPreferences(getString(R.string.userInfo), Context.MODE_PRIVATE)
+        val isBiometricLogin = sharedPreferencesBiometric.getBoolean(getString(R.string.isUsingBiometric), false)
+        val clientType = sharedPreferences.getString(getString(R.string.clientType), getString(R.string.estudante))
 
-        if(!clientType.equals("student")) {
+        if(!clientType.equals(getString(R.string.estudante))) {
             checkboxEditEventTransport.isChecked = isBiometricLogin
-        }else{3
+        }else{
             checkboxEditEventTransport.isChecked = false
         }
 
-        checkboxEditEventTransport.setOnCheckedChangeListener { buttonView, isChecked ->
+        checkboxEditEventTransport.setOnCheckedChangeListener { _, isChecked ->
 
-            if(!clientType.equals("student")) {
+            if(!clientType.equals(getString(R.string.estudante))) {
                 val editor = sharedPreferencesBiometric.edit()
 
                 if (isChecked) {
-                    editor.putBoolean("isUsingBiometric", true)
+                    editor.putBoolean(getString(R.string.isUsingBiometric), true)
                     editor.putString(
-                        "biometricEmail",
-                        sharedPreferences.getString("clientEmail", "")
+                        getString(R.string.biometricEmail),
+                        sharedPreferences.getString(getString(R.string.clientEmail), "")
                     )
                 } else {
-                    editor.putBoolean("isUsingBiometric", false)
-                    editor.putString("biometricEmail", "")
+                    editor.putBoolean(getString(R.string.isUsingBiometric), false)
+                    editor.putString(getString(R.string.biometricEmail), "")
                 }
                 editor.apply()
             }else{
                 AlertDialog.Builder(requireContext())
-                    .setTitle("Aviso")
-                    .setMessage("Tem que fazer login para poder aceder ao seu perfil.")
-                    .setNeutralButton("Mais tarde") { dialog, which ->
+                    .setTitle(getString(R.string.dialogAlertTitle))
+                    .setMessage(getString(R.string.dialogAlertMessage2))
+                    .setNeutralButton(getString(R.string.dialogAlertNeutralButton)) { _, _ ->
                     }
-                    .setPositiveButton(" Fazer Login") { dialog, which ->
+                    .setPositiveButton(getString(R.string.dialogAlertPositiveButton2)) { _, _ ->
                         startActivity(Intent(requireActivity(), LoginActivity::class.java))
                     }
                     .show()
+
+                checkboxEditEventTransport.isChecked = false
             }
 
 
@@ -74,6 +70,4 @@ class SettingsFragmento : Fragment() {
         return view
     }
 
-    companion object {
-    }
 }

@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +21,7 @@ import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 
 class sabiasQueFragmento : BasicFragment() {
-    private var selectedSortOption: String = "recente"
+    private lateinit var selectedSortOption: String
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private var isInitialized = false
     private lateinit var recyclerView: RecyclerView
@@ -37,13 +36,6 @@ class sabiasQueFragmento : BasicFragment() {
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeSortOption()
@@ -51,12 +43,12 @@ class sabiasQueFragmento : BasicFragment() {
     }
 
     private fun observeSortOption() {
-        sharedViewModel.sortOption.observe(viewLifecycleOwner, Observer { sortOption ->
+        sharedViewModel.sortOption.observe(viewLifecycleOwner) { sortOption ->
             if (isInitialized) {
                 selectedSortOption = sortOption
                 updateRecyclerView()
             }
-        })
+        }
     }
 
 
@@ -66,6 +58,7 @@ class sabiasQueFragmento : BasicFragment() {
     ): View? {
         val view =  inflater.inflate(R.layout.did_you_know_fragmento, container, false)
 
+        selectedSortOption = getString(R.string.recent)
         /**
          * REFERENCES TO UI
          */
@@ -84,16 +77,16 @@ class sabiasQueFragmento : BasicFragment() {
         /**
          * Obter info do user
          */
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientType = sharedPref.getString("clientType", "member");
+        val sharedPref = requireActivity().getSharedPreferences(getString(R.string.userInfo), AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString(getString(R.string.clientType), getString(R.string.member))
 
         /**
          * ClickListeners
          */
-        if(!clientType.equals("ADMINISTRADOR")){
-            fabAddDidYouKnow.visibility = View.GONE;
+        if(!clientType.equals(getString(R.string.admin))){
+            fabAddDidYouKnow.visibility = View.GONE
         }else{
-            fabAddDidYouKnow.visibility = View.VISIBLE;
+            fabAddDidYouKnow.visibility = View.VISIBLE
             fabAddDidYouKnow.setOnClickListener {
                 findNavController().navigate(R.id.navigation_didyouknow_add)
             }
@@ -107,7 +100,7 @@ class sabiasQueFragmento : BasicFragment() {
                     myListDidYouKnow = didYouKnowList
                     updateRecyclerView()
                 },
-                onError = { errorMessage ->
+                onError = {
 
                 }
             )
@@ -117,7 +110,7 @@ class sabiasQueFragmento : BasicFragment() {
          * Carregar eventos para a UI
          */
         //Se os sabias que já foram descarregados da API
-        if(null != myListDidYouKnow && !myListDidYouKnow!!.isEmpty()){
+        if(null != myListDidYouKnow && myListDidYouKnow!!.isNotEmpty()){
             //Mas existem ordem de voltar a atualizar (adiciona, editado ou removido algum sabias que)
             //Volta a fazer um pedido de getSabiasQue
             if(needRefresh){
@@ -127,7 +120,7 @@ class sabiasQueFragmento : BasicFragment() {
                         updateRecyclerView()
                         setMyNeedRefresh(false)
                     },
-                    onError = { errorMessage ->
+                    onError = {
                     }
                 )
             } else {
@@ -141,7 +134,7 @@ class sabiasQueFragmento : BasicFragment() {
                     myListDidYouKnow = didYouKnowList
                     updateRecyclerView()
                 },
-                onError = { errorMessage ->
+                onError = {
 
                 }
             )
@@ -155,7 +148,7 @@ class sabiasQueFragmento : BasicFragment() {
      * Função de obter todos os sabias que
      *
      */
-    fun getDidYouKnowFromApi(onDidYouKnowLoaded: (List<DidYouKnowResponse>) -> Unit, onError: (String) -> Unit) {
+    private fun getDidYouKnowFromApi(onDidYouKnowLoaded: (List<DidYouKnowResponse>) -> Unit, onError: (String) -> Unit) {
         makeRequestWithRetries(
             requestCall = {
                 RetrofitClient.apiService.getDidYouKnow().execute()
@@ -180,21 +173,21 @@ class sabiasQueFragmento : BasicFragment() {
         setLoadingVisibility(true)
 
         if(!myListDidYouKnow.isNullOrEmpty()) {
-            myListDidYouKnow = if(selectedSortOption.equals("recente")) {
+            myListDidYouKnow = if(selectedSortOption == getString(R.string.recent)) {
                 myListDidYouKnow!!.sortedByDescending { it.createdAt }
-            } else if (selectedSortOption.equals("antigo")){
+            } else if (selectedSortOption == getString(R.string.old)){
                 myListDidYouKnow!!.sortedBy { it.createdAt }
             } else {
                 myListDidYouKnow // Mantém a lista como está se não se encaixar nas condições anteriores
             }
 
             // Definiçao do adapter com a lista
-            adapter = DidYouKnowAdapter(requireContext(), myListDidYouKnow!!).apply {
+            adapter = DidYouKnowAdapter(myListDidYouKnow!!).apply {
                 // Definiçao do clickListener de abrir detalhes
                 onItemClickListener = { didYouKnow ->
 
                     val bundle = Bundle().apply {
-                        putParcelable("myDidYouKow", didYouKnow)
+                        putParcelable(getString(R.string.myDidYouKow), didYouKnow)
                     }
                     findNavController().navigate(R.id.navigation_didyouknow_details, bundle)
                 }

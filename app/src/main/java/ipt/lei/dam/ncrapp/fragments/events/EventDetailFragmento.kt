@@ -36,6 +36,8 @@ import ipt.lei.dam.ncrapp.network.RetrofitClient
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.text.SimpleDateFormat
 import java.util.Calendar
 
@@ -96,17 +98,13 @@ class EventDetailFragmento :  BasicFragment() {
     private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
     private lateinit var currentPhotoUri: Uri
 
+    //paths
+    private var midPath = "event/images/"
+
     /**
      * Componentes DELETE
      */
     private lateinit var btnRemoveEvent: Button
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -197,11 +195,11 @@ class EventDetailFragmento :  BasicFragment() {
         /**
          * ClickListeners base
          */
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientType = sharedPref.getString("clientType", "member");
+        val sharedPref = requireActivity().getSharedPreferences(getString(R.string.userInfo), AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString(getString(R.string.clientType), getString(R.string.member))
 
-        if(!clientType.equals("ADMINISTRADOR")){
-            fabEditEvent.visibility = View.GONE;
+        if(!clientType.equals(getString(R.string.admin))){
+            fabEditEvent.visibility = View.GONE
         }else{
             fabEditEvent.setOnClickListener {
                 toggleEditMode()
@@ -216,12 +214,12 @@ class EventDetailFragmento :  BasicFragment() {
          * Carregar eventos para a UI
          */
         //Obter evento do bundle
-        event = arguments?.getParcelable("myEvent")!!
+        event = arguments?.getParcelable(getString(R.string.myEvent))!!
 
         //Definir valores VIEW
-        eventName.text = event?.name
-        eventDescription.text = event?.description
-        eventLocation.text = event?.location
+        eventName.text = event.name
+        eventDescription.text = event.description
+        eventLocation.text = event.location
         eventInitDate.text = convertDateTime(event.initDate.toString())
         if(event.endDate!=null){
             eventEndDate.text = convertDateTime(event.endDate.toString())
@@ -231,22 +229,22 @@ class EventDetailFragmento :  BasicFragment() {
             btnPickEndDateTime.visibility = View.GONE
         }
 
-        if (event?.transport == true) {
-            eventTransport.text = "Sim"
+        if (event.transport == true) {
+            eventTransport.text = getString(R.string.addEventTextEventTranspBox)
             checkboxEditEventTransport.isChecked = true
         } else {
-            eventTransport.text = "Não"
+            eventTransport.text = getString(R.string.dialogNegativeButton)
             checkboxEditEventTransport.isChecked = false
         }
 
-        selectedInitDateTime = event?.initDate.toString()
-        selectedEndDateTime = event?.endDate.toString()
-        eventSelectedImage = event?.image.toString()
+        selectedInitDateTime = event.initDate.toString()
+        selectedEndDateTime = event.endDate.toString()
+        eventSelectedImage = event.image.toString()
 
         var urlImage = ""
 
-        if (!event?.image.isNullOrBlank()){
-            urlImage = "" + RetrofitClient.BASE_URL + "event/images/" + event.image
+        if (!event.image.isNullOrBlank()){
+            urlImage = RetrofitClient.BASE_URL + midPath + event.image
 
             Glide.with(this)
                 .load(urlImage)
@@ -281,7 +279,7 @@ class EventDetailFragmento :  BasicFragment() {
             linearLayoutEventDetails.visibility = View.VISIBLE
             eventImageBig.visibility = View.GONE
             eventImageBigCloseBtn.visibility = View.GONE
-            if(clientType.equals("ADMINISTRADOR")){
+            if(clientType.equals(getString(R.string.admin))){
                 fabEditEvent.visibility = View.VISIBLE
             }
         }
@@ -317,7 +315,7 @@ class EventDetailFragmento :  BasicFragment() {
                 }
                 shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA) -> {
                     // Fornecer uma explicação adicional ao usuário
-                    Toast.makeText(context, "A câmera é necessária para capturar fotos", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, getString(R.string.cameraNeeded), Toast.LENGTH_LONG).show()
                 }
                 else -> {
                     // Solicitar permissão
@@ -328,11 +326,11 @@ class EventDetailFragmento :  BasicFragment() {
 
         btnRemoveEvent.setOnClickListener {
             AlertDialog.Builder(requireContext())
-                .setTitle("Aviso")
-                .setMessage("Tem a certeza que quer apagar o evento?")
-                .setNeutralButton("Não") { dialog, which ->
+                .setTitle(getString(R.string.dialogAlertTitle))
+                .setMessage(getString(R.string.dialogAlertMessage4))
+                .setNeutralButton(getString(R.string.dialogNegativeButton)) { _, _ ->
                 }
-                .setPositiveButton("Apagar") { dialog, which ->
+                .setPositiveButton(R.string.addEventTextEventTranspBox) { _, _ ->
                     deleteEvent()
                 }
                 .show()
@@ -352,15 +350,15 @@ class EventDetailFragmento :  BasicFragment() {
             requestCall = {
                 RetrofitClient.apiService.deleteEvent(event.id!!).execute()
             },
-            onSuccess = { isDeleted ->
+            onSuccess = {
                 //Atualizar loading
                 setLoadingVisibility(false)
 
                 //Informar via toast
                 if (toast != null) {
-                    toast!!.setText("Evento removido com sucesso")
+                    toast!!.setText(getString(R.string.eventRemoved))
                 } else {
-                    toast = Toast.makeText(requireActivity(), "Evento removido com sucesso", Toast.LENGTH_SHORT)
+                    toast = Toast.makeText(requireActivity(), getString(R.string.eventRemoved), Toast.LENGTH_SHORT)
                 }
                 toast!!.show()
 
@@ -413,15 +411,15 @@ class EventDetailFragmento :  BasicFragment() {
             )
 
             //Contruir parts com toda a info do event
-            val idPart = RequestBody.create(MultipartBody.FORM, eventToEdit.id.toString())
-            val namePart = RequestBody.create(MultipartBody.FORM, eventToEdit.name)
-            val descriptionPart = RequestBody.create(MultipartBody.FORM, eventToEdit.description)
-            val initDatePart = RequestBody.create(MultipartBody.FORM, eventToEdit.initDate)
-            val endDatePart = RequestBody.create(MultipartBody.FORM, eventToEdit.endDate)
-            val locationPart = RequestBody.create(MultipartBody.FORM, eventToEdit.location)
-            val transportPart = RequestBody.create(MultipartBody.FORM, eventToEdit.transport.toString())
-            val createdAtPart = RequestBody.create(MultipartBody.FORM, eventToEdit.createdAt)
-            val imageFileNamePart = RequestBody.create(MultipartBody.FORM, eventToEdit.imageFileName)
+            val idPart = eventToEdit.id.toString().toRequestBody(MultipartBody.FORM)
+            val namePart = eventToEdit.name.toRequestBody(MultipartBody.FORM)
+            val descriptionPart = eventToEdit.description.toRequestBody(MultipartBody.FORM)
+            val initDatePart = eventToEdit.initDate.toRequestBody(MultipartBody.FORM)
+            val endDatePart = eventToEdit.endDate.toRequestBody(MultipartBody.FORM)
+            val locationPart = eventToEdit.location.toRequestBody(MultipartBody.FORM)
+            val transportPart = eventToEdit.transport.toString().toRequestBody(MultipartBody.FORM)
+            val createdAtPart = eventToEdit.createdAt.toRequestBody(MultipartBody.FORM)
+            val imageFileNamePart = eventToEdit.imageFileName.toRequestBody(MultipartBody.FORM)
 
             //Construir part de imagem
             var imagePart: MultipartBody.Part? = null
@@ -429,11 +427,12 @@ class EventDetailFragmento :  BasicFragment() {
             //Se foi introduzida/editada uma imagem
             if(wasImageEdited && eventToEdit.image != null) {
                 val imageFile = compressImage(eventToEdit.image)
-                val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
+                val imageRequestBody = imageFile.asRequestBody("image/*".toMediaTypeOrNull())
                 imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
             } else {
                 //Senao, usar imagem default/manter imagem
-                val emptyRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), ByteArray(0))
+                val emptyRequestBody =
+                    ByteArray(0).toRequestBody("image/*".toMediaTypeOrNull(), 0, 0)
                 imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
             }
 
@@ -442,17 +441,17 @@ class EventDetailFragmento :  BasicFragment() {
                 requestCall = {
                     RetrofitClient.apiService.editEvent(idPart, namePart, descriptionPart, initDatePart, endDatePart, locationPart, transportPart, createdAtPart, imagePart, imageFileNamePart).execute()
                 },
-                onSuccess = { responseBody ->
+                onSuccess = {
                     //Atualizar loading
                     setLoadingVisibility(false)
 
                     //Informar via Toast
                     if (toast != null) {
-                        toast!!.setText("Evento editado com sucesso")
+                        toast!!.setText(getString(R.string.eventEdited))
                     } else {
                         toast = Toast.makeText(
                             requireActivity(),
-                            "Evento editado com sucesso",
+                            getString(R.string.eventEdited),
                             Toast.LENGTH_SHORT
                         )
                     }
@@ -490,15 +489,15 @@ class EventDetailFragmento :  BasicFragment() {
      */
     private fun validateFields(): Boolean{
         if (etEventName.text.toString().trim().isEmpty()) {
-            etEventName.error = "Introduza um nome"
+            etEventName.error = getString(R.string.addEventTitleError)
             return false
         }
         if (etEventDescription.text.toString().trim().isEmpty()) {
-            etEventDescription.error = "Introduza uma descrição"
+            etEventDescription.error = getString(R.string.didYouKnowDescriptionError)
             return false
         }
         if (etEventLocation.text.toString().trim().isEmpty()) {
-            etEventLocation.error = "Introduza uma localização"
+            etEventLocation.error = getString(R.string.addEventLocationError)
             return false
         }
         return true
@@ -554,7 +553,7 @@ class EventDetailFragmento :  BasicFragment() {
             eventImageEditLayout.visibility = View.VISIBLE
 
             btnPickInitDateTime.visibility = View.VISIBLE
-            var eventEndDate = eventEndDate.text
+            val eventEndDate = eventEndDate.text
 
             if(eventEndDate.equals(null) || eventEndDate.isEmpty()){
                 btnPickEndDateTime.visibility = View.GONE
@@ -587,7 +586,7 @@ class EventDetailFragmento :  BasicFragment() {
         }
     }
 
-    fun convertDateTime(dateTimeStr: String): String {
+    private fun convertDateTime(dateTimeStr: String): String {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm")
         val outputFormat = SimpleDateFormat("dd/MM/yyyy HH:mm")
 
@@ -609,7 +608,7 @@ class EventDetailFragmento :  BasicFragment() {
                     openCamera()
                 } else {
                     // Permissão negada, lide com a situação
-                    Toast.makeText(context, "Permissão de câmera necessária", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, getString(R.string.cameraNeeded), Toast.LENGTH_LONG).show()
                 }
             }
         }

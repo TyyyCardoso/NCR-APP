@@ -64,11 +64,6 @@
         <item name="theme">@style/ThemeOverlay.MaterialComponents</item>
     </style>
 
-    <!-- Define the button color in colors.xml -->
-    <color name="buttonColor">#00574B</color>
-    <color name="buttonRedColor">#DC3545</color>
-    <color name="background">#FFF8E7</color>
-
 
 </resources>
 

@@ -38,7 +38,7 @@
                 android:layout_weight="1"
                 android:button="@null"
                 android:gravity="center"
-                android:text="NCR"
+                android:text="@string/appTag"
                 android:textColor="@color/black" />
 
             <RadioButton
@@ -68,7 +68,7 @@
                 android:id="@+id/textViewNomeNucleo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Núcleo de Conservação e Restauro"
+                android:text="@string/infoTitle"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -77,7 +77,7 @@
                 android:id="@+id/textViewDescricaoNucleo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Somos um grupo de estudantes de conservação e restauro que visa dinamizar o curso e dar lhe vida! Através de atividades como workshops, palestras entre outros."
+                android:text="@string/infoText"
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
 
@@ -86,7 +86,7 @@
                 android:id="@+id/textViewAnoFundacao"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ano de Fundação: 2023"
+                android:text="@string/infoYear"
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
 
@@ -94,7 +94,7 @@
                 android:id="@+id/textViewMembros"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Membros: 15"
+                android:text="@string/infoPeople"
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
 
@@ -102,7 +102,7 @@
                 android:id="@+id/textViewLogo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nosso logo:"
+                android:text="@string/infoLogo"
                 android:textSize="16sp"
                 android:layout_marginTop="8dp" />
 

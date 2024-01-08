@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.events.EventAddFragmento"
-    android:background="#FFF8E7"
+    android:background="@color/background"
 
     android:gravity="center">
 

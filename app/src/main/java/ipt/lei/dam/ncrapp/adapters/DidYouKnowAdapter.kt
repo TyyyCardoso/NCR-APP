@@ -1,6 +1,5 @@
 package ipt.lei.dam.ncrapp.adapters
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowResponse
 
-class DidYouKnowAdapter(private val context: Context, private val didyouknowList: List<DidYouKnowResponse>) : RecyclerView.Adapter<DidYouKnowAdapter.ViewHolder>() {
+class DidYouKnowAdapter(private val didyouknowList: List<DidYouKnowResponse>) : RecyclerView.Adapter<DidYouKnowAdapter.ViewHolder>() {
     var toast: Toast? = null
     var onItemClickListener: ((DidYouKnowResponse) -> Unit)? = null
 

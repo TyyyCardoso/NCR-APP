@@ -35,7 +35,6 @@
                 android:id="@+id/document_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Document Title"
                 android:textSize="16sp"
                 android:textStyle="bold"/>
 
@@ -44,7 +43,7 @@
                 android:id="@+id/document_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Clique para fazer download"
+                android:text="@string/mainScheduleFileDescription"
                 android:textSize="14sp"/>
         </LinearLayout>
 

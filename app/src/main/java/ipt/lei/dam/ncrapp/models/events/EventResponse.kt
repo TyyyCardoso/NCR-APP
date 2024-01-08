@@ -32,8 +32,7 @@ data class EventResponse(
         parcel.readString(),
         parcel.readValue(Boolean::class.java.classLoader) as? Boolean,
 
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(id)

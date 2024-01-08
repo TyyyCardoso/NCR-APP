@@ -1,7 +1,8 @@
 package ipt.lei.dam.ncrapp.fragments.schedule
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,43 +10,35 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
-import ipt.lei.dam.ncrapp.adapters.DidYouKnowAdapter
-import ipt.lei.dam.ncrapp.adapters.EventsAdapter
 import ipt.lei.dam.ncrapp.adapters.ScheduleAdapter
-import ipt.lei.dam.ncrapp.adapters.StaffSliderAdapter
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
-import ipt.lei.dam.ncrapp.fragments.didyouknow.sabiasQueFragmento
-import ipt.lei.dam.ncrapp.fragments.events.EventsFragmento
-import ipt.lei.dam.ncrapp.fragments.staff.StaffFragment
-import ipt.lei.dam.ncrapp.models.events.EventResponse
 import ipt.lei.dam.ncrapp.models.schedule.ScheduleResponse
-import ipt.lei.dam.ncrapp.models.staff.StaffMemberResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
-import java.text.SimpleDateFormat
-import java.util.Date
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.File
+import java.io.FileOutputStream
+import java.net.URL
 
 class ScheduleFragment : BasicFragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: ScheduleAdapter
+    private lateinit var docReference : String
+    private lateinit var docName : String
+    private val url = "" + RetrofitClient.BASE_URL + "files/docs/"
+
 
     companion object {
         var scheduleList: List<ScheduleResponse> = emptyList()
-        var needRefresh: Boolean = false
-        fun setMyNeedRefresh(state : Boolean){
-            needRefresh = state
-        }
-    }
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-        }
     }
 
     override fun onCreateView(
@@ -57,13 +50,13 @@ class ScheduleFragment : BasicFragment() {
 
         val fabSchedule: FloatingActionButton = view.findViewById(R.id.fab_add_schedule)
 
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientType = sharedPref.getString("clientType", "member");
+        val sharedPref = requireActivity().getSharedPreferences(getString(R.string.userInfo), AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString(getString(R.string.clientType), getString(R.string.member))
 
-        if(!clientType.equals("ADMINISTRADOR")){
-            fabSchedule.visibility = View.GONE;
+        if(!clientType.equals(getString(R.string.admin))){
+            fabSchedule.visibility = View.GONE
         }else {
-            fabSchedule.visibility = View.VISIBLE;
+            fabSchedule.visibility = View.VISIBLE
             fabSchedule.setOnClickListener {
                 findNavController().navigate(R.id.navigation_schedule_add)
             }
@@ -81,10 +74,25 @@ class ScheduleFragment : BasicFragment() {
             onItemClickListener = { schedule ->
                 AlertDialog.Builder(requireContext())
                     .setTitle(requireContext().getString(R.string.dialogAlertTitle))
-                    .setMessage("Tem a certeza que quer eliminar o ficheiro \"" + schedule.docName + "\" ?")
-                    .setNeutralButton("Não", null)
-                    .setPositiveButton("Sim") { _, _ ->
+                    .setMessage(getString(R.string.dialogAlertMessage5, schedule.docName))
+                    .setNeutralButton(getString(R.string.dialogNegativeButton), null)
+                    .setPositiveButton(getString(R.string.addEventTextEventTranspBox)) { _, _ ->
                         deleteSchedule(schedule.id)
+                    }
+                    .show()
+            }
+
+            onItemClickTransferListener = { schedule ->
+
+                docName = schedule.docName!!
+                docReference = url + schedule.docReference!!
+
+                AlertDialog.Builder(requireContext())
+                    .setTitle(requireContext().getString(R.string.dialogAlertTitle))
+                    .setMessage(getString(R.string.dialogAlertMessage6, docName))
+                    .setNeutralButton(getString(R.string.dialogNegativeButton), null)
+                    .setPositiveButton(getString(R.string.addEventTextEventTranspBox)) { _, _ ->
+                        downloadFile(docReference, docName)
                     }
                     .show()
             }
@@ -94,13 +102,10 @@ class ScheduleFragment : BasicFragment() {
 
         getSchedulesList()
 
-
-
-
-
-
         return view
     }
+
+
 
     private fun getSchedulesList() {
         makeRequestWithRetries(
@@ -128,7 +133,7 @@ class ScheduleFragment : BasicFragment() {
                 requestCall = {
                     RetrofitClient.apiService.deleteSchedule(id).execute()
                 },
-                onSuccess = { deleteSchedule ->
+                onSuccess = {
                     getSchedulesList()
                 },
                 onError = { errorMessage ->
@@ -142,4 +147,47 @@ class ScheduleFragment : BasicFragment() {
             )
         }
 
+
+
+    private fun downloadFile(url: String?, docName: String?) {
+        GlobalScope.launch(Dispatchers.IO) {
+            try {
+                val url = URL(url)
+                val connection = url.openConnection()
+                val inputStream = connection.getInputStream()
+
+                val dir = requireContext().getExternalFilesDir(null)
+
+                val file = File(dir, docName)
+                val output = FileOutputStream(file)
+
+                val buffer = ByteArray(1024)
+                var bytesRead: Int
+                while (inputStream.read(buffer).also { bytesRead = it } != -1) {
+                    output.write(buffer, 0, bytesRead)
+                }
+                output.close()
+                inputStream.close()
+                withContext(Dispatchers.Main) {
+                    openFileInDocumentReader(file)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Handle exceptions or errors
+            }
+        }
+    }
+
+    private fun openFileInDocumentReader(file: File) {
+        val uri = FileProvider.getUriForFile(requireContext(), "${requireContext().applicationContext.packageName}.provider", file)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setDataAndType(uri, "application/pdf")
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+        try{
+            requireContext().startActivity(intent)
+        }catch (e: ActivityNotFoundException) {
+        }
+
+    }
 }

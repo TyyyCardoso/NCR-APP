@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.events.EventDetailFragmento"
-    android:background="#FFF8E7"
+    android:background="@color/background"
     >
 
     <ScrollView
@@ -269,7 +269,7 @@
         android:layout_marginTop="16dp"
         android:layout_marginRight="16dp"
         android:src="@drawable/baseline_close_24"
-        android:tint="#FFF8E7"
+        android:tint="@color/background"
         android:visibility="gone"/>
 
     <com.alexvasilkov.gestures.views.GestureImageView
@@ -287,6 +287,6 @@
         android:layout_marginBottom="72dp"
         android:layout_marginRight="16dp"
         android:src="@drawable/baseline_edit_24"
-        android:tint="#FFF8E7"/>
+        android:tint="@color/background"/>
 
 </FrameLayout>

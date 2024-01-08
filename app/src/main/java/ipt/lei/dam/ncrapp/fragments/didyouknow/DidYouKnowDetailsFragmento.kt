@@ -18,13 +18,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
 import ipt.lei.dam.ncrapp.fragments.didyouknow.sabiasQueFragmento.Companion.setMyNeedRefresh
-import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowAddRequest
 import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowEditRequest
 import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowResponse
 import ipt.lei.dam.ncrapp.network.RetrofitClient
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Calendar
 
 
 class DidYouKnowDetailsFragmento : BasicFragment() {
@@ -55,13 +51,6 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
      * Componentes DELETE
      */
     private lateinit var btnDidYouKnowDelete: Button
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -103,13 +92,13 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
         /**
          * ClickListeners base
          */
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientType = sharedPref.getString("clientType", "member");
+        val sharedPref = requireActivity().getSharedPreferences(getString(R.string.userInfo), AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString(getString(R.string.clientType), getString(R.string.member))
 
-        if(!clientType.equals("ADMINISTRADOR")){
-            fabEditDidYouKnow.visibility = View.GONE;
+        if(!clientType.equals(getString(R.string.admin))){
+            fabEditDidYouKnow.visibility = View.GONE
         }else{
-            fabEditDidYouKnow.visibility = View.VISIBLE;
+            fabEditDidYouKnow.visibility = View.VISIBLE
             fabEditDidYouKnow.setOnClickListener {
                 toggleEditMode()
             }
@@ -121,14 +110,14 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
         }
 
         //obter do bundle
-        didYouKnow = arguments?.getParcelable<DidYouKnowResponse>("myDidYouKow")!!
+        didYouKnow = arguments?.getParcelable(getString(R.string.myDidYouKow))!!
 
         /**
          * Carregar eventos para a UI
          */
-        didYouKnowTitle.text = didYouKnow?.title
-        didYouKnowDescription.text = didYouKnow?.text
-        didYouKnowReferences.text = didYouKnow?.references
+        didYouKnowTitle.text = didYouKnow.title
+        didYouKnowDescription.text = didYouKnow.text
+        didYouKnowReferences.text = didYouKnow.references
 
 
         return view
@@ -166,11 +155,11 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
 
             btnDidYouKnowDelete.setOnClickListener {
                 AlertDialog.Builder(requireContext())
-                    .setTitle("Aviso")
-                    .setMessage("Tem a certeza que quer apagar este Sabias que?")
-                    .setNeutralButton("Não") { dialog, which ->
+                    .setTitle(getString(R.string.dialogAlertTitle))
+                    .setMessage(getString(R.string.dialogAlertMessage3))
+                    .setNeutralButton(getString(R.string.dialogNegativeButton)) { _, _ ->
                     }
-                    .setPositiveButton("Apagar") { dialog, which ->
+                    .setPositiveButton(getString(R.string.addEventTextEventTranspBox)) { _, _ ->
                         deleteDidYouKnow()
                     }
                     .show()
@@ -213,15 +202,15 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
                 requestCall = {
                     RetrofitClient.apiService.editDidYouKnow(didYouKnowRequest).execute()
                 },
-                onSuccess = { isEditted ->
+                onSuccess = {
                     //Atualizar loading
                     setLoadingVisibility(false)
 
                     //Informar via Toast
                     if (toast != null) {
-                        toast!!.setText("Sabias Que editado com sucesso")
+                        toast!!.setText(getString(R.string.sabiasQueEditadoComSucesso))
                     } else {
-                        toast = Toast.makeText(requireActivity(), "Sabias Que editado com sucesso", Toast.LENGTH_SHORT)
+                        toast = Toast.makeText(requireActivity(), getString(R.string.sabiasQueEditadoComSucesso), Toast.LENGTH_SHORT)
                     }
                     toast!!.show()
 
@@ -259,15 +248,15 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
             requestCall = {
                 RetrofitClient.apiService.deleteDidYouKnow(didYouKnow.id!!).execute()
             },
-            onSuccess = { isEditted ->
+            onSuccess = {
                 //Atualizar loading
                 setLoadingVisibility(false)
 
                 //Informar via toast
                 if (toast != null) {
-                    toast!!.setText("Sabias Que removido com sucesso")
+                    toast!!.setText(getString(R.string.sabiasQueRemovidoComSucesso))
                 } else {
-                    toast = Toast.makeText(requireActivity(), "Sabias Que removido com sucesso", Toast.LENGTH_SHORT)
+                    toast = Toast.makeText(requireActivity(), getString(R.string.sabiasQueRemovidoComSucesso), Toast.LENGTH_SHORT)
                 }
                 toast!!.show()
 
@@ -300,15 +289,15 @@ class DidYouKnowDetailsFragmento : BasicFragment() {
      */
     private fun validateFields():Boolean{
         if (etDidYouKnowTitle.text.toString().trim().isEmpty()) {
-            etDidYouKnowTitle.error = "Introduza um titulo"
+            etDidYouKnowTitle.error = getString(R.string.didYouKnowTitleError)
             return false
         }
         if (etDidYouKnowDescription.text.toString().trim().isEmpty()) {
-            etDidYouKnowDescription.error = "Introduza uma descrição"
+            etDidYouKnowDescription.error = getString(R.string.didYouKnowDescriptionError)
             return false
         }
         if (etDidYouKnowReferences.text.toString().trim().isEmpty()) {
-            etDidYouKnowReferences.error = "Introduza uma referência"
+            etDidYouKnowReferences.error = getString(R.string.didYouKnowReferenceError)
             return false
         }
         return true

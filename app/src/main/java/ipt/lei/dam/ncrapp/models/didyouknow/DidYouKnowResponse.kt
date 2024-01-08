@@ -4,6 +4,18 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.time.LocalDateTime
 
+/**
+ *
+ * Classe modelo para pedido à API de resposta de "sabiasque"
+ *
+ * id: identificador do sabias que
+ * title: Titulo do sabias que
+ * text: Texto do sabias que
+ * references: Referências do sabias que
+ * createdAt: data e hora que o sabias que foi criado
+ * updatedAt: data e hora que o sabias que foi atualizado
+ */
+
 data class DidYouKnowResponse(
     val id: Int?,
     var title: String?,
@@ -19,8 +31,7 @@ data class DidYouKnowResponse(
         parcel.readString(),
         TODO("createdAt"),
         TODO("updatedAt")
-    ) {
-    }
+    )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeValue(id)

@@ -31,6 +31,8 @@ import ipt.lei.dam.ncrapp.network.RetrofitClient
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.Calendar
 
 
@@ -64,13 +66,8 @@ class EventAddFragmento : BasicFragment() {
     private lateinit var takePictureLauncher: ActivityResultLauncher<Uri>
     private lateinit var currentPhotoUri: Uri
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-
-        }
-    }
+    //Paths
+    private var imagePath = "image/*"
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -148,7 +145,7 @@ class EventAddFragmento : BasicFragment() {
         }
 
         eventImageSelectButton.setOnClickListener {
-            getContent.launch("image/*")
+            getContent.launch(imagePath)
         }
 
         eventImagemCaptureButton.setOnClickListener {
@@ -159,7 +156,7 @@ class EventAddFragmento : BasicFragment() {
                 }
                 shouldShowRequestPermissionRationale(android.Manifest.permission.CAMERA) -> {
                     // Fornecer uma explicação adicional ao usuário
-                    Toast.makeText(context, "A câmera é necessária para capturar fotos", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, getString(R.string.cameraNeeded), Toast.LENGTH_LONG).show()
                 }
                 else -> {
                     // Solicitar permissão
@@ -211,24 +208,25 @@ class EventAddFragmento : BasicFragment() {
         )
 
         //Contruir parts com toda a info do event
-        val namePart = RequestBody.create(MultipartBody.FORM, event.name)
-        val descriptionPart = RequestBody.create(MultipartBody.FORM, event.description)
-        val initDatePart = RequestBody.create(MultipartBody.FORM, event.initDate)
-        val endDatePart = RequestBody.create(MultipartBody.FORM, event.endDate)
-        val locationPart = RequestBody.create(MultipartBody.FORM, event.location)
-        val transportPart = RequestBody.create(MultipartBody.FORM, event.transport.toString())
+        val namePart = event.name.toRequestBody(MultipartBody.FORM)
+        val descriptionPart = event.description.toRequestBody(MultipartBody.FORM)
+        val initDatePart = event.initDate.toRequestBody(MultipartBody.FORM)
+        val endDatePart = event.endDate.toRequestBody(MultipartBody.FORM)
+        val locationPart = event.location.toRequestBody(MultipartBody.FORM)
+        val transportPart = event.transport.toString().toRequestBody(MultipartBody.FORM)
 
         //Construir part de imagem
-        var imagePart: MultipartBody.Part? = null
+        val imagePart: MultipartBody.Part?
 
         //Se foi introduzida uma imagem
         if(event.image != null){
             val imageFile = compressImage(event.image)
-            val imageRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), imageFile)
+            val imageRequestBody = imageFile.asRequestBody(imagePath.toMediaTypeOrNull())
             imagePart = MultipartBody.Part.createFormData("image", imageFile.name, imageRequestBody)
         } else {
             //Senao, usar imagem default
-            val emptyRequestBody = RequestBody.create("image/*".toMediaTypeOrNull(), ByteArray(0))
+            val emptyRequestBody =
+                ByteArray(0).toRequestBody(imagePath.toMediaTypeOrNull(), 0, 0)
             imagePart = MultipartBody.Part.createFormData("image", "", emptyRequestBody)
 
         }
@@ -238,17 +236,17 @@ class EventAddFragmento : BasicFragment() {
             requestCall = {
                 RetrofitClient.apiService.addEvent(namePart, descriptionPart, initDatePart, endDatePart, locationPart, transportPart, imagePart).execute()
             },
-            onSuccess = { responseBody ->
+            onSuccess = {
                 //Atualizar loading
                 setLoadingVisibility(false)
 
                 //Informar via Toast
                 if (toast != null) {
-                    toast!!.setText("Evento criado com sucesso")
+                    toast!!.setText(getString(R.string.eventCreatedSuccess))
                 } else {
                     toast = Toast.makeText(
                         requireActivity(),
-                        "Evento criado com sucesso",
+                        getString(R.string.eventCreatedSuccess),
                         Toast.LENGTH_SHORT
                     )
                 }
@@ -311,15 +309,15 @@ class EventAddFragmento : BasicFragment() {
      */
     private fun validateFields(): Boolean {
         if (eventNameEditText.text.toString().trim().isEmpty()) {
-            eventNameEditText.error = "Introduza um nome"
+            eventNameEditText.error = getString(R.string.addEventTitleError)
             return false
         }
         if (eventDescEditText.text.toString().trim().isEmpty()) {
-            eventDescEditText.error = "Introduza uma descrição"
+            eventDescEditText.error = getString(R.string.didYouKnowDescriptionError)
             return false
         }
         if (eventLocalEditText.text.toString().trim().isEmpty()) {
-            eventLocalEditText.error = "Introduza uma localização"
+            eventLocalEditText.error = getString(R.string.addEventLocationError)
             return false
         }
         return true
@@ -337,7 +335,7 @@ class EventAddFragmento : BasicFragment() {
                     openCamera()
                 } else {
                     // Permissão negada, lide com a situação
-                    Toast.makeText(context, "Permissão de câmera necessária", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, getString(R.string.cameraNeeded), Toast.LENGTH_LONG).show()
                 }
             }
         }

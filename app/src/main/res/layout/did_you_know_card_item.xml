@@ -11,13 +11,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background="#FFF8E7">
+        android:background="@color/background">
 
         <TextView
             android:id="@+id/didyouknow_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nome do Evento"
+            android:text=""
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#000"
@@ -34,7 +34,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Descrição:"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#00574B"/>
@@ -44,7 +43,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:text="Descrição breve do evento..."
                 android:textSize="14sp"
                 android:maxLines="3"
                 android:ellipsize="end"
@@ -60,7 +58,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Referências:"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#00574B"/>
@@ -70,7 +67,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:text="Descrição breve do evento..."
                 android:textSize="14sp"
                 android:maxLines="1"
                 android:ellipsize="end"
@@ -91,7 +87,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Detalhes"
+                android:text="@string/mainEventTabDetalhesBtn"
                 android:layout_marginEnd="8dp"/>
 
 

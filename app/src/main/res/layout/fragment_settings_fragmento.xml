@@ -23,7 +23,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1.5"
                 android:layout_height="wrap_content"
-                android:text="Impressão digital:"
+                android:text="@string/biometricSetting"
                 android:textSize="16sp"
                 android:textColor="#00574B" />
 

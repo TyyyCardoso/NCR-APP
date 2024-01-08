@@ -8,7 +8,6 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,19 +25,11 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 class EventsFragmento : BasicFragment() {
-    private var selectedSortOption: String = "recente"
+    private lateinit var selectedSortOption: String
     private val sharedViewModel: SharedViewModel by activityViewModels()
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: EventsAdapter
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-
-    companion object {
-        var myListEvents: List<EventResponse>? = null
-        var needRefresh: Boolean = false
-        fun setMyNeedRefresh(state : Boolean){
-            needRefresh = state
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,16 +39,24 @@ class EventsFragmento : BasicFragment() {
 
     }
 
+    companion object {
+        var myListEvents: List<EventResponse>? = null
+        var needRefresh: Boolean = false
+        fun setMyNeedRefresh(state : Boolean){
+            needRefresh = state
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observeSortOption()
     }
 
     private fun observeSortOption() {
-        sharedViewModel.sortOption.observe(viewLifecycleOwner, Observer { sortOption ->
+        sharedViewModel.sortOption.observe(viewLifecycleOwner) { sortOption ->
             selectedSortOption = sortOption
             updateRecyclerView()
-        })
+        }
     }
 
     override fun onCreateView(
@@ -66,6 +65,7 @@ class EventsFragmento : BasicFragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_events, container, false)
 
+        selectedSortOption = getString(R.string.recent)
         /**
          * REFERENCES TO UI
          */
@@ -84,17 +84,17 @@ class EventsFragmento : BasicFragment() {
         /**
          * Obter info do user
          */
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientType = sharedPref.getString("clientType", "member")
+        val sharedPref = requireActivity().getSharedPreferences(getString(R.string.userInfo), AppCompatActivity.MODE_PRIVATE)
+        val clientType = sharedPref.getString(getString(R.string.clientType), getString(R.string.member))
         val editor = sharedPref.edit()
-        editor.putString("orderBy", selectedSortOption)
+        editor.putString(getString(R.string.orderBy), selectedSortOption)
         editor.apply()
 
         /**
          * ClickListeners
          */
-        if(!clientType.equals("ADMINISTRADOR")){
-            fab.visibility = View.GONE;
+        if(!clientType.equals(getString(R.string.admin))){
+            fab.visibility = View.GONE
         }else{
             fab.setOnClickListener {
                 findNavController().navigate(R.id.navigation_events_add)
@@ -108,7 +108,7 @@ class EventsFragmento : BasicFragment() {
                     myListEvents = eventList
                     updateRecyclerView()
                 },
-                onError = { errorMessage ->
+                onError = {
 
                 }
             )
@@ -118,7 +118,7 @@ class EventsFragmento : BasicFragment() {
          * Carregar eventos para a UI
          */
         //Se os eventos já foram descarregados da API
-        if(null != myListEvents && !myListEvents!!.isEmpty()){
+        if(null != myListEvents && myListEvents!!.isNotEmpty()){
             //Mas existem ordem de voltar a atualizar (adiciona, editado ou removido algum evento)
             //Volta a fazer um pedido de getEvents
             if(needRefresh){
@@ -128,7 +128,7 @@ class EventsFragmento : BasicFragment() {
                         updateRecyclerView()
                         setMyNeedRefresh(false)
                     },
-                    onError = { errorMessage ->
+                    onError = {
                     }
                 )
             } else {
@@ -143,7 +143,7 @@ class EventsFragmento : BasicFragment() {
                     myListEvents = eventList
                     updateRecyclerView()
                 },
-                onError = { errorMessage ->
+                onError = {
 
                 }
             )
@@ -159,9 +159,9 @@ class EventsFragmento : BasicFragment() {
      * Função de obter todos os eventos
      *
      */
-    fun getEventsFromApi(onEventsLoaded: (List<EventResponse>) -> Unit, onError: (String) -> Unit) {
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientEmail = sharedPref.getString("clientEmail", "")
+    private fun getEventsFromApi(onEventsLoaded: (List<EventResponse>) -> Unit, onError: (String) -> Unit) {
+        val sharedPref = requireActivity().getSharedPreferences(getString(R.string.userInfo), AppCompatActivity.MODE_PRIVATE)
+        val clientEmail = sharedPref.getString(getString(R.string.clientEmail), "")
 
         makeRequestWithRetries(
             requestCall = {
@@ -183,13 +183,12 @@ class EventsFragmento : BasicFragment() {
      *  eventList -> lista de todos os eventos
      *
      */
-    fun updateRecyclerView() {
+    private fun updateRecyclerView() {
         setLoadingVisibility(true)
-        println("updating recycler: " + selectedSortOption)
 
-        if(selectedSortOption.equals("recente")){
+        if(selectedSortOption == getString(R.string.recent)){
             myListEvents = myListEvents!!.sortedByDescending { it.initDate }
-        } else if (selectedSortOption.equals("antigo")){
+        } else if (selectedSortOption == getString(R.string.old)){
             myListEvents = myListEvents!!.sortedBy { it.initDate }
         }
 
@@ -198,19 +197,19 @@ class EventsFragmento : BasicFragment() {
             // Definiçao do clickListener de abrir detalhes
             onItemClickListener = { event ->
                 val bundle = Bundle().apply {
-                    putParcelable("myEvent", event)
+                    putParcelable(getString(R.string.myEvent), event)
                 }
                 findNavController().navigate(R.id.navigation_events_details, bundle)
             }
 
             // Definiçao do clickListener de subscrever
             onItemClickSubscribeListener = { event, position ->
-                var eventInitDate = event.initDate.toString().substring(0,10)
-                var eventEndDate = event.endDate.toString().substring(0,10)
+                val eventInitDate = event.initDate.toString().substring(0,10)
+                val eventEndDate = event.endDate.toString().substring(0,10)
 
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd")
-                var initDate : Date =  dateFormat.parse(eventInitDate);
-                var endDate : Date =  dateFormat.parse(eventEndDate);
+                val initDate : Date =  dateFormat.parse(eventInitDate)
+                val endDate : Date =  dateFormat.parse(eventEndDate)
                 val today = Date()
 
                 if(endDate.equals(null)){
@@ -221,7 +220,7 @@ class EventsFragmento : BasicFragment() {
                             inscreverEvento(event, position)
                         }
                     }else{
-                        Toast.makeText(requireContext(), "Este evento não se encontra disponivel", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.eventNotAvailable), Toast.LENGTH_SHORT).show()
                     }
                 }else{
                     if(today.after(initDate) && today.before(endDate)){
@@ -231,7 +230,7 @@ class EventsFragmento : BasicFragment() {
                             inscreverEvento(event, position)
                         }
                     }else{
-                        Toast.makeText(requireContext(), "Este evento não se encontra disponivel", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), getString(R.string.eventNotAvailable), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -251,18 +250,18 @@ class EventsFragmento : BasicFragment() {
      *  event -> Evento a ser inscrito
      *
      */
-    fun inscreverEvento(event : EventResponse?, pos : Int){
+    private fun inscreverEvento(event : EventResponse?, pos : Int){
         setLoadingVisibility(true)
 
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientEmail = sharedPref.getString("clientEmail", "");
+        val sharedPref = requireActivity().getSharedPreferences(getString(R.string.userInfo), AppCompatActivity.MODE_PRIVATE)
+        val clientEmail = sharedPref.getString(getString(R.string.clientEmail), "")
 
         makeRequestWithRetries(
             requestCall = {
                 RetrofitClient.apiService.subscribeEvent(SubscribeEventRequest(event!!.id, clientEmail)).execute()
             },
-            onSuccess = { EventResponseList ->
-                Toast.makeText(requireContext(), "Adesão ao evento realizada com sucesso!", Toast.LENGTH_SHORT).show()
+            onSuccess = {
+                Toast.makeText(requireContext(), getString(R.string.eventSusbcribed), Toast.LENGTH_SHORT).show()
                 event!!.subscribed = true
                 adapter.notifyItemChanged(pos)
             },
@@ -280,18 +279,18 @@ class EventsFragmento : BasicFragment() {
      *  event -> Evento a retirar inscrição
      *
      */
-    fun cancelarInscricao(event : EventResponse?, pos: Int){
+    private fun cancelarInscricao(event : EventResponse?, pos: Int){
         setLoadingVisibility(true)
 
-        val sharedPref = requireActivity().getSharedPreferences("UserInfo", AppCompatActivity.MODE_PRIVATE)
-        val clientEmail = sharedPref.getString("clientEmail", "");
+        val sharedPref = requireActivity().getSharedPreferences(getString(R.string.userInfo), AppCompatActivity.MODE_PRIVATE)
+        val clientEmail = sharedPref.getString(getString(R.string.clientEmail), "")
 
         makeRequestWithRetries(
             requestCall = {
                 RetrofitClient.apiService.cancelarInscricao(SubscribeEventRequest(event!!.id, clientEmail)).execute()
             },
-            onSuccess = { EventResponseList ->
-                Toast.makeText(requireContext(), "Cancelamento realizado com sucesso.", Toast.LENGTH_SHORT).show()
+            onSuccess = {
+                Toast.makeText(requireContext(), getString(R.string.eventSusbcriptionCancel), Toast.LENGTH_SHORT).show()
                 event!!.subscribed = false
                 adapter.notifyItemChanged(pos)
             },

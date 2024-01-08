@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".fragments.didyouknow.DidYouKnowAddFragmento"
-    android:background="#FFF8E7">
+    android:background="@color/background">
 
     <ScrollView
         android:layout_width="match_parent"

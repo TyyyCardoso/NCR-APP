@@ -15,6 +15,8 @@ import ipt.lei.dam.ncrapp.network.RetrofitClient
 
 class StaffSliderAdapter(private val context: Context, private var staffMembers: List<StaffMemberResponse>) : RecyclerView.Adapter<StaffSliderAdapter.ViewHolder>() {
 
+    private var midPath = "event/images/"
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.staff_member_item, parent, false)
         return ViewHolder(view)
@@ -36,7 +38,7 @@ class StaffSliderAdapter(private val context: Context, private var staffMembers:
         holder.staffMemberEmail.text = member.email
 
         if(!member.image.isNullOrEmpty()){
-            val url = "" + RetrofitClient.BASE_URL + "event/images/" + member.image
+            val url = RetrofitClient.BASE_URL + midPath + member.image
 
             Glide.with(context)
                 .load(url)

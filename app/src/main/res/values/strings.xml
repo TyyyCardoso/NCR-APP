@@ -21,11 +21,13 @@
     <string name="addEventTextEventDescBox">Descrição</string>
     <string name="addEventTextEventLocalBox">Localização</string>
     <string name="addEventTextEventDateBox">Data</string>
-    <string name="addEventTextEventTranspBox">Sim </string>
+    <string name="addEventTextEventTranspBox">Sim</string>
     <string name="addEventTextEventImgBox">Escolher Imagem </string>
     <string name="addEventTextEventImgBoxCap">Tirar Fotografia </string>
     <string name="addEventTextEventAddBtn">Criar Evento </string>
     <string name="addEventTextEventAddTimeDateBtn">Escolher Data </string>
+    <string name="addEventTitleError">Introduza um nome</string>
+    <string name="addEventLocationError">Introduza uma localização</string>
     <!-- DETAILS & EDIT EVENT SCREEN TEXTS -->
     <string name="eventDetailNameTitle">Nome do Evento </string>
     <string name="eventDetailDescriptionTitle">Descrição do Evento </string>
@@ -41,19 +43,36 @@
     <string name="sort_title">Ordenar por</string>
     <string name="ok">Aplicar</string>
     <string name="cancel">Cancelar</string>
+    <string name="finishEvent">Evento terminado</string>
+    <string name="startedEvent">Evento já começou</string>
+
+    <!-- PARCEAVEIS -->
+    <string name="myDidYouKow">myDidYouKow</string>
+    <string name="myEvent">myEvent</string>
+
+    <!-- SORTS -->
+    <string name="recent">Mais recente</string>
+    <string name="old">Mais antigo</string>
+
     <!-- ADD DIDYOUKNOW SCREEN TEXTS -->
-    <string name="addDidYouKnowTextBtn">Criar Sabias Que </string>
+    <string name="addDidYouKnowTextBtn">Criar Sabias Que</string>
+    <string name="didYouKnowTitleError">Introduza um titulo</string>
+    <string name="didYouKnowDescriptionError">Introduza uma descrição</string>
+    <string name="didYouKnowReferenceError">Introduza uma referência</string>
+
     <!--  DETAILS & EDIT DIDYOUKNOW SCREEN TEXTS -->
     <string name="didYouKnowDetailNameTitle">Sabias que </string>
     <string name="didYouKnowDetailDescriptionTitle">Descrição </string>
     <string name="didYouKnowDetailReferencesTitle">Referências </string>
     <string name="didYouKnowEditBtn">Guardar </string>
     <string name="didYouKnowDeleteBtn">Remover </string>
+    <string name="eventAderir">Aderir</string>
     <!-- LOGIN SCREEN TEXTS -->
     <string name="loginEmailBoxHint">E-mail</string>
     <string name="loginEmailBoxNotFilledError">Tem que preencher o e-mail.</string>
     <string name="loginEmailBoxInvalid">E-mail inválido.</string>
     <string name="loginPasswordBoxHint">Palavra-passe</string>
+    <string name="loginKeepPassword">Manter sessão iniciada</string>
     <string name="loginPasswordBoxHintNotFilledError">Tem que preencher a palavra-passe.</string>
     <string name="loginButton">Entrar</string>
     <string name="loginForgotPassword">Esqueci-me da minha palavra-passe.</string>
@@ -96,12 +115,28 @@
     <string name="dialogAlertTitle">Alerta</string>
     <string name="dialogAlertMessage1">Quer ativar o login por impressão digital?</string>
     <string name="dialogAlertMessage2">Tem que fazer login para poder aceder ao seu perfil.</string>
+    <string name="dialogAlertMessage3">Tem a certeza que quer apagar este "Sabias que"?</string>
+    <string name="dialogAlertMessage4">Tem a certeza que quer apagar o evento?</string>
+    <string name="dialogAlertMessage5">Tem a certeza que quer eliminar o ficheiro "%1$s"?</string>
+    <string name="dialogAlertMessage6">Quer transferir o ficheiro "%1$s" ?</string>
+
+
     <string name="dialogAlertNeutralButton">Mais tarde</string>
     <string name="dialogAlertPositiveButton1">Ativar</string>
     <string name="dialogAlertPositiveButton2">Fazer Login</string>
     <string name="dialogInfoTitle">Informação</string>
     <string name="dialogInfoMessage1">Quando pretender usar impressão digital diriga-se às definições para ativar.</string>
     <string name="dialogPositiveButton">OK</string>
+    <string name="dialogNegativeButton">Não</string>
+
+    <!-- STAFF SCREEN -->
+    <string name="aboutForStaff">Sobre </string>
+    <string name="aboutForStaff2">Sobre: </string>
+    <string name="telefoneForStaff2">Telefone: </string>
+    <string name="stateForStaff2">Estado: </string>
+    <string name="entryForStaff2">Data de entrada: </string>
+
+
     <!-- INTENT OBJECTS -->
     <string name="userID">userID</string>
     <string name="userInsertedEmail">userInsertedEmail</string>
@@ -125,20 +160,60 @@
     <string name="clientImage">clientImage</string>
     <string name="clientAbout">clientAbout</string>
     <string name="keepLogin">keepLogin</string>
+    <string name="orderBy">orderBy</string>
+
+    <string name="profileDefaultName">Erro a obter o seu nome</string>
+    <string name="profileDefaultEmail">Erro a obter o seu email</string>
+    <string name="profileDefaultRegist">Erro ao obter a sua data de registo</string>
+    <string name="profileDefaultAbout">Diz algo sobre ti...</string>
+    <string name="profileDefaultAbout2">Algo sobre mim...</string>
+    <string name="profileEditName">Novo nome</string>
+    <string name="profileAbout">Sobre mim:</string>
+    <string name="profileClientType">Tipo de Cliente:</string>
+    <string name="profileRegistDate">Data de registo:</string>
+
 
     <!-- TOAST MESSAGES -->
     <string name="toastMessageSuccessLogout">Logout efetuado com sucesso</string>
     <string name="leituraImpressaoDigitalErro">Ocorreu um erro na leitura da sua impressão digital</string>
     <string name="falhaAuth">Autenticação falhou</string>
     <string name="accountCreated">Conta criada com sucesso</string>
+    <string name="LoginNeeded"> É necessário fazer login para se inscrever nos eventos</string>
+    <string name="eventNotAvailable">Este evento não está disponível</string>
+    <string name="sabiasQueCriadoComSucesso">"Sabias Que" criado com sucesso</string>
+    <string name="sabiasQueEditadoComSucesso">"Sabias Que" editado com sucesso</string>
+    <string name="sabiasQueRemovidoComSucesso">"Sabias Que" removido com sucesso</string>
+    <string name="eventCreatedSuccess">Evento criado com sucesso</string>
+    <string name="cameraNeeded">A câmera é necessária para capturar fotos</string>
+    <string name="eventRemoved">Evento removido com sucesso</string>
+    <string name="eventEdited">Evento editado com sucesso</string>
+    <string name="eventSusbcribed">Adesão ao evento realizada com sucesso</string>
+    <string name="eventSusbcriptionCancel">Cancelamento realizado com sucesso</string>
+    <string name="fillFieldsCorrectly">Tem que preencher os campos corretamente</string>
+    <string name="profileEditadoSucesso">Perfil editado com sucesso</string>
+    <string name="documentSubmited">Documento submetido com sucesso</string>
+    <string name="selectOtherFile">Selecionar outro ficheiro</string>
+
+    <!-- INFO SCREEN -->
+    <string name="infoTitle">Núcleo de Conservação e Restauro</string>
+    <string name="infoText">Somos um grupo de estudantes de conservação e restauro que visa dinamizar o curso e dar lhe vida! Através de atividades como workshops, palestras entre outros.</string>
+    <string name="infoYear">Ano de Fundação: 2023</string>
+    <string name="infoPeople">Membros: 15</string>
+    <string name="infoLogo">Nosso logotipo:</string>
 
     <!-- CODE STRING -->
     <string name="navigation_drawer_open">Abrir menu de navegação</string>
     <string name="navigation_drawer_close">Fechar menu de navegação</string>
     <string name="sair">Sair</string>
     <string name="estudante">student</string>
+    <string name="member">member</string>
+    <string name="admin">ADMINISTRADOR</string>
 
     <string name="mainScheduleAddFileName">Nome do ficheiro</string>
-    <string name="mainScheduleCreateSchedule">Criar horário </string>
+    <string name="mainScheduleCreateSchedule">Criar horário</string>
+    <string name="mainScheduleSelectFile">Selecionar ficheiro</string>
+    <string name="mainScheduleFileDescription"> Clique para fazer download</string>
+
+    <string name="biometricSetting"> Impressão digital:</string>
 
 </resources>

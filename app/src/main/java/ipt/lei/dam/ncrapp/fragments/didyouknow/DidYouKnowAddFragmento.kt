@@ -17,7 +17,6 @@ import ipt.lei.dam.ncrapp.fragments.BasicFragment
 import ipt.lei.dam.ncrapp.models.didyouknow.DidYouKnowAddRequest
 import ipt.lei.dam.ncrapp.network.RetrofitClient
 
-
 class DidYouKnowAddFragmento : BasicFragment() {
     //Text Fields
     private lateinit var newDidYouKnowTitle: TextView
@@ -26,13 +25,6 @@ class DidYouKnowAddFragmento : BasicFragment() {
 
     //Others
     private lateinit var newDidYouKnowSubmitBtn: Button
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-
-        }
-    }
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreateView(
@@ -95,15 +87,15 @@ class DidYouKnowAddFragmento : BasicFragment() {
                 requestCall = {
                     RetrofitClient.apiService.addDidYouKnow(newDidYouKnow).execute()
                 },
-                onSuccess = { isAdded ->
+                onSuccess = {
                     //Atualizar loading
                     setLoadingVisibility(false)
 
                     //Informar via Toast
                     if (toast != null) {
-                        toast!!.setText("Sabias Que criado com sucesso")
+                        toast!!.setText(getString(R.string.sabiasQueCriadoComSucesso))
                     } else {
-                        toast = Toast.makeText(requireActivity(), "Sabias Que criado com sucesso", Toast.LENGTH_SHORT)
+                        toast = Toast.makeText(requireActivity(), getString(R.string.sabiasQueCriadoComSucesso), Toast.LENGTH_SHORT)
                     }
                     toast!!.show()
 
@@ -138,15 +130,15 @@ class DidYouKnowAddFragmento : BasicFragment() {
      */
     private fun validateFields():Boolean{
         if (newDidYouKnowTitle.text.toString().trim().isEmpty()) {
-            newDidYouKnowTitle.error = "Introduza um titulo"
+            newDidYouKnowTitle.error = getString(R.string.didYouKnowTitleError)
             return false
         }
         if (newDidYouKnowDescription.text.toString().trim().isEmpty()) {
-            newDidYouKnowDescription.error = "Introduza uma descrição"
+            newDidYouKnowDescription.error = getString(R.string.didYouKnowDescriptionError)
             return false
         }
         if (newDidYouKnowReferences.text.toString().trim().isEmpty()) {
-            newDidYouKnowReferences.error = "Introduza uma referência"
+            newDidYouKnowReferences.error = getString(R.string.didYouKnowReferenceError)
             return false
         }
         return true

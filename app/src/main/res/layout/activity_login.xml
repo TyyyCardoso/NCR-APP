@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#FFF8E7">
+    android:background="@color/background">
 
     <ImageView
         android:id="@+id/backButtonLogin"
@@ -18,7 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="#FFF8E7"
+        android:background="@color/background"
         android:padding="32dp"
         android:gravity="center"
         android:layout_marginTop="?attr/actionBarSize"> <!-- Assume que isso é aproximadamente a altura da sua ActionBar -->
@@ -77,7 +77,7 @@
             android:id="@+id/checkbox_keep_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Manter sessão iniciada"
+            android:text="@string/loginKeepPassword"
             android:layout_marginStart="5dp"
             android:layout_gravity="start"
             android:textColor="#00574B" />

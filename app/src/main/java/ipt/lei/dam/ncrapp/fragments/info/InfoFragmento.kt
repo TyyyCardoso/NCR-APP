@@ -7,20 +7,11 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioGroup
-import android.widget.Switch
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.fragments.BasicFragment
 
 
 class InfoFragmento : BasicFragment() {
-
-    private lateinit var switchToggle: Switch
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {}
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -54,12 +45,4 @@ class InfoFragmento : BasicFragment() {
         return view
     }
 
-    private fun getSavedSwitchState(): Boolean {
-        // Placeholder function to get the saved state
-        // In a real application, you would retrieve this value from shared preferences or a database
-        return true // or false
-    }
-
-    companion object {
-    }
 }

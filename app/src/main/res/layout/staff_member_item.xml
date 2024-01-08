@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_margin="16dp"
-    android:background="#FFF8E7"
+    android:background="@color/background"
     app:cardElevation="4dp"
     app:cardCornerRadius="8dp">
 
@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:background="#FFF8E7"
+        android:background="@color/background"
         android:padding="16dp">
 
         <!-- Staff Member Image -->
@@ -32,7 +32,6 @@
             android:id="@+id/staffMemberName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="John Doe"
             android:textSize="20sp"
             android:textStyle="bold"
             android:layout_gravity="center_horizontal"
@@ -43,18 +42,16 @@
             android:id="@+id/staffMemberPosition"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Software Developer"
-            android:textSize="16sp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="@android:color/darker_gray"
+            android:textSize="16sp" />
 
         <!-- Staff Member Position -->
         <TextView
             android:id="@+id/staffMemberEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="tiagocardoso@gmail.com"
             android:textSize="18sp"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="4dp" />

@@ -13,16 +13,19 @@ import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private val environment = EnvironmentEnum.EMULATOR// Set your current environment here
+    private val environment = EnvironmentEnum.PROD// Set your current environment here
 
-     val BASE_URL = when(environment) {
+    //Diferentes IP's para a API
+    val BASE_URL = when(environment) {
         EnvironmentEnum.EMULATOR -> "http://10.0.2.2:8080/ncr/" // Emulator URL
         EnvironmentEnum.DEV -> "http://localhost:8080/ncr/" // Development URL
         EnvironmentEnum.PROD -> "http://85.243.90.78:8080/ncrAPI/"   // Production URL
     }
 
+    //Interceptor
     private val authInterceptor = AuthInterceptor()
 
+    //Construç~ão do cliente
     private val okHttpClient = OkHttpClient.Builder()
         .connectTimeout(30, TimeUnit.SECONDS) // Tempo de timeout para a conexão
         .readTimeout(30, TimeUnit.SECONDS)    // Tempo de timeout para a leitura de dados

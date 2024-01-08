@@ -28,7 +28,7 @@ import ipt.lei.dam.ncrapp.databinding.ActivityMainBinding
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object{
-        var selectedSortOption: String = "recente"
+        var selectedSortOption: String = "Mais recente"
     }
 
     private lateinit var binding: ActivityMainBinding
@@ -207,7 +207,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
 
         sortByImage.setOnClickListener {
-            val sortOptions = arrayOf("recente", "antigo")
+            val sortOptions = arrayOf(getString(R.string.recent), getString(R.string.old))
             var checkedItem = sortOptions.indexOf(selectedSortOption)
 
             if (checkedItem == -1) checkedItem = 0

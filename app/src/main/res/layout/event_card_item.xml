@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp"
-        android:background="#FFF8E7">
+        android:background="@color/background">
 
         <!-- ImageView e outros componentes aqui -->
         <ImageView
@@ -26,7 +26,6 @@
             android:id="@+id/event_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nome do Evento"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#000"
@@ -43,7 +42,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Descrição:"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#00574B"/>
@@ -53,7 +51,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:text="Descrição breve do evento..."
                 android:maxLines="3"
                 android:textSize="14sp"
                 android:textColor="#666"/>
@@ -71,7 +68,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Data:"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#00574B"/>
@@ -82,7 +78,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:text="Data do Evento"
                 android:textSize="14sp"
                 android:textColor="#333"/>
         </LinearLayout>
@@ -99,7 +94,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Data inicio:"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#00574B"/>
@@ -110,7 +104,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:text="Data do Evento"
                 android:textSize="14sp"
                 android:textColor="#333"/>
         </LinearLayout>
@@ -127,7 +120,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Data fim:"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="#00574B"/>
@@ -138,7 +130,6 @@
                 android:layout_width="0dp"
                 android:layout_weight="2"
                 android:layout_height="wrap_content"
-                android:text="Data do Evento"
                 android:textSize="14sp"
                 android:textColor="#333"/>
         </LinearLayout>
@@ -158,7 +149,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Detalhes"
+                android:text="@string/mainEventTabDetalhesBtn"
                 android:layout_marginEnd="8dp"/>
 
             <Button
@@ -167,7 +158,7 @@
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Aderir"
+                android:text="@string/eventAderir"
                 android:layout_marginStart="8dp"/>
 
         </LinearLayout>

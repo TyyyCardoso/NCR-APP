@@ -32,27 +32,44 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 
 interface APIService {
+        /**
+         * Chamada de login
+         */
         @POST("auth/login")
         fun login(@Body request: LoginRequest): Call<LoginResponse>
-
+        /**
+         * Chamada de login biométrico
+         */
         @POST("auth/biometricLogin")
         fun biometricLogin(@Body request: BiometricLoginRequest): Call<LoginResponse>
-
+        /**
+         * Chamada de recuperação de password
+         */
         @POST("auth/recover")
         fun recoverPassword(@Body request: RecoverPasswordRequest): Call<ResponseBody>
-
+        /**
+         * Chamada de validar o código
+         */
         @POST("auth/validate")
         fun validateOTP(@Body request: ValidateOTPRequest): Call<ValidateOTPResponse>
-
+        /**
+         * Chamada de mudar a palavra-passe
+         */
         @POST("auth/change")
         fun changePassword(@Body request: ChangePasswordRequest): Call<ResponseBody>
-
+        /**
+         * Chamada de criar conta
+         */
         @POST("auth/signup")
         fun signUp(@Body request: SignUpRequest): Call<SignUpResponse>
-
+        /**
+         * Chamada de enviar código
+         */
         @POST("auth/send")
         fun sendOTP(@Body request: SendOTPRequest): Call<ResponseBody>
-
+        /**
+         * Chamada de editar perfil
+         */
         @Multipart
         @POST("profile/edit")
         fun editProfile(
@@ -63,18 +80,20 @@ interface APIService {
         ): Call<DefaultResponse>
 
         /**
-         * Staff
+         * Chamada de obter o staff
          */
-
         @GET("staff/all")
         fun getStaff(): Call<List<StaffMemberResponse>>
 
         /**
-         * Events
+         * Chamada de obter os eventos
          */
         @POST("event/all")
         fun getEvents(@Body getEventsRequest: GetEventsRequest): Call<List<EventResponse>>
 
+        /**
+         * Chamada para criar um evento
+         */
         @Multipart
         @POST("event")
         fun addEvent(
@@ -86,7 +105,9 @@ interface APIService {
                 @Part("transport") transport: RequestBody,
                 @Part image: MultipartBody.Part
         ): Call<DefaultResponse>
-
+        /**
+         * Chamada para editar um evento
+         */
         @Multipart
         @PUT("event")
         fun editEvent(
@@ -101,38 +122,60 @@ interface APIService {
                 @Part image: MultipartBody.Part,
                 @Part("imageFileName") imageFileName: RequestBody,
         ) : Call<DefaultResponse>
-
+        /**
+         * Chamada para eliminar um evento
+         */
         @DELETE("event/{id}")
         fun deleteEvent(@Path("id") id: Int) : Call<ResponseBody>
-
+        /**
+         * Chamada para increver num evento
+         */
         @POST("event/subscribe")
         fun subscribeEvent(@Body subscribeEventRequest: SubscribeEventRequest) : Call<ResponseBody>
-
+        /**
+         * Chamada para cancelar uma inscrição
+         */
         @POST("event/cancel")
         fun cancelarInscricao(@Body subscribeEventRequest: SubscribeEventRequest) : Call<ResponseBody>
 
         /**
-         * DidYouKnow
+         * Chamada para obter "Sabias que"
          */
         @GET("didyouknow/all")
         fun getDidYouKnow() : Call<List<DidYouKnowResponse>>
-
+        /**
+         * Chamada para criar "sabias que"
+         */
         @POST("didyouknow")
         fun addDidYouKnow(@Body didYouKnowRequest: DidYouKnowAddRequest) : Call<DefaultResponse>
 
+        /**
+         * Chamada para editar "sabias que"
+         */
         @PUT("didyouknow")
         fun editDidYouKnow(@Body didYouKnowRequest: DidYouKnowEditRequest) : Call<DefaultResponse>
 
+        /**
+         * Chamada para eliminar "sabias que"
+         */
         @DELETE("didyouknow/{id}")
         fun deleteDidYouKnow(@Path("id") id: Int) : Call<ResponseBody>
 
+        /**
+         * Chamada obter documentos de horarios
+         */
         @GET("docs/all")
         fun getSchedules() : Call<List<ScheduleResponse>>
 
+        /**
+         * Chamada para elimianr um documento de horario
+         */
         @DELETE("docs/{id}")
         fun deleteSchedule(@Path("id") id: Int?) : Call<ResponseBody>
 
-
+        /**
+         * Chamada para criar um documento de horario
+         */
         @Multipart
         @POST("docs/uploadSchedule")
         fun uploadDoc(@Part("docName") docName: RequestBody,

@@ -28,15 +28,6 @@ class StaffFragment : BasicFragment() {
 
     companion object {
         var staffMembers: List<StaffMemberResponse> = emptyList()
-        var needRefresh: Boolean = false
-        fun setMyNeedRefresh(state : Boolean){
-            needRefresh = state
-        }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {}
     }
 
     override fun onCreateView(
@@ -88,13 +79,13 @@ class StaffFragment : BasicFragment() {
         val statusTextView = view?.findViewById<TextView>(R.id.profile_estado)
         val dataEntradaTextView = view?.findViewById<TextView>(R.id.profile_dataEntrada)
 
-        var inputFormat : SimpleDateFormat = SimpleDateFormat("yyyy-MM-dd");
-        var outputFormat : SimpleDateFormat =  SimpleDateFormat("dd-MM-yyyy");
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd")
+        val outputFormat =  SimpleDateFormat("dd-MM-yyyy")
 
-        var date : Date = inputFormat.parse(member.dataEntrada);
-        var formattedDate = outputFormat.format(date);
+        val date : Date = inputFormat.parse(member.dataEntrada)
+        val formattedDate = outputFormat.format(date)
 
-        sobreUsername?.text = "Sobre "
+        sobreUsername?.text = getString(R.string.aboutForStaff)
         sobreUsername?.text = sobreUsername?.text.toString() + member.name?.split(" ")?.get(0) + "..."
         //emailTextView?.text = member.email
         descricaoTextView?.text = member.descricao
