@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -33,6 +35,8 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import java.io.File
+import java.io.IOException
 import java.util.Calendar
 
 
@@ -342,18 +346,30 @@ class EventAddFragmento : BasicFragment() {
     }
 
     private fun openCamera() {
-        currentPhotoUri = getOutputMediaFileUri()
-        takePictureLauncher.launch(currentPhotoUri)
+        if(getOutputMediaFileUri() != null){
+            currentPhotoUri = getOutputMediaFileUri()!!
+            takePictureLauncher.launch(currentPhotoUri)
+        }
+
     }
 
-    private fun getOutputMediaFileUri(): Uri {
-        val contentResolver = requireActivity().applicationContext.contentResolver
-        val contentValues = ContentValues().apply {
-            put(MediaStore.MediaColumns.DISPLAY_NAME, "my_image_${System.currentTimeMillis()}.jpg")
-            put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+    private fun getOutputMediaFileUri(): Uri? {
+        val context = requireActivity().applicationContext
+
+        // Criando um arquivo de imagem no armazenamento interno do aplicativo
+        val fileName = "my_image_${System.currentTimeMillis()}.jpg"
+        val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+        return try {
+            val imageFile = File(storageDir, fileName)
+            val imageUri = FileProvider.getUriForFile(context, "${context.packageName}.provider", imageFile)
+
+            imageUri
+        } catch (e: IOException) {
+            null
         }
-        return contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)!!
     }
+
 
     companion object {
         private const val REQUEST_CODE_CAPTURE_IMAGE = 1
