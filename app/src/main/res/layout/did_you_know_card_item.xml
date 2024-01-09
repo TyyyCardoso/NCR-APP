@@ -36,6 +36,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:text="@string/addEventTextEventDescBox"
                 android:textColor="#00574B"/>
 
             <TextView
@@ -60,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:text="@string/didYouKnowDetailReferencesTitle"
                 android:textColor="#00574B"/>
 
             <TextView
