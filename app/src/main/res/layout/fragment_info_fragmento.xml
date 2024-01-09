@@ -115,6 +115,11 @@
 
         </LinearLayout>
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+
         <LinearLayout
             android:id="@+id/professorInfo"
             android:layout_width="match_parent"
@@ -129,27 +134,27 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nome do Curso: Engenharia Informática"
+                android:text="@string/nomeCursoInfo"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Disciplina: Desenvolvimento de Aplicativos Móveis"
+                android:text="@string/disciplinaNomeInfo"
                 android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Ano Letivo: 2023/2024"
+                android:text="@string/anoInfo"
                 android:textSize="16sp" />
 
             <!-- Nº e nome dos autores do trabalho -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Nº de Autores: 2"
+                android:text="@string/nAutorInfo"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
@@ -157,14 +162,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Autores: Tiago Cardoso, Tiago Oliveira"
+                android:text="@string/autoresNomesInfo"
                 android:textSize="16sp" />
 
             <!-- Identificação das bibliotecas, frameworks e código de terceiros -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bibliotecas e Frameworks:"
+                android:text="@string/libsInfo"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
@@ -172,20 +177,52 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="- Biblioteca A (Obtida de: www.bibliotecaA.com)"
+                android:text="@string/libthreetenabpInfo"
                 android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="- Framework B (Obtido de: www.frameworkB.com)"
+                android:text="@string/libcircleindicatorInfo"
                 android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/libgestureviewsInfo"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/libglideInfo"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/libretrofitInfo"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/libbiometricInfo"
+                android:textSize="16sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/libswipeInfo"
+                android:textSize="16sp" />
+
+
 
             <!-- Identificação das credenciais de acesso -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Credenciais de Acesso:"
+                android:text="@string/credenciaisInfo"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp" />
@@ -193,16 +230,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Login: teste123"
+                android:text="@string/exampleloginInfo"
                 android:textSize="16sp" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Password: qwer123"
-                android:textSize="16sp" />
+                android:text="@string/examplepassInfo"
+                android:textSize="16sp"
+                android:layout_marginBottom="40dp"/>
 
         </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 

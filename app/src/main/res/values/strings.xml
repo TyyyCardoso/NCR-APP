@@ -215,5 +215,23 @@
     <string name="mainScheduleFileDescription"> Clique para fazer download</string>
 
     <string name="biometricSetting"> Impressão digital:</string>
+    <string name="nomeCursoInfo">Nome do Curso: Engenharia Informática</string>
+    <string name="disciplinaNomeInfo">Disciplina: Desenvolvimento de Aplicativos Móveis</string>
+    <string name="anoInfo">Ano Letivo: 2023/2024</string>
+    <string name="nAutorInfo">Nº de Autores: 2</string>
+    <string name="autoresNomesInfo">Autores: Tiago Cardoso, Tiago Oliveira</string>
+
+    <string name="libsInfo">Bibliotecas e Frameworks:</string>
+    <string name="libthreetenabpInfo">- Biblioteca ThreeTenABP (Obtida de: github.com/JakeWharton/ThreeTenABP)</string>
+    <string name="libcircleindicatorInfo">- Biblioteca CircleIndicator (Obtida de: github.com/ongakuer/CircleIndicator)</string>
+    <string name="libgestureviewsInfo">- Biblioteca GestureViews (Obtida de: github.com/alexvasilkov/GestureViews)</string>
+    <string name="libglideInfo">- Biblioteca Glide (Obtida de: github.com/bumptech/glide)</string>
+    <string name="libretrofitInfo">- Biblioteca Retrofit2 (Obtida de: quare.github.io/retrofit/)</string>
+    <string name="libbiometricInfo">- Biblioteca de Biometria (Obtida de: AndroidX)</string>
+    <string name="libswipeInfo">- Biblioteca SwipeRefreshLayout (Obtida de: AndroidX)</string>
+
+    <string name="credenciaisInfo">Credenciais de Acesso:</string>
+    <string name="exampleloginInfo">Login: test@email.com</string>
+    <string name="examplepassInfo">Password: 1234qwer</string>
 
 </resources>
