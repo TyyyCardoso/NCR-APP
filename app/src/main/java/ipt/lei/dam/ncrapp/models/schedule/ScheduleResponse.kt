@@ -1,6 +1,6 @@
 package ipt.lei.dam.ncrapp.models.schedule
 
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
 
 
 

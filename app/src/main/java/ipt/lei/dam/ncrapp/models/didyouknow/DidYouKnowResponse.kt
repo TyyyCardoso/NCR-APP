@@ -2,7 +2,7 @@ package ipt.lei.dam.ncrapp.models.didyouknow
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.time.LocalDateTime
+import org.threeten.bp.LocalDateTime
 
 /**
  *

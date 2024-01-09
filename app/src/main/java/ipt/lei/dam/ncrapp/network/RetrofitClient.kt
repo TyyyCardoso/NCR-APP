@@ -6,10 +6,10 @@ import androidx.annotation.RequiresApi
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializer
 import okhttp3.OkHttpClient
+import org.threeten.bp.LocalDateTime
+import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
@@ -42,6 +42,7 @@ object RetrofitClient {
     val gson = GsonBuilder()
         .registerTypeAdapter(LocalDateTime::class.java, localDateTimeDeserializer)
         .create()
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private val retrofit: Retrofit = Retrofit.Builder()

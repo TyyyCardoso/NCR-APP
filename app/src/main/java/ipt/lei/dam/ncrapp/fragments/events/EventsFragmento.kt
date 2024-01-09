@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.jakewharton.threetenabp.AndroidThreeTen
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.SharedViewModel
 import ipt.lei.dam.ncrapp.adapters.EventsAdapter

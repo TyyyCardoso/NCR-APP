@@ -2,6 +2,7 @@ package ipt.lei.dam.ncrapp.activities
 
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View.GONE
@@ -19,6 +20,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import com.jakewharton.threetenabp.AndroidThreeTen
 import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.SharedViewModel
 import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
@@ -44,6 +46,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AndroidThreeTen.init(this);
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -108,34 +111,41 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             val logoutItem = menu.findItem(R.id.navigation_logout)
             logoutItem.isVisible = true
 
-            val isBiometric = biometricInfo.getBoolean(getString(R.string.isUsingBiometric), false)
-            val isToRequestBiometric = biometricInfo.getBoolean(getString(R.string.isToRequestBiometric), true)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                val isBiometric =
+                    biometricInfo.getBoolean(getString(R.string.isUsingBiometric), false)
+                val isToRequestBiometric =
+                    biometricInfo.getBoolean(getString(R.string.isToRequestBiometric), true)
 
-            if(!isBiometric && isToRequestBiometric){
-                AlertDialog.Builder(this)
-                    .setTitle(getString(R.string.dialogAlertTitle))
-                    .setMessage(getString(R.string.dialogAlertMessage1))
-                    .setNeutralButton(getString(R.string.dialogAlertNeutralButton)) { _, _ ->
+                if (!isBiometric && isToRequestBiometric) {
+                    AlertDialog.Builder(this)
+                        .setTitle(getString(R.string.dialogAlertTitle))
+                        .setMessage(getString(R.string.dialogAlertMessage1))
+                        .setNeutralButton(getString(R.string.dialogAlertNeutralButton)) { _, _ ->
 
-                        val editor = biometricInfo.edit()
-                        editor.putBoolean(getString(R.string.isToRequestBiometric), false)
-                        editor.apply()
+                            val editor = biometricInfo.edit()
+                            editor.putBoolean(getString(R.string.isToRequestBiometric), false)
+                            editor.apply()
 
-                        AlertDialog.Builder(this)
-                            .setTitle(getString(R.string.dialogInfoTitle))
-                            .setMessage(getString(R.string.dialogInfoMessage1))
-                            .setPositiveButton(getString(R.string.dialogPositiveButton)) { _, _ ->
-                            }
-                            .show()
-                    }
-                    .setPositiveButton(getString(R.string.dialogAlertPositiveButton1)) { _, _ ->
-                        val editor = biometricInfo.edit()
-                        editor.putBoolean(getString(R.string.isUsingBiometric), true)
-                        editor.putString(getString(R.string.biometricEmail), userInfo.getString(getString(R.string.clientEmail), ""))
-                        editor.putBoolean(getString(R.string.isToRequestBiometric), false)
-                        editor.apply()
-                    }
-                    .show()
+                            AlertDialog.Builder(this)
+                                .setTitle(getString(R.string.dialogInfoTitle))
+                                .setMessage(getString(R.string.dialogInfoMessage1))
+                                .setPositiveButton(getString(R.string.dialogPositiveButton)) { _, _ ->
+                                }
+                                .show()
+                        }
+                        .setPositiveButton(getString(R.string.dialogAlertPositiveButton1)) { _, _ ->
+                            val editor = biometricInfo.edit()
+                            editor.putBoolean(getString(R.string.isUsingBiometric), true)
+                            editor.putString(
+                                getString(R.string.biometricEmail),
+                                userInfo.getString(getString(R.string.clientEmail), "")
+                            )
+                            editor.putBoolean(getString(R.string.isToRequestBiometric), false)
+                            editor.apply()
+                        }
+                        .show()
+                }
             }
 
         }

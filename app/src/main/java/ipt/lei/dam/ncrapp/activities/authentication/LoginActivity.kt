@@ -48,15 +48,17 @@ class LoginActivity : BaseActivity() {
         /**
          * Iniciada configuração biométrica se tiver disponivel
          */
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            val biometricManager = BiometricManager.from(this)
+            configureBiometricLogin(biometricManager)
 
-        val biometricManager = BiometricManager.from(this)
-        configureBiometricLogin(biometricManager)
-
-        biometricInfo = getSharedPreferences(getString(R.string.biometricLogin), MODE_PRIVATE)
-        val isBiometricLogin = biometricInfo.getBoolean(getString(R.string.isUsingBiometric), false)
-        if(isBiometricLogin){
-            prompt.authenticate(promptInfo)
+            biometricInfo = getSharedPreferences(getString(R.string.biometricLogin), MODE_PRIVATE)
+            val isBiometricLogin = biometricInfo.getBoolean(getString(R.string.isUsingBiometric), false)
+            if(isBiometricLogin){
+                prompt.authenticate(promptInfo)
+            }
         }
+
 
         /**
          * Obter componentes do ecrã
@@ -156,15 +158,16 @@ class LoginActivity : BaseActivity() {
                             editor.putBoolean(getString(R.string.keepLogin), keepLogin.isChecked)
                             editor.apply()
 
-                            val biometricEmail = biometricInfo.getString(getString(R.string.biometricEmail), "")
-
-                            //valida se o cliente tem biometrico ativado
-                            if(!loginResponse.email.equals(biometricEmail)){
-                                 val biometricEditor = biometricInfo.edit()
-                                biometricEditor.putBoolean(getString(R.string.isUsingBiometric), false)
-                                biometricEditor.putString(getString(R.string.biometricEmail), "")
-                                biometricEditor.apply()
-                             }
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                                val biometricEmail = biometricInfo.getString(getString(R.string.biometricEmail), "")
+                                //valida se o cliente tem biometrico ativado
+                                if(!loginResponse.email.equals(biometricEmail)){
+                                    val biometricEditor = biometricInfo.edit()
+                                    biometricEditor.putBoolean(getString(R.string.isUsingBiometric), false)
+                                    biometricEditor.putString(getString(R.string.biometricEmail), "")
+                                    biometricEditor.apply()
+                                }
+                            }
 
 
                             startActivity(Intent(this@LoginActivity, MainActivity::class.java))
@@ -196,105 +199,111 @@ class LoginActivity : BaseActivity() {
     }
 
     private fun configureBiometricLogin(biometricManager : BiometricManager){
-
-        when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
-            BiometricManager.BIOMETRIC_SUCCESS ->
-                Log.d(getString(R.string.appTag), "Aplicação consegue usar biométricos para autenticar")
-            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
-                Log.e(getString(R.string.appTag), "Dispositivo não suporta biométricos")
-            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
-                Log.e(getString(R.string.appTag), "Erro na obtenção de funcionalidades biométricas")
-            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
-                val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
-                    putExtra(Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
-                        BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            when (biometricManager.canAuthenticate(BIOMETRIC_STRONG or DEVICE_CREDENTIAL)) {
+                BiometricManager.BIOMETRIC_SUCCESS ->
+                    Log.d(getString(R.string.appTag), "Aplicação consegue usar biométricos para autenticar")
+                BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
+                    Log.e(getString(R.string.appTag), "Dispositivo não suporta biométricos")
+                BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
+                    Log.e(getString(R.string.appTag), "Erro na obtenção de funcionalidades biométricas")
+                BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                    val enrollIntent = Intent(Settings.ACTION_BIOMETRIC_ENROLL).apply {
+                        putExtra(Settings.EXTRA_BIOMETRIC_AUTHENTICATORS_ALLOWED,
+                            BIOMETRIC_STRONG or DEVICE_CREDENTIAL)
+                    }
+                    startActivityForResult(enrollIntent, 2)
                 }
-                startActivityForResult(enrollIntent, 2)
             }
+
+            prompt = BiometricPrompt(this, executor,
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationError(errorCode: Int,
+                                                       errString: CharSequence) {
+                        super.onAuthenticationError(errorCode, errString)
+                        Toast.makeText(applicationContext,
+                            getString(R.string.leituraImpressaoDigitalErro), Toast.LENGTH_SHORT)
+                            .show()
+                    }
+
+                    override fun onAuthenticationSucceeded(
+                        result: BiometricPrompt.AuthenticationResult) {
+                        super.onAuthenticationSucceeded(result)
+                        biometricLogin()
+                    }
+
+                    override fun onAuthenticationFailed() {
+                        super.onAuthenticationFailed()
+                        Toast.makeText(applicationContext, getString(R.string.falhaAuth),
+                            Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                })
+
+            promptInfo = BiometricPrompt.PromptInfo.Builder()
+                .setTitle(getString(R.string.app_name))
+                .setSubtitle(getString(R.string.biometricPromptMessage))
+                .setNegativeButtonText(getString(R.string.useCredential))
+                .build()
         }
-
-        prompt = BiometricPrompt(this, executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationError(errorCode: Int,
-                                                   errString: CharSequence) {
-                    super.onAuthenticationError(errorCode, errString)
-                    Toast.makeText(applicationContext,
-                        getString(R.string.leituraImpressaoDigitalErro), Toast.LENGTH_SHORT)
-                        .show()
-                }
-
-                override fun onAuthenticationSucceeded(
-                    result: BiometricPrompt.AuthenticationResult) {
-                    super.onAuthenticationSucceeded(result)
-                    biometricLogin()
-                }
-
-                override fun onAuthenticationFailed() {
-                    super.onAuthenticationFailed()
-                    Toast.makeText(applicationContext, getString(R.string.falhaAuth),
-                        Toast.LENGTH_SHORT)
-                        .show()
-                }
-            })
-
-        promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(getString(R.string.app_name))
-            .setSubtitle(getString(R.string.biometricPromptMessage))
-            .setNegativeButtonText(getString(R.string.useCredential))
-            .build()
 
     }
 
     private fun biometricLogin(){
-        setLoadingVisibility(true)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            setLoadingVisibility(true)
 
-        val email = biometricInfo.getString(getString(R.string.biometricEmail), "")
+            val email = biometricInfo.getString(getString(R.string.biometricEmail), "")
 
-        makeRequestWithRetries(
-            requestCall = {
-                RetrofitClient.apiService.biometricLogin(BiometricLoginRequest(email)).execute()
-            },
-            onSuccess = { loginResponse ->
-                // Aqui, loginResponse é diretamente o corpo da resposta e não o objeto Response
-                RetrofitClient.setAuthToken(loginResponse.token)
-                println(loginResponse.token)
-                if(loginResponse.isValidated){
-                    val editor = userInfo.edit()
-                    editor.putString(getString(R.string.clientName), loginResponse.name)
-                    editor.putString(getString(R.string.clientEmail), loginResponse.email)
-                    editor.putBoolean(getString(R.string.clientValidated), true)
-                    editor.putString(getString(R.string.clientType), loginResponse.type)
-                    editor.putString(getString(R.string.clientRegistrationDate), loginResponse.registrationDate)
-                    editor.putString(getString(R.string.clientImage), loginResponse.image)
-                    editor.putString(getString(R.string.clientAbout), loginResponse.about)
-                    editor.apply()
+            makeRequestWithRetries(
+                requestCall = {
+                    RetrofitClient.apiService.biometricLogin(BiometricLoginRequest(email)).execute()
+                },
+                onSuccess = { loginResponse ->
+                    // Aqui, loginResponse é diretamente o corpo da resposta e não o objeto Response
+                    RetrofitClient.setAuthToken(loginResponse.token)
+                    println(loginResponse.token)
+                    if (loginResponse.isValidated) {
+                        val editor = userInfo.edit()
+                        editor.putString(getString(R.string.clientName), loginResponse.name)
+                        editor.putString(getString(R.string.clientEmail), loginResponse.email)
+                        editor.putBoolean(getString(R.string.clientValidated), true)
+                        editor.putString(getString(R.string.clientType), loginResponse.type)
+                        editor.putString(
+                            getString(R.string.clientRegistrationDate),
+                            loginResponse.registrationDate
+                        )
+                        editor.putString(getString(R.string.clientImage), loginResponse.image)
+                        editor.putString(getString(R.string.clientAbout), loginResponse.about)
+                        editor.apply()
 
 
 
-                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                    finish()
-                    setLoadingVisibility(false)
-                }else{
-                    val intent = Intent(this@LoginActivity, InsertOTPActivity::class.java)
-                    intent.putExtra(getString(R.string.userInsertedEmail), loginResponse.email)
-                    intent.putExtra(getString(R.string.type), "2")
-                    startActivity(intent)
-                    finish()
+                        startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                        finish()
+                        setLoadingVisibility(false)
+                    } else {
+                        val intent = Intent(this@LoginActivity, InsertOTPActivity::class.java)
+                        intent.putExtra(getString(R.string.userInsertedEmail), loginResponse.email)
+                        intent.putExtra(getString(R.string.type), "2")
+                        startActivity(intent)
+                        finish()
+                        setLoadingVisibility(false)
+                    }
+
+                },
+                onError = { errorMessage ->
+                    // Tratamento de erro
+                    if (toast != null) {
+                        toast!!.setText(errorMessage)
+                    } else {
+                        toast = Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT)
+                    }
+                    toast!!.show()
                     setLoadingVisibility(false)
                 }
-
-            },
-            onError = { errorMessage ->
-                // Tratamento de erro
-                if (toast != null) {
-                    toast!!.setText(errorMessage)
-                } else {
-                    toast = Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT)
-                }
-                toast!!.show()
-                setLoadingVisibility(false)
-            }
-        )
+            )
+        }
     }
 
 }

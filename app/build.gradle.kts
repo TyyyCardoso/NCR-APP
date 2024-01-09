@@ -77,6 +77,8 @@ dependencies {
     // Retrofit para comunicações com a API
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+    // Lidar com LocalDateTime para permitir compatibilidade com android 7 para baixo
+    implementation("com.jakewharton.threetenabp:threetenabp:1.3.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.9.0")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
