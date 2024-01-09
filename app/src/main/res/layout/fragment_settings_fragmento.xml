@@ -12,6 +12,7 @@
         android:padding="16dp">
 
         <LinearLayout
+            android:id="@+id/layoutbiometric"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -28,7 +29,7 @@
                 android:textColor="#00574B" />
 
             <CheckBox
-                android:id="@+id/checkboxEditEventTransport"
+                android:id="@+id/checkboxActivateBiometric"
                 android:layout_width="0dp"
                 android:layout_weight="0.5"
                 android:layout_height="wrap_content"
