@@ -206,7 +206,7 @@ class EventAddFragmento : BasicFragment() {
             transport = eventTransport,
             image = eventSelectedImageUri
         )
-
+        
         //Contruir parts com toda a info do event
         val namePart = event.name.toRequestBody(MultipartBody.FORM)
         val descriptionPart = event.description.toRequestBody(MultipartBody.FORM)
@@ -292,9 +292,9 @@ class EventAddFragmento : BasicFragment() {
 
                 if(type==1){
                     selectedInitDateTime = format.format(calendar.time)
-                    tvSelectedEndDateTime.text = formatShow.format(calendar.time)
+                    tvSelectedInitDateTime.text = formatShow.format(calendar.time)
                 }else{
-                    selectedInitDateTime = format.format(calendar.time)
+                    selectedEndDateTime = format.format(calendar.time)
                     tvSelectedEndDateTime.text = formatShow.format(calendar.time)
                 }
 
