@@ -42,6 +42,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
     private lateinit var userInfo : SharedPreferences
     private lateinit var biometricInfo : SharedPreferences
 
+    private lateinit var navigationDrawerView : NavigationView
+
     private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,7 +83,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         bottomNavigationView.setupWithNavController(navController)
 
         //Obtenção da referência da navegação do drawer menu
-        val navigationDrawerView = findViewById<NavigationView>(R.id.nav_side_view)
+        navigationDrawerView = findViewById(R.id.nav_side_view)
         navigationDrawerView.setNavigationItemSelectedListener(this)
         //Criado o toggle para o drawer
         val toggle = ActionBarDrawerToggle(this,drawerLayout,toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -109,7 +111,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             //Mostrar no drawer menu, a opção de "Sair"
             val menu = navigationDrawerView.menu
             val logoutItem = menu.findItem(R.id.navigation_logout)
-            //logoutItem.isVisible = true
+            logoutItem.isVisible = true
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 val isBiometric =
@@ -306,10 +308,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun cleanLogoutSessionAndUpdateUI(){
         userInfo.edit().clear().apply()
-        toolbarLoginContainerText.text = getString(R.string.loginButton)
-        toolbarLoginImage.setImageResource(R.drawable.baseline_person_24)
+        //toolbarLoginContainerText.text = getString(R.string.loginButton)
+        //toolbarLoginImage.setImageResource(R.drawable.baseline_person_24)
         Toast.makeText(this@MainActivity, getString(R.string.toastMessageSuccessLogout), Toast.LENGTH_SHORT).show()
         findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
+        val menu = navigationDrawerView.menu
+        val logoutItem = menu.findItem(R.id.navigation_logout)
+        logoutItem.isVisible = false
     }
 
 }
