@@ -150,6 +150,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 }
             }
 
+        } else {
+            val menu = navigationDrawerView.menu
+            val loginItem = menu.findItem(R.id.navigation_login)
+            loginItem.isVisible = true
         }
 
         ////////////////////////////////////////////////////
@@ -294,6 +298,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                 cleanLogoutSessionAndUpdateUI()
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
             }
+            R.id.navigation_login -> {
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+            }
         }
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
@@ -315,6 +323,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val menu = navigationDrawerView.menu
         val logoutItem = menu.findItem(R.id.navigation_logout)
         logoutItem.isVisible = false
+        val loginItem = menu.findItem((R.id.navigation_login))
+        loginItem.isVisible = true
     }
 
 }
