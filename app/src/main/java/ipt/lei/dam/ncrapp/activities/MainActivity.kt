@@ -25,6 +25,7 @@ import ipt.lei.dam.ncrapp.R
 import ipt.lei.dam.ncrapp.SharedViewModel
 import ipt.lei.dam.ncrapp.activities.authentication.LoginActivity
 import ipt.lei.dam.ncrapp.databinding.ActivityMainBinding
+import ipt.lei.dam.ncrapp.fragments.events.EventsFragmento
 
 
 class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedListener {
@@ -296,6 +297,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
             R.id.navigation_logout -> {
                 cleanLogoutSessionAndUpdateUI()
+                EventsFragmento.setMyNeedRefresh(true)
                 findNavController(R.id.nav_host_fragment_activity_main).navigate(R.id.navigation_events)
             }
             R.id.navigation_login -> {

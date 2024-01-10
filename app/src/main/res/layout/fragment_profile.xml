@@ -190,7 +190,7 @@
                 android:id="@+id/editProfileAboutMe"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Diz algo sobre ti..."
+                android:hint="@string/profileDefaultAbout"
                 android:background="@drawable/edittext_background"
                 android:padding="15dp"
                 android:visibility="gone"/>

@@ -194,30 +194,38 @@ class ProfileFragmento : BasicFragment() {
             }else{
                 if (editProfileName.text.toString().trim().isNotEmpty()) {
                     val newName = editProfileName.text.toString()
-                    val newImage = profileSelectedImageUri
+                    var newImage = profileSelectedImageUri
                     var newAbout = editProfileAboutMe.text.toString()
 
                     clientName = sharedPref.getString(getString(R.string.clientName), "")
+                    val clientAbout = sharedPref.getString(getString(R.string.clientAbout), "")
+
                     val editor = sharedPref.edit()
 
-                    if(newName != ""){
+                    if(newName != "" || newAbout != "" || newImage != null){
+                        var update = false;
+
                         if(newName != clientName && newName != ""){
                             profileName.text = newName
                             editor.putString(getString(R.string.clientName), newName)
+                            update = true
                         }
 
-                        if(newAbout != ""){
+                        if(newAbout != "" && newAbout != clientAbout){
                             profileAbout.text = newAbout
                             editor.putString(getString(R.string.clientAbout), newAbout)
-                        } else {
-                            newAbout = getString(R.string.profileDefaultAbout2)
-                            profileAbout.text = newAbout
-                            editor.putString(getString(R.string.clientAbout), newAbout)
+                            update = true
                         }
 
-                        updateProfile(newName, newImage, newAbout)
+                        if(newImage != null){
+                            update = true
+                        }
 
-                        editor.apply()
+                        if(update) {
+                            updateProfile(newName, newImage, newAbout)
+                            profileSelectedImageUri = null
+                            editor.apply()
+                        }
                     }
 
                     editProfileImageButtons.visibility = View.GONE

@@ -13,7 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private val environment = EnvironmentEnum.PROD// Set your current environment here
+    private val environment = EnvironmentEnum.EMULATOR// Set your current environment here
 
     //Diferentes IP's para a API
     val BASE_URL = when(environment) {
