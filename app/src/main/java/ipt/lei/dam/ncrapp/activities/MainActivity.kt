@@ -208,7 +208,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //  Implementado um listener na toolbar de forma ser possivel efetuar um logout ou um login quando necessário
         //
         ////////////////////////////////////////////////////
-
+        /*
         toolbarLoginContainer.setOnClickListener {
             clientType = userInfo.getString(getString(R.string.clientType), getString(R.string.estudante))
             if(clientType.equals(getString(R.string.estudante))){
@@ -221,7 +221,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             }
 
         }
-
+        */
         sortByImage.setOnClickListener {
             val sortOptions = arrayOf(getString(R.string.recent), getString(R.string.old))
             var checkedItem = sortOptions.indexOf(selectedSortOption)
