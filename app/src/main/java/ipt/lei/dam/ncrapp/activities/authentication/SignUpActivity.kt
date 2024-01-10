@@ -154,4 +154,9 @@ class SignUpActivity : BaseActivity() {
             }
         }
     }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
+    }
 }
