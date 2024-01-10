@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -32,6 +33,7 @@ class SignUpActivity : BaseActivity() {
         val etSignUpPasswordConfirm = findViewById<EditText>(R.id.etSignUpPasswordConfirm)
         val passwordInputLayout = findViewById<TextInputLayout>(R.id.passwordInputLayoutSignup)
 
+        val backButton = findViewById<ImageView>(R.id.backButtonLoginRegister)
         val btnSignUp = findViewById<Button>(R.id.btnSignUp)
         val btnBackToLogin = findViewById<TextView>(R.id.btnBackToLogin)
 
@@ -64,6 +66,11 @@ class SignUpActivity : BaseActivity() {
             override fun afterTextChanged(editable: Editable) {}
         })
 
+        //Listener para navegar para o ecrã principal
+        backButton.setOnClickListener {
+            startActivity(Intent(this@SignUpActivity, LoginActivity::class.java))
+            finish()
+        }
 
         btnSignUp.setOnClickListener {
             var doSignUp = true

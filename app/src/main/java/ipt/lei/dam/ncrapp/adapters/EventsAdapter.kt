@@ -106,12 +106,12 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
             }else if(today.after(date)){
                 holder.eventSubscribeBtn.text = context.getString(R.string.finishEvent)
                 // Mudar a cor de fundo do botão
-                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
+                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey))
                 isEventAvailable = false
             }else{
                 holder.eventSubscribeBtn.text = context.getString(R.string.startedEvent)
                 // Mudar a cor de fundo do botão
-                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
+                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey))
                 isEventAvailable = false
             }
 
@@ -126,22 +126,42 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
             val initDate : Date =  dateFormat.parse(eventDate)
             val endDate : Date =  dateFormat.parse(eventEndDate)
 
-            if(today.after(initDate) && today.before(endDate)){
-                if (null != event.subscribed) {
-                    if (event.subscribed!!) {
+            when {
+                today.before(initDate) -> {
+                    // Se o evento ainda não começou, permite aderir ou cancelar adesão
+                    if (event.subscribed != null && event.subscribed!!) {
+                        // Se está inscrito, permite cancelar
                         holder.eventSubscribeBtn.text = context.getString(R.string.cancel)
-                        holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.buttonRedColor)) // Exemplo para mudar a cor de fundo do botão
+                        holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(
+                            ContextCompat.getColor(
+                                context,
+                                R.color.buttonRedColor
+                            )
+                        )
+                    } else {
+                        // Se não está inscrito, permite aderir
+                        holder.eventSubscribeBtn.text = context.getString(R.string.eventAderir)
                     }
+                    isEventAvailable = true
                 }
-            }else if(today.before(initDate)){
-                holder.eventSubscribeBtn.text = context.getString(R.string.finishEvent)
-                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
-                isEventAvailable = false
-            }else if(today.after(endDate)){
-                holder.eventSubscribeBtn.text = context.getString(R.string.startedEvent)
-                holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
-                isEventAvailable = false
+
+                today.after(initDate) && today.before(endDate) -> {
+                    // Se o evento está a meio da sua duração, bloqueia botão a cinza
+                    holder.eventSubscribeBtn.text = context.getString(R.string.startedEvent)
+                    holder.eventSubscribeBtn.backgroundTintList =
+                        ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey))
+                    isEventAvailable = false
+                }
+
+                today.after(endDate) -> {
+                    // Se o evento já terminou, bloqueia botão a cinza
+                    holder.eventSubscribeBtn.text = context.getString(R.string.finishEvent)
+                    holder.eventSubscribeBtn.backgroundTintList =
+                        ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey))
+                    isEventAvailable = false
+                }
             }
+
         }
 
         holder.eventDetailsBtn.setOnClickListener {
@@ -180,7 +200,7 @@ class EventsAdapter(private val context: Context, private val eventsList: List<E
         }
 
         if(clientType.equals(context.getString(R.string.estudante))){
-            holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey)) // Exemplo para mudar a cor de fundo do botão
+            holder.eventSubscribeBtn.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.grey))
         }
     }
 

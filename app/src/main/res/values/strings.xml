@@ -184,6 +184,7 @@
     <string name="sabiasQueEditadoComSucesso">"Sabias Que" editado com sucesso</string>
     <string name="sabiasQueRemovidoComSucesso">"Sabias Que" removido com sucesso</string>
     <string name="eventCreatedSuccess">Evento criado com sucesso</string>
+    <string name="eventDatesError">ERRO: Data de fim é antes da data de início</string>
     <string name="cameraNeeded">A câmera é necessária para capturar fotos</string>
     <string name="eventRemoved">Evento removido com sucesso</string>
     <string name="eventEdited">Evento editado com sucesso</string>
@@ -196,7 +197,7 @@
 
     <!-- INFO SCREEN -->
     <string name="infoTitle">Núcleo de Conservação e Restauro</string>
-    <string name="infoText">Somos um grupo de estudantes de conservação e restauro que visa dinamizar o curso e dar lhe vida! Através de atividades como workshops, palestras entre outros.</string>
+    <string name="infoText">Somos um grupo de estudantes de conservação e restauro que visa dinamizar o curso e dar-lhe vida! Através de atividades como workshops, palestras entre outros.</string>
     <string name="infoYear">Ano de Fundação: 2023</string>
     <string name="infoPeople">Membros: 15</string>
     <string name="infoLogo">Nosso logotipo:</string>

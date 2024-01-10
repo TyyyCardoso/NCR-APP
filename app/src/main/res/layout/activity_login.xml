@@ -5,27 +5,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background">
 
-    <ImageView
-        android:id="@+id/backButtonLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/baseline_arrow_back_24"
-        android:layout_gravity="top|start"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp" />
+
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:background="@color/background"
         android:padding="32dp"
-        android:gravity="center"
-        android:layout_marginTop="?attr/actionBarSize"> <!-- Assume que isso é aproximadamente a altura da sua ActionBar -->
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/backButtonLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/baseline_arrow_back_24"
+            android:layout_gravity="top|start"
+            android:layout_marginTop="0dp"
+            android:layout_marginStart="-5dp" />
 
         <ImageView
             android:layout_width="250dp"

@@ -40,6 +40,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.threeten.bp.LocalDateTime
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -492,6 +493,23 @@ class EventDetailFragmento :  BasicFragment() {
      *
      */
     private fun validateFields(): Boolean{
+        val dataInit = LocalDateTime.parse(selectedInitDateTime, formatComp)
+        val dataEnd = LocalDateTime.parse(selectedEndDateTime, formatComp)
+
+        if(dataEnd.isBefore(dataInit)){
+            if (toast != null) {
+                toast!!.setText(getString(R.string.eventDatesError))
+            } else {
+                toast = Toast.makeText(
+                    requireActivity(),
+                    getString(R.string.eventDatesError),
+                    Toast.LENGTH_SHORT
+                )
+            }
+            toast!!.show()
+            return false
+        }
+
         if (etEventName.text.toString().trim().isEmpty()) {
             etEventName.error = getString(R.string.addEventTitleError)
             return false

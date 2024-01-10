@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import ipt.lei.dam.ncrapp.R
 import org.json.JSONObject
+import org.threeten.bp.format.DateTimeFormatter
 import retrofit2.Response
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -24,8 +25,12 @@ open class BasicFragment : Fragment() {
     protected lateinit var loadingImage: ImageView
     protected lateinit var rotationAnimation: Animation
 
+    //Formatar Datas para base de dados
     val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault())
+    //Formatar Datas para mostrar na aplicação
     val formatShow = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+    //Formatar Datas para fazer comparações
+    val formatComp = DateTimeFormatter.ISO_DATE_TIME
 
 
     /**

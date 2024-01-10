@@ -58,8 +58,8 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         val toolbar: Toolbar = findViewById(R.id.toolbar_custom)
         val toolbarBackButton: ImageView = findViewById(R.id.back_button)
         val toolbarLoginContainer: LinearLayout = findViewById(R.id.entrar_container)
-        toolbarLoginContainerText = findViewById(R.id.containerText)
-        toolbarLoginImage = findViewById(R.id.containerImage)
+        //toolbarLoginContainerText = findViewById(R.id.containerText)
+        //toolbarLoginImage = findViewById(R.id.containerImage)
         sortByImage = findViewById(R.id.sort_button)
 
 
@@ -103,13 +103,13 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         //Alterar o design caso o cliente com o login feito
         if(!clientType.equals(getString(R.string.estudante))){
             //Alterar toolbar para ter o "Sair"
-            toolbarLoginContainerText.text = getString(R.string.sair)
-            toolbarLoginImage.setImageResource(R.drawable.baseline_logout_24)
+            //toolbarLoginContainerText.text = getString(R.string.sair)
+            //toolbarLoginImage.setImageResource(R.drawable.baseline_logout_24)
 
             //Mostrar no drawer menu, a opção de "Sair"
             val menu = navigationDrawerView.menu
             val logoutItem = menu.findItem(R.id.navigation_logout)
-            logoutItem.isVisible = true
+            //logoutItem.isVisible = true
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                 val isBiometric =

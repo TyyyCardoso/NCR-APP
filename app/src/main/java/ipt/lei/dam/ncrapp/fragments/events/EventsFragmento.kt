@@ -224,7 +224,7 @@ class EventsFragmento : BasicFragment() {
                         Toast.makeText(requireContext(), getString(R.string.eventNotAvailable), Toast.LENGTH_SHORT).show()
                     }
                 }else{
-                    if(today.after(initDate) && today.before(endDate)){
+                    if(today.before(initDate) || (today.after(initDate) && today.before(endDate))){
                         if (event.subscribed == true) {
                             cancelarInscricao(event, position)
                         } else {
